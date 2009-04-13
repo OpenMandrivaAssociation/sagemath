@@ -15,7 +15,7 @@ Source0:	http://www.sagemath.org/src/sage-3.2.3.tar
 URL:	http://www.sagemath.org/src/sage-3.2.3.tar
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
-BuildRequires:	gfortran
+BuildRequires:	gcc-gfortran
 
 # BuildRequires:	ginac-devel
 # It really wants the variant in pynac-0.1.1.spk,
@@ -36,7 +36,7 @@ BuildRequires:	libm4ri-devel
 # Need to use sage builtin one as it requires 0.5, but 0.6 was added to distro
 
 BuildRequires:	libntl-devel
-BuildRequires:	libqd-devel-static
+BuildRequires:	libqd-static-devel
 BuildRequires:	libzn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
 BuildRequires:	python-cython
@@ -119,22 +119,27 @@ packages into a common Python-based interface.
 %prep
 %setup -q -n sage-%{version}
 
+mkdir -p spkg/build
+tar jxf spkg/standard/sage-%{version}.spkg -C spkg/build
+
+%patch0 -p1
+
 %build
 export SAGE_ROOT=%{sagedir}
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 
-pushd sage/spkg/build
-    tar jxf ../standard/sage-%{version}.spkg
+export BUILDROOT=%{buildroot}
+
+pushd spkg/build
     cd sage-%{version}
-    %patch0 -p1
     python setup.py build
 popd
 
 %install
 rm -rf %{buildroot}
 
-pushd sage/spkg/build
+pushd spkg/build
     python setup.py install
 popd
 
