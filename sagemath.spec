@@ -133,7 +133,10 @@ export BUILDROOT=%{buildroot}
 
 pushd spkg/build
     cd sage-%{version}
-    python setup.py build
+    pushd c_lib
+	scons
+    popd
+    python ./setup.py build
 popd
 
 %install
