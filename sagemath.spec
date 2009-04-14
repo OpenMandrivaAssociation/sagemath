@@ -136,6 +136,8 @@ pushd spkg/build
     pushd c_lib
 	scons
     popd
+    # some .c files are not (re)generated
+    find . -name \*.pyx -exec touch {} \;
     python ./setup.py build
 popd
 
