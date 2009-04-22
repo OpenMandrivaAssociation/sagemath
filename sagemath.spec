@@ -130,9 +130,9 @@ export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 
 export BUILDROOT=%{buildroot}
+export DESTDIR=%{buildroot}
 
-pushd spkg/build
-    cd sage-%{version}
+pushd spkg/build/sage-%{version}
     pushd c_lib
 	scons
     popd
@@ -144,8 +144,11 @@ popd
 %install
 rm -rf %{buildroot}
 
-pushd spkg/build
-    python setup.py install
+export BUILDROOT=%{buildroot}
+export DESTDIR=%{buildroot}
+
+pushd spkg/build/sage-%{version}
+    python setup.py --root=%{buildroot} install
 popd
 
 mkdir -p %{buildroot}%{_bindir}
