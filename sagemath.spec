@@ -3,7 +3,7 @@
 
 %define		name			sagemath
 %define		sagedir			%{_datadir}/%{name}
-%define		sagedatadir		%{sagedir}/data
+%define		sagedatadir		%{_localstatedir}/sage
 
 Name:		%{name}
 Group:		Sciences/Mathematics
@@ -12,7 +12,7 @@ Summary:	A free open-source mathematics software system
 Version:	3.2.3
 Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-3.2.3.tar
-URL:	http://www.sagemath.org/src/sage-3.2.3.tar
+URL:		http://www.sagemath.org/src/sage-3.2.3.tar
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:	gcc-gfortran
@@ -57,22 +57,24 @@ Requires:	flint
 Requires:	gap-system gap-system-packages
 Requires:	gd-utils
 ## genus2reduction-0.3.p4.spkg 
-Requires:	gfortran
-Requires:	gp2c pari pari-data pari-devel
+Requires:	gcc-gfortran
+Requires:	gp2c pari pari-data libpari-devel
 ## graphs-20070722.spkg 
 Requires:	ipython
 Requires:	jmol
 Requires:	libatlas atlas
 Requires:	libblas
-Requires:	libntl
+Requires:	ntl
 Requires:	libopencdk
-Requires:	libm4ri
+Requires:	libm4ri-devel
 Requires:	lcalc
 Requires:	linalg-linbox
 Requires:	maxima
-Requires:	mercurial
+
+# Requires:	mercurial
+
 Requires:	moin
-Requires:	mpfi
+Requires:	libmpfi-devel
 Requires:	palp
 Requires:	perl
 ## polybori-0.5rc.p6.spkg
@@ -104,10 +106,10 @@ Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
-Requires:	zope
-
+## Requires:	zope
 
 Patch0:		sage-3.2.3.patch
+Patch1:		sage-3.2.3-sage_scripts.patch
 
 %description
 Sage is a free open-source mathematics software system licensed
@@ -121,15 +123,18 @@ packages into a common Python-based interface.
 
 mkdir -p spkg/build
 tar jxf spkg/standard/sage-%{version}.spkg -C spkg/build
+tar jxf spkg/standard/sage_scripts-%{version}.spkg -C spkg/build
+rm -f spkg/build/sage_scripts-%{version}/*.orig
+tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
 
 %patch0 -p1
+%patch1 -p1
 
 %build
 export SAGE_ROOT=%{sagedir}
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 
-export BUILDROOT=%{buildroot}
 export DESTDIR=%{buildroot}
 
 pushd spkg/build/sage-%{version}
@@ -144,23 +149,35 @@ popd
 %install
 rm -rf %{buildroot}
 
-export BUILDROOT=%{buildroot}
 export DESTDIR=%{buildroot}
 
 pushd spkg/build/sage-%{version}
-    python setup.py --root=%{buildroot} install
+    python setup.py install --root=%{buildroot}
+popd
+
+pushd spkg/build/sage_scripts-%{version}
+    ./spkg-install
 popd
 
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
-mkdir -p %{buildroot}%{sagedatdir}
+mkdir -p %{buildroot}%{sagedatadir}
 
-mkdir -p %{buildroot}%{sagedatadir}/conway_polynomials
-cp conway_polynomials-0.2/src/conway_polynomials/conway_table.py.bz2 %{buildroot}%{sagedatadir}/conway_polynomials
-bunzip2 %{buildroot}%{sagedatadir}/conway_polynomials/conway_table.py.bz2
+pushd spkg/build/conway_polynomials-0.2
+    mkdir -p %{buildroot}%{sagedatadir}/conway_polynomials
+    cp -fa src/conway_polynomials/* %{buildroot}%{sagedatadir}/conway_polynomials
+popd
+
+rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 
 %clean
 rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
+%dir %{py_platsitedir}/sage
+%{py_platsitedir}/*.egg-info
+%{py_platsitedir}/sage/*
+%dir %{sagedatadir}
+%{sagedatadir}/*
+%{_bindir}/*
