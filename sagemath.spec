@@ -126,6 +126,8 @@ tar jxf spkg/standard/sage-%{version}.spkg -C spkg/build
 tar jxf spkg/standard/sage_scripts-%{version}.spkg -C spkg/build
 rm -f spkg/build/sage_scripts-%{version}/*.orig
 tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
+tar jxf spkg/standard/elliptic_curves-0.1.spkg -C spkg/build
+tar jxf spkg/standard/extcode-3.2.3.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
@@ -149,29 +151,42 @@ popd
 %install
 rm -rf %{buildroot}
 
+mkdir -p %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_libdir}
+mkdir -p %{buildroot}%{sagedatadir}
+
 export DESTDIR=%{buildroot}
 
 pushd spkg/build/sage-%{version}
     python setup.py install --root=%{buildroot}
+    cp -fa c_lib/libcsage.so %{buildroot}%{_libdir}
 popd
 
 pushd spkg/build/sage_scripts-%{version}
     ./spkg-install
 popd
 
-mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_libdir}
-mkdir -p %{buildroot}%{sagedatadir}
-
 pushd spkg/build/conway_polynomials-0.2
     mkdir -p %{buildroot}%{sagedatadir}/conway_polynomials
     cp -fa src/conway_polynomials/* %{buildroot}%{sagedatadir}/conway_polynomials
 popd
 
+pushd spkg/build/elliptic_curves-0.1
+    cp -fa cremona_mini/src/cremona_mini %{buildroot}%{sagedatadir}
+    mkdir -p %{buildroot}%{sagedatadir}/ellcurves
+    cp -fa ellcurves/rank* %{buildroot}%{sagedatadir}/ellcurves
+popd
+
+pushd spkg/build/extcode-3.2.3
+    mkdir -p %{buildroot}%{sagedatadir}/extcode
+    cp -far gap images javascript maxima mwrank notebook pari pickle_jar sagebuild singular \
+	%{buildroot}%{sagedatadir}/extcode
+popd
+
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 
 %clean
-rm -rf %{buildroot}
+# rm -rf #%#{buildroot}
 
 %files
 %defattr(-,root,root)
@@ -181,3 +196,4 @@ rm -rf %{buildroot}
 %dir %{sagedatadir}
 %{sagedatadir}/*
 %{_bindir}/*
+%{_libdir}/*.so
