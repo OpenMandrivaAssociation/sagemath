@@ -2,7 +2,7 @@
 %define		debug_package		%{nil}
 
 %define		name			sagemath
-%define		sagedir			%{_datadir}/%{name}
+%define		sagedir			%{_datadir}/sage
 %define		sagedatadir		%{_localstatedir}/sage
 
 Name:		%{name}
@@ -160,9 +160,14 @@ export DESTDIR=%{buildroot}
 pushd spkg/build/sage-%{version}
     python setup.py install --root=%{buildroot}
     cp -fa c_lib/libcsage.so %{buildroot}%{_libdir}
+    mkdir -p %{buildroot}%{sagedir}/devel
+    pushd sage
+        find . -name \*.pxi -o -name \*.pxd -o -name \*.py -exec install -D -m 644 {} %{buildroot}%{sagedir}/devel/{} \;
+    popd
 popd
 
 pushd spkg/build/sage_scripts-%{version}
+    mkdir -p %{buildroot}%{sagedir}/bin
     ./spkg-install
 popd
 
@@ -185,6 +190,53 @@ popd
 
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 
+# not supported - only prebuilt packages for now
+rm -f %{sagedir}/bin/sage-bdist
+rm -f %{sagedir}/bin/sage-build
+rm -f %{sagedir}/bin/sage-build-debian
+rm -f %{sagedir}/bin/sage-clone
+rm -f %{sagedir}/bin/sage-crap
+rm -f %{sagedir}/bin/sage-debsource
+rm -f %{sagedir}/bin/sage-download_package
+rm -f %{sagedir}/bin/sage-env
+rm -f %{sagedir}/bin/sage-libdist
+rm -f %{sagedir}/bin/sage-list-*
+rm -f %{sagedir}/bin/sage-location
+rm -f %{sagedir}/bin/sage-make_devel_packages
+rm -f %{sagedir}/bin/sage-mirror*
+# omega tool not available in mandriva version of valgrind
+rm -f %{sagedir}/bin/sage-omega
+rm -f %{sagedir}/bin/sage-pkg
+rm -f %{sagedir}/bin/sage-pkg-nocompress
+rm -f %{sagedir}/bin/sage-pull
+rm -f %{sagedir}/bin/sage-push
+rm -f %{sagedir}/bin/sage-sdist
+rm -f %{sagedir}/bin/SbuildHack.pm
+rm -f %{sagedir}/bin/sage-sbuildhack
+rm -f %{sagedir}/bin/sage-test-*
+rm -f %{sagedir}/bin/sage-upgrade
+
+# osx only
+rm -f  %{sagedir}/sage-check-libraries.py
+rm -f  %{sagedir}/sage-ldwrap
+rm -f  %{sagedir}/sage-native-execute
+rm -f  %{sagedir}/sage-open
+rm -f  %{sagedir}/sage-osx-open
+
+# windows only
+sage-rebase_sage.sh
+
+cat > %{buildroot}%{_bindir}/sage << EOF
+#!/bin/sh
+
+export SAGE_ROOT="/"
+export SAGE_HOME="\$HOME/.sage/"
+mkdir -p \$SAGE_HOME
+export SAGE_LOCAL="%{sagedir}"
+%{sagedir}/bin/sage-sage $*
+EOF
+chmod +x %{buildroot}%{_bindir}/sage
+
 %clean
 # rm -rf #%#{buildroot}
 
@@ -195,5 +247,7 @@ rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 %{py_platsitedir}/sage/*
 %dir %{sagedatadir}
 %{sagedatadir}/*
+%dir %{sagedir}
+%{sagedir}/*
 %{_bindir}/*
 %{_libdir}/*.so
