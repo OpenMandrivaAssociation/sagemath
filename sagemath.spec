@@ -149,7 +149,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 %install
-rm -rf %{buildroot}
+#rm -rf %#{buildroot}
 
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
@@ -168,7 +168,15 @@ popd
 
 pushd spkg/build/sage_scripts-%{version}
     mkdir -p %{buildroot}%{sagedir}/bin
-    ./spkg-install
+    cp -fa sage-* dsage_* *doctest.py ipy_profile_sage.py %{buildroot}%{sagedir}/bin
+    cp -far ipython %{buildroot}%{sagedir}
+    cp -fa matplotlibrc %{buildroot}%{sagedir}
+    cp -fa COPYING.txt %{buildroot}%{sagedir}
+    pushd %{buildroot}%{sagedir}/bin
+	ln -sf %{_bindir}/python sage.bin
+	ln -sf %{_bindir}/Singular sage_singular
+	ln -sf %{_bindir}/gp sage_pari
+    popd
 popd
 
 pushd spkg/build/conway_polynomials-0.2
@@ -191,40 +199,40 @@ popd
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 
 # not supported - only prebuilt packages for now
-rm -f %{sagedir}/bin/sage-bdist
-rm -f %{sagedir}/bin/sage-build
-rm -f %{sagedir}/bin/sage-build-debian
-rm -f %{sagedir}/bin/sage-clone
-rm -f %{sagedir}/bin/sage-crap
-rm -f %{sagedir}/bin/sage-debsource
-rm -f %{sagedir}/bin/sage-download_package
-rm -f %{sagedir}/bin/sage-env
-rm -f %{sagedir}/bin/sage-libdist
-rm -f %{sagedir}/bin/sage-list-*
-rm -f %{sagedir}/bin/sage-location
-rm -f %{sagedir}/bin/sage-make_devel_packages
-rm -f %{sagedir}/bin/sage-mirror*
+rm -f %{buildroot}%{sagedir}/bin/sage-bdist
+rm -f %{buildroot}%{sagedir}/bin/sage-build
+rm -f %{buildroot}%{sagedir}/bin/sage-build-debian
+rm -f %{buildroot}%{sagedir}/bin/sage-clone
+rm -f %{buildroot}%{sagedir}/bin/sage-crap
+rm -f %{buildroot}%{sagedir}/bin/sage-debsource
+rm -f %{buildroot}%{sagedir}/bin/sage-download_package
+rm -f %{buildroot}%{sagedir}/bin/sage-env
+rm -f %{buildroot}%{sagedir}/bin/sage-libdist
+rm -f %{buildroot}%{sagedir}/bin/sage-list-*
+rm -f %{buildroot}%{sagedir}/bin/sage-location
+rm -f %{buildroot}%{sagedir}/bin/sage-make_devel_packages
+rm -f %{buildroot}%{sagedir}/bin/sage-mirror*
 # omega tool not available in mandriva version of valgrind
-rm -f %{sagedir}/bin/sage-omega
-rm -f %{sagedir}/bin/sage-pkg
-rm -f %{sagedir}/bin/sage-pkg-nocompress
-rm -f %{sagedir}/bin/sage-pull
-rm -f %{sagedir}/bin/sage-push
-rm -f %{sagedir}/bin/sage-sdist
-rm -f %{sagedir}/bin/SbuildHack.pm
-rm -f %{sagedir}/bin/sage-sbuildhack
-rm -f %{sagedir}/bin/sage-test-*
-rm -f %{sagedir}/bin/sage-upgrade
+rm -f %{buildroot}%{sagedir}/bin/sage-omega
+rm -f %{buildroot}%{sagedir}/bin/sage-pkg
+rm -f %{buildroot}%{sagedir}/bin/sage-pkg-nocompress
+rm -f %{buildroot}%{sagedir}/bin/sage-pull
+rm -f %{buildroot}%{sagedir}/bin/sage-push
+rm -f %{buildroot}%{sagedir}/bin/sage-sdist
+rm -f %{buildroot}%{sagedir}/bin/SbuildHack.pm
+rm -f %{buildroot}%{sagedir}/bin/sage-sbuildhack
+rm -f %{buildroot}%{sagedir}/bin/sage-test-*
+rm -f %{buildroot}%{sagedir}/bin/sage-upgrade
 
 # osx only
-rm -f  %{sagedir}/sage-check-libraries.py
-rm -f  %{sagedir}/sage-ldwrap
-rm -f  %{sagedir}/sage-native-execute
-rm -f  %{sagedir}/sage-open
-rm -f  %{sagedir}/sage-osx-open
+rm -f %{buildroot}%{sagedir}/sage-check-libraries.py
+rm -f %{buildroot}%{sagedir}/sage-ldwrap
+rm -f %{buildroot}%{sagedir}/sage-native-execute
+rm -f %{buildroot}%{sagedir}/sage-open
+rm -f %{buildroot}%{sagedir}/sage-osx-open
 
 # windows only
-sage-rebase_sage.sh
+rm -f %{buildroot}%{sagedir}/sage-rebase_sage.sh
 
 cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
@@ -232,7 +240,9 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 export SAGE_ROOT="/"
 export SAGE_HOME="\$HOME/.sage/"
 mkdir -p \$SAGE_HOME
+export SAGE_DATA="%{sagedatadir}"
 export SAGE_LOCAL="%{sagedir}"
+export PATH=%{sagedir}/bin:\$PATH
 %{sagedir}/bin/sage-sage $*
 EOF
 chmod +x %{buildroot}%{_bindir}/sage
