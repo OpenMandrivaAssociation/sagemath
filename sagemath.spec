@@ -110,6 +110,7 @@ Requires:	tachyon
 
 Patch0:		sage-3.2.3.patch
 Patch1:		sage-3.2.3-sage_scripts.patch
+Patch2:		sage-3.2.3-env-vars.patch
 
 %description
 Sage is a free open-source mathematics software system licensed
@@ -131,6 +132,7 @@ tar jxf spkg/standard/extcode-3.2.3.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 export SAGE_ROOT=%{sagedir}
