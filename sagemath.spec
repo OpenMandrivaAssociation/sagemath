@@ -255,8 +255,8 @@ export SAGE_HOME="\$HOME/.sage/"
 mkdir -p \$SAGE_HOME
 export SAGE_DATA="%{sagedatadir}"
 export SAGE_LOCAL="%{sagedir}"
-export PATH=%{sagedir}/bin:%{datadir}/singular/%{_arch}:\$PATH
-export SINGULARPATH=%{datadir}/singular/LIB:%{datadir}/singular/%{_arch}
+export PATH=%{sagedir}/bin:%{_datadir}/singular/%{_arch}:\$PATH
+export SINGULARPATH=%{_datadir}/singular/LIB
 %{sagedir}/bin/sage-sage $*
 EOF
 chmod +x %{buildroot}%{_bindir}/sage
