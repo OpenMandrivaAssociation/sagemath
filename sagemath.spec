@@ -102,7 +102,8 @@ Requires:	python-sympy
 Requires:	python-twisted-core
 Requires:	R-base
 ## rubiks-20070912.p8.spkg
-Requires:	singular
+# libsingular.so
+Requires:	singular-devel
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
@@ -111,6 +112,14 @@ Requires:	tachyon
 Patch0:		sage-3.2.3.patch
 Patch1:		sage-3.2.3-sage_scripts.patch
 Patch2:		sage-3.2.3-env-vars.patch
+
+# PyString_FromString() will crash if receiving a null string,
+# that comes from dlerror if there are no errors, and the error
+# was checking for libsingular.so at the wrong placd.
+Patch3:		sage-3.2.3-libsingular.patch
+
+# newer libm4ri renames some symbols...
+Patch4:		sage-3.2.3-libm4ri.patch
 
 %description
 Sage is a free open-source mathematics software system licensed
@@ -133,6 +142,8 @@ tar jxf spkg/standard/extcode-3.2.3.spkg -C spkg/build
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
 export SAGE_ROOT=%{sagedir}
@@ -244,7 +255,8 @@ export SAGE_HOME="\$HOME/.sage/"
 mkdir -p \$SAGE_HOME
 export SAGE_DATA="%{sagedatadir}"
 export SAGE_LOCAL="%{sagedir}"
-export PATH=%{sagedir}/bin:\$PATH
+export PATH=%{sagedir}/bin:%{datadir}/singular/%{_arch}:\$PATH
+export SINGULARPATH=%{datadir}/singular/LIB:%{datadir}/singular/%{_arch}
 %{sagedir}/bin/sage-sage $*
 EOF
 chmod +x %{buildroot}%{_bindir}/sage
