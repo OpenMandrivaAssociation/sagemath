@@ -12,7 +12,7 @@ Summary:	A free open-source mathematics software system
 Version:	3.2.3
 Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-3.2.3.tar
-URL:		http://www.sagemath.org/src/sage-3.2.3.tar
+URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:	gcc-gfortran
@@ -35,6 +35,7 @@ BuildRequires:	libm4ri-devel
 # BuildRequires:	libpolybori-devel
 # Need to use sage builtin one as it requires 0.5, but 0.6 was added to distro
 
+BuildRequires:	libeclib-devel
 BuildRequires:	libntl-devel
 BuildRequires:	libqd-static-devel
 BuildRequires:	libzn_poly-static-devel
@@ -50,8 +51,6 @@ BuildRequires:	scons
 Requires:	bzip2
 Requires:	clisp
 Requires:	ecm
-## elliptic_curves-0.1.spkg
-## extcode-3.2.3.spkg
 Requires:	flint
 ## flintqs-20070817.p3.spkg	( no longer available upstream )
 Requires:	gap-system gap-system-packages
@@ -64,6 +63,7 @@ Requires:	ipython
 Requires:	jmol
 Requires:	libatlas atlas
 Requires:	libblas
+Requires:	libeclib-devel
 Requires:	ntl
 Requires:	libopencdk
 Requires:	libm4ri-devel
