@@ -17,16 +17,8 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:	gcc-gfortran
 
-# BuildRequires:	ginac-devel
-# It really wants the variant in pynac-0.1.1.spk,
-# but an attempt on a python-ginac package from the sage spkg failed, as
-# it depends on symbols that may or may not be available on the python binary,
-# example:
-#	py_acosh
-# see http://mail.python.org/pipermail/python-bugs-list/2008-May/052722.html
-
 BuildRequires:	libpari-devel
-BuildRequires:	libatlas3
+BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
 BuildRequires:	libflint-devel
 BuildRequires:	libfplll-devel
@@ -37,6 +29,7 @@ BuildRequires:	libm4ri-devel
 
 BuildRequires:	libeclib-devel
 BuildRequires:	libntl-devel
+BuildRequires:	libpynac-devel
 BuildRequires:	libqd-static-devel
 BuildRequires:	libzn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
@@ -61,7 +54,7 @@ Requires:	gp2c pari pari-data libpari-devel
 ## graphs-20070722.spkg 
 Requires:	ipython
 Requires:	jmol
-Requires:	libatlas atlas
+Requires:	libatlas
 Requires:	libblas
 Requires:	libeclib-devel
 Requires:	ntl
@@ -80,6 +73,7 @@ Requires:	perl
 ## polybori-0.5rc.p6.spkg
 Requires:	polymake
 ## polytopes_db-20080430.spkg
+Requires:	libpynac-devel
 Requires:	python
 Requires:	python-cvxopt
 Requires:	python-cython
@@ -100,6 +94,7 @@ Requires:	python-sqlalchemy
 Requires:	python-sqlite2
 Requires:	python-sympy
 Requires:	python-twisted-core
+Requires:	python-twisted-web2
 Requires:	R-base
 ## rubiks-20070912.p8.spkg
 # libsingular.so
@@ -121,11 +116,21 @@ Patch3:		sage-3.2.3-libsingular.patch
 # newer libm4ri renames some symbols...
 Patch4:		sage-3.2.3-libm4ri.patch
 
+Patch5:		sage-3.2.3-notebook.patch
+
 %description
 Sage is a free open-source mathematics software system licensed
 under the GPL. It combines the power of many existing open-source
 packages into a common Python-based interface.
 
+
+########################################################################
+%package	doc
+Summary:	Documentation for sagemath
+Group:		Development/other
+
+%description	doc
+This package constains sagemath documentation.
 
 ########################################################################
 %prep
@@ -138,12 +143,14 @@ rm -f spkg/build/sage_scripts-%{version}/*.orig
 tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
 tar jxf spkg/standard/elliptic_curves-0.1.spkg -C spkg/build
 tar jxf spkg/standard/extcode-3.2.3.spkg -C spkg/build
+tar jxf spkg/standard/doc-3.2.3.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 export SAGE_ROOT=%{sagedir}
@@ -167,6 +174,7 @@ popd
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{sagedatadir}
+mkdir -p %{buildroot}%{sagedir}/doc
 
 export DESTDIR=%{buildroot}
 
@@ -176,6 +184,9 @@ pushd spkg/build/sage-%{version}
     mkdir -p %{buildroot}%{sagedir}/devel
     pushd sage
         find . -name \*.pxi -o -name \*.pxd -o -name \*.py -exec install -D -m 644 {} %{buildroot}%{sagedir}/devel/{} \;
+	# install sage notebook templates
+	mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/templates
+	cp -fa server/notebook/templates/*.html %{buildroot}%{sagedatadir}/extcode/notebook/templates
     popd
 popd
 
@@ -207,6 +218,10 @@ pushd spkg/build/extcode-3.2.3
     mkdir -p %{buildroot}%{sagedatadir}/extcode
     cp -far gap images javascript maxima mwrank notebook pari pickle_jar sagebuild singular \
 	%{buildroot}%{sagedatadir}/extcode
+popd
+
+pushd spkg/build/doc-3.2.3
+    cp -far html/* %{buildroot}/%{sagedir}/doc
 popd
 
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
@@ -257,7 +272,7 @@ export SAGE_DATA="%{sagedatadir}"
 export SAGE_LOCAL="%{sagedir}"
 export PATH=%{sagedir}/bin:%{_datadir}/singular/%{_arch}:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
-%{sagedir}/bin/sage-sage $*
+%{sagedir}/bin/sage-sage "\$@"
 EOF
 chmod +x %{buildroot}%{_bindir}/sage
 
@@ -275,3 +290,7 @@ chmod +x %{buildroot}%{_bindir}/sage
 %{sagedir}/*
 %{_bindir}/*
 %{_libdir}/*.so
+
+%files		doc
+%dir %{sagedir}/doc
+%{sagedir}/doc/*
