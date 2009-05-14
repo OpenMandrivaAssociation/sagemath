@@ -28,7 +28,7 @@ BuildRequires:	libm4ri-devel
 # Need to use sage builtin one as it requires 0.5, but 0.6 was added to distro
 
 BuildRequires:	libeclib-devel
-BuildRequires:	libntl-devel
+BuildRequires:	ntl-devel
 BuildRequires:	libpynac-devel
 BuildRequires:	libqd-static-devel
 BuildRequires:	libzn_poly-static-devel
