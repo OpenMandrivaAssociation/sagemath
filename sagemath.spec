@@ -32,6 +32,7 @@ BuildRequires:	qd-static-devel
 BuildRequires:	zn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
 BuildRequires:	python-cython
+BuildRequires:	python-numpy-devel
 BuildRequires:	python-setuptools
 BuildRequires:	flex bison
 BuildRequires:	singular-devel
