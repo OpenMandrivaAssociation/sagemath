@@ -21,23 +21,21 @@ BuildRequires:	libpari-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
 BuildRequires:	libflint-devel
-BuildRequires:	libfplll-devel
+BuildRequires:	fplll-devel
 BuildRequires:	libm4ri-devel
 
-# BuildRequires:	libpolybori-devel
-# Need to use sage builtin one as it requires 0.5, but 0.6 was added to distro
-
+BuildRequires:	polybori-devel
 BuildRequires:	libeclib-devel
 BuildRequires:	ntl-devel
-BuildRequires:	libpynac-devel
-BuildRequires:	libqd-static-devel
-BuildRequires:	libzn_poly-static-devel
+BuildRequires:	pynac-devel
+BuildRequires:	qd-static-devel
+BuildRequires:	zn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
 BuildRequires:	python-cython
 BuildRequires:	python-setuptools
 BuildRequires:	flex bison
 BuildRequires:	singular-devel
-BuildRequires:	libsymmetrica-static-devel
+BuildRequires:	symmetrica-static-devel
 BuildRequires:	scons
 
 # This is actually, mainly a listing of spkgs
@@ -73,7 +71,7 @@ Requires:	perl
 ## polybori-0.5rc.p6.spkg
 Requires:	polymake
 ## polytopes_db-20080430.spkg
-Requires:	libpynac-devel
+Requires:	pynac-devel
 Requires:	python
 Requires:	python-cvxopt
 Requires:	python-cython
@@ -176,6 +174,9 @@ mkdir -p %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{sagedatadir}
 mkdir -p %{buildroot}%{sagedir}/doc
 
+# FIXME this is required for the notebook()
+mkdir -p %{buildroot}%{sagedatadir}/extcode/sage
+
 export DESTDIR=%{buildroot}
 
 pushd spkg/build/sage-%{version}
@@ -224,43 +225,18 @@ pushd spkg/build/doc-3.2.3
     cp -far html/* %{buildroot}/%{sagedir}/doc
 popd
 
+
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 
 # not supported - only prebuilt packages for now
-rm -f %{buildroot}%{sagedir}/bin/sage-bdist
-rm -f %{buildroot}%{sagedir}/bin/sage-build
-rm -f %{buildroot}%{sagedir}/bin/sage-build-debian
-rm -f %{buildroot}%{sagedir}/bin/sage-clone
-rm -f %{buildroot}%{sagedir}/bin/sage-crap
-rm -f %{buildroot}%{sagedir}/bin/sage-debsource
-rm -f %{buildroot}%{sagedir}/bin/sage-download_package
-rm -f %{buildroot}%{sagedir}/bin/sage-env
-rm -f %{buildroot}%{sagedir}/bin/sage-libdist
-rm -f %{buildroot}%{sagedir}/bin/sage-list-*
-rm -f %{buildroot}%{sagedir}/bin/sage-location
-rm -f %{buildroot}%{sagedir}/bin/sage-make_devel_packages
-rm -f %{buildroot}%{sagedir}/bin/sage-mirror*
-# omega tool not available in mandriva version of valgrind
-rm -f %{buildroot}%{sagedir}/bin/sage-omega
-rm -f %{buildroot}%{sagedir}/bin/sage-pkg
-rm -f %{buildroot}%{sagedir}/bin/sage-pkg-nocompress
-rm -f %{buildroot}%{sagedir}/bin/sage-pull
-rm -f %{buildroot}%{sagedir}/bin/sage-push
-rm -f %{buildroot}%{sagedir}/bin/sage-sdist
-rm -f %{buildroot}%{sagedir}/bin/SbuildHack.pm
-rm -f %{buildroot}%{sagedir}/bin/sage-sbuildhack
-rm -f %{buildroot}%{sagedir}/bin/sage-test-*
-rm -f %{buildroot}%{sagedir}/bin/sage-upgrade
-
-# osx only
-rm -f %{buildroot}%{sagedir}/sage-check-libraries.py
-rm -f %{buildroot}%{sagedir}/sage-ldwrap
-rm -f %{buildroot}%{sagedir}/sage-native-execute
-rm -f %{buildroot}%{sagedir}/sage-open
-rm -f %{buildroot}%{sagedir}/sage-osx-open
-
-# windows only
-rm -f %{buildroot}%{sagedir}/sage-rebase_sage.sh
+pushd %{buildroot}%{sagedir}/bin/
+    rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
+    rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
+    # osx only
+    rm -f sage-{check-libraries.py,ldwrap,native-execute,open,osx-open}
+    # windows only
+    rm -f sage-rebase_sage.sh
+popd
 
 cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
