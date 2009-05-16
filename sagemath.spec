@@ -22,6 +22,7 @@ BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
 BuildRequires:	libflint-devel
 BuildRequires:	libflint-devel
+BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
 BuildRequires:	gsl-devel
 BuildRequires:	libm4ri-devel
