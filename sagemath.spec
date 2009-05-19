@@ -124,6 +124,7 @@ Patch3:		sage-3.2.3-libsingular.patch
 Patch4:		sage-3.2.3-libm4ri.patch
 
 Patch5:		sage-3.2.3-notebook.patch
+Patch6:		sage-3.2.3-native-execute.patch
 
 %description
 Sage is a free open-source mathematics software system licensed
@@ -158,6 +159,7 @@ tar jxf spkg/standard/doc-3.2.3.spkg -C spkg/build
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 export SAGE_ROOT=/
