@@ -15,22 +15,25 @@ Source0:	http://www.sagemath.org/src/sage-3.2.3.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
+BuildRequires:	boost-devel
 BuildRequires:	gcc-gfortran
-
 BuildRequires:	libpari-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
-BuildRequires:	libflint-devel
-BuildRequires:	libflint-devel
+BuildRequires:	eclib-devel
+BuildRequires:	ecm-devel
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
+BuildRequires:	gd-devel
+BuildRequires:	ghmm-devel
 BuildRequires:	gsl-devel
+BuildRequires:	iml
 BuildRequires:	libm4ri-devel
-
+BuildRequires:	mpfi-devel
 BuildRequires:	polybori-devel
-BuildRequires:	libeclib-devel
+BuildRequires:	polybori-static-devel
 BuildRequires:	ntl-devel
-BuildRequires:	pynac-devel
+BuildRequires:	pynac-develpython-processing
 BuildRequires:	qd-static-devel
 BuildRequires:	zn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
@@ -38,7 +41,9 @@ BuildRequires:	python-cython
 BuildRequires:	python-numpy-devel
 BuildRequires:	python-setuptools
 BuildRequires:	flex bison
+BuildRequires:	readline-devel
 BuildRequires:	singular-devel
+BuildRequires:	singular-static-devel
 BuildRequires:	symmetrica-static-devel
 BuildRequires:	scons
 
@@ -99,7 +104,6 @@ Requires:	python-twisted-core
 Requires:	python-twisted-web2
 Requires:	R-base
 ## rubiks-20070912.p8.spkg
-# libsingular.so
 Requires:	singular-devel
 Requires:	symmetrica
 Requires:	sympow
@@ -155,7 +159,7 @@ tar jxf spkg/standard/doc-3.2.3.spkg -C spkg/build
 %patch5 -p1
 
 %build
-export SAGE_ROOT=%{sagedir}
+export SAGE_ROOT=/
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 
