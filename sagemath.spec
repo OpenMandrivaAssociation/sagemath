@@ -33,7 +33,8 @@ BuildRequires:	mpfi-devel
 BuildRequires:	polybori-devel
 BuildRequires:	polybori-static-devel
 BuildRequires:	ntl-devel
-BuildRequires:	pynac-develpython-processing
+BuildRequires:	pynac-devel
+BuildRequires:	python-processing
 BuildRequires:	qd-static-devel
 BuildRequires:	zn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
