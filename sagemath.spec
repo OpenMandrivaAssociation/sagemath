@@ -200,6 +200,9 @@ pushd spkg/build/sage-%{version}
 	mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/templates
 	cp -fa server/notebook/templates/*.html %{buildroot}%{sagedatadir}/extcode/notebook/templates
     popd
+    pushd %{buildroot}%{sagedatadir}/extcode/notebook/java
+	ln -sf %{_datadir}/jmol jmol
+    popd
 popd
 
 pushd spkg/build/sage_scripts-%{version}
