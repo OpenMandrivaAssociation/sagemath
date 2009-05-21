@@ -200,9 +200,6 @@ pushd spkg/build/sage-%{version}
 	mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/templates
 	cp -fa server/notebook/templates/*.html %{buildroot}%{sagedatadir}/extcode/notebook/templates
     popd
-    pushd %{buildroot}%{sagedatadir}/extcode/notebook/java
-	ln -sf %{_datadir}/jmol jmol
-    popd
 popd
 
 pushd spkg/build/sage_scripts-%{version}
@@ -233,6 +230,9 @@ pushd spkg/build/extcode-3.2.3
     mkdir -p %{buildroot}%{sagedatadir}/extcode
     cp -far gap images javascript maxima mwrank notebook pari pickle_jar sagebuild singular \
 	%{buildroot}%{sagedatadir}/extcode
+    pushd %{buildroot}%{sagedatadir}/extcode/notebook/java
+	ln -sf %{_datadir}/jmol jmol
+    popd
 popd
 
 pushd spkg/build/doc-3.2.3
