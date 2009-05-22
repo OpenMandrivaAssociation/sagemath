@@ -135,10 +135,20 @@ packages into a common Python-based interface.
 ########################################################################
 %package	doc
 Summary:	Documentation for sagemath
-Group:		Development/other
+Group:		Development/Other
 
 %description	doc
 This package constains sagemath documentation.
+
+
+########################################################################
+%package	examples
+Summary:	Sagemath example scripts and tests
+Group:		Development/Other
+
+%description	examples
+This package constains sagemath example scripts and tests.
+
 
 ########################################################################
 %prep
@@ -152,6 +162,7 @@ tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
 tar jxf spkg/standard/elliptic_curves-0.1.spkg -C spkg/build
 tar jxf spkg/standard/extcode-3.2.3.spkg -C spkg/build
 tar jxf spkg/standard/doc-3.2.3.spkg -C spkg/build
+tar jxf spkg/standard/examples-3.2.3.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
@@ -255,6 +266,7 @@ popd
 cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
 
+export CUR=`pwd`
 export SAGE_ROOT="/"
 export SAGE_HOME="\$HOME/.sage/"
 mkdir -p \$SAGE_HOME
@@ -265,6 +277,14 @@ export SINGULARPATH=%{_datadir}/singular/LIB
 %{sagedir}/bin/sage-sage "\$@"
 EOF
 chmod +x %{buildroot}%{_bindir}/sage
+
+mkdir -p %{buildroot}%{sagedir}/examples
+pushd spkg/build/examples-3.2.3
+    cp -far ajax calculus comm_algebra example.py example.sage finance \
+	fortran gsl latex_embed linalg misc modsym programming \
+	test_all tests worksheets \
+	%{buildroot}%{sagedir}/examples
+popd
 
 %clean
 # rm -rf #%#{buildroot}
@@ -284,3 +304,7 @@ chmod +x %{buildroot}%{_bindir}/sage
 %files		doc
 %dir %{sagedir}/doc
 %{sagedir}/doc/*
+
+%files		examples
+%dir %{sagedir}/examples
+%{sagedir}/examples/*
