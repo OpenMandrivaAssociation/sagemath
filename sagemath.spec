@@ -20,6 +20,7 @@ BuildRequires:	gcc-gfortran
 BuildRequires:	libpari-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
+BuildRequires:	libxml2-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
 BuildRequires:	flint-devel
@@ -34,6 +35,7 @@ BuildRequires:	polybori-devel
 BuildRequires:	polybori-static-devel
 BuildRequires:	ntl-devel
 BuildRequires:	pynac-devel
+BuildRequires:	python-ghmm
 BuildRequires:	python-processing
 BuildRequires:	qd-static-devel
 BuildRequires:	zn_poly-static-devel
@@ -53,21 +55,33 @@ Requires:	bzip2
 Requires:	clisp
 Requires:	ecm
 Requires:	flint
+
 ## flintqs-20070817.p3.spkg	( no longer available upstream )
+
 Requires:	gap-system gap-system-packages
 Requires:	gd-utils
+
 ## genus2reduction-0.3.p4.spkg 
+
 Requires:	gcc-gfortran
 Requires:	gp2c pari pari-data libpari-devel
+
 ## graphs-20070722.spkg 
+
 Requires:	ipython
 Requires:	jmol
 Requires:	libatlas
 Requires:	libblas
+
+# FIXME unversioned .so
 Requires:	libeclib-devel
+
 Requires:	ntl
 Requires:	libopencdk
+
+# FIXME .a and .so files (this is also a sage specific library)
 Requires:	libm4ri-devel
+
 Requires:	lcalc
 Requires:	linalg-linbox
 Requires:	maxima
@@ -78,9 +92,10 @@ Requires:	moin
 Requires:	libmpfi-devel
 Requires:	palp
 Requires:	perl
-## polybori-0.5rc.p6.spkg
 Requires:	polymake
+
 ## polytopes_db-20080430.spkg
+
 Requires:	pynac-devel
 Requires:	python
 Requires:	python-cvxopt
@@ -88,13 +103,16 @@ Requires:	python-cython
 Requires:	python-gd
 Requires:	python-ghmm
 Requires:	python-gnutls
+Requires:	python-jinja
 Requires:	python-networkx
 Requires:	python-matplotlib
 Requires:	python-numpy
 Requires:	python-pexpect
+Requires:	python-polybori
+Requires:	python-processing
 Requires:	python-pycrypto
 Requires:	python-pygments
-Requires:	python-processing
+
 # scipy should also provide the weave (http://www.scipy.org/Weave) dependency
 Requires:	python-scipy
 Requires:	python-sphinx
@@ -104,16 +122,21 @@ Requires:	python-sympy
 Requires:	python-twisted-core
 Requires:	python-twisted-web2
 Requires:	R-base
+
 ## rubiks-20070912.p8.spkg
-Requires:	singular-devel
+
+Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
+
+## FIXME some zope modules are required...
 ## Requires:	zope
 
 Patch0:		sage-3.2.3.patch
 Patch1:		sage-3.2.3-sage_scripts.patch
 Patch2:		sage-3.2.3-env-vars.patch
+
 
 # PyString_FromString() will crash if receiving a null string,
 # that comes from dlerror if there are no errors, and the error
@@ -172,6 +195,8 @@ tar jxf spkg/standard/examples-3.2.3.spkg -C spkg/build
 %patch5 -p1
 %patch6 -p1
 
+
+########################################################################
 %build
 export SAGE_ROOT=/
 export SAGE_FORTRAN=%{_bindir}/gfortran
@@ -188,6 +213,8 @@ pushd spkg/build/sage-%{version}
     python ./setup.py build
 popd
 
+
+########################################################################
 %install
 #rm -rf %#{buildroot}
 
@@ -195,12 +222,12 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{sagedatadir}
 mkdir -p %{buildroot}%{sagedir}/doc
-
 # FIXME this is required for the notebook()
 mkdir -p %{buildroot}%{sagedatadir}/extcode/sage
 
 export DESTDIR=%{buildroot}
 
+#------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     python setup.py install --root=%{buildroot}
     cp -fa c_lib/libcsage.so %{buildroot}%{_libdir}
@@ -213,6 +240,7 @@ pushd spkg/build/sage-%{version}
     popd
 popd
 
+#------------------------------------------------------------------------
 pushd spkg/build/sage_scripts-%{version}
     mkdir -p %{buildroot}%{sagedir}/bin
     cp -fa sage-* dsage_* *doctest.py ipy_profile_sage.py %{buildroot}%{sagedir}/bin
@@ -226,17 +254,20 @@ pushd spkg/build/sage_scripts-%{version}
     popd
 popd
 
+#------------------------------------------------------------------------
 pushd spkg/build/conway_polynomials-0.2
     mkdir -p %{buildroot}%{sagedatadir}/conway_polynomials
     cp -fa src/conway_polynomials/* %{buildroot}%{sagedatadir}/conway_polynomials
 popd
 
+#------------------------------------------------------------------------
 pushd spkg/build/elliptic_curves-0.1
     cp -fa cremona_mini/src/cremona_mini %{buildroot}%{sagedatadir}
     mkdir -p %{buildroot}%{sagedatadir}/ellcurves
     cp -fa ellcurves/rank* %{buildroot}%{sagedatadir}/ellcurves
 popd
 
+#------------------------------------------------------------------------
 pushd spkg/build/extcode-3.2.3
     mkdir -p %{buildroot}%{sagedatadir}/extcode
     cp -far gap images javascript maxima mwrank notebook pari pickle_jar sagebuild singular \
@@ -246,15 +277,15 @@ pushd spkg/build/extcode-3.2.3
     popd
 popd
 
+#------------------------------------------------------------------------
 pushd spkg/build/doc-3.2.3
     cp -far html/* %{buildroot}/%{sagedir}/doc
 popd
 
-
+#------------------------------------------------------------------------
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
-
-# not supported - only prebuilt packages for now
 pushd %{buildroot}%{sagedir}/bin/
+    # not supported - only prebuilt packages for now
     rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
     rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
     # osx only
@@ -263,10 +294,11 @@ pushd %{buildroot}%{sagedir}/bin/
     rm -f sage-rebase_sage.sh
 popd
 
+#------------------------------------------------------------------------
 cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
 
-export CUR=`pwd`
+export CUR=\`pwd\`
 export SAGE_ROOT="/"
 export SAGE_HOME="\$HOME/.sage/"
 mkdir -p \$SAGE_HOME
@@ -276,8 +308,10 @@ export PATH=%{sagedir}/bin:%{_datadir}/singular/%{_arch}:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
 %{sagedir}/bin/sage-sage "\$@"
 EOF
+#------------------------------------------------------------------------
 chmod +x %{buildroot}%{_bindir}/sage
 
+#------------------------------------------------------------------------
 mkdir -p %{buildroot}%{sagedir}/examples
 pushd spkg/build/examples-3.2.3
     cp -far ajax calculus comm_algebra example.py example.sage finance \
@@ -286,9 +320,13 @@ pushd spkg/build/examples-3.2.3
 	%{buildroot}%{sagedir}/examples
 popd
 
+
+########################################################################
 %clean
 # rm -rf #%#{buildroot}
 
+
+########################################################################
 %files
 %defattr(-,root,root)
 %dir %{py_platsitedir}/sage
@@ -301,10 +339,14 @@ popd
 %{_bindir}/*
 %{_libdir}/*.so
 
+
+########################################################################
 %files		doc
 %dir %{sagedir}/doc
 %{sagedir}/doc/*
 
+
+########################################################################
 %files		examples
 %dir %{sagedir}/examples
 %{sagedir}/examples/*
