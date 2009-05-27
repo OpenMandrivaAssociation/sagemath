@@ -9,9 +9,9 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	3.2.3
+Version:	3.4.2
 Release:	%mkrel 1
-Source0:	http://www.sagemath.org/src/sage-3.2.3.tar
+Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -31,9 +31,10 @@ BuildRequires:	gsl-devel
 BuildRequires:	iml
 BuildRequires:	libm4ri-devel
 BuildRequires:	mpfi-devel
+BuildRequires:	ntl-devel
+BuildRequires:	png-devel
 BuildRequires:	polybori-devel
 BuildRequires:	polybori-static-devel
-BuildRequires:	ntl-devel
 BuildRequires:	pynac-devel
 BuildRequires:	python-ghmm
 BuildRequires:	python-processing
@@ -133,21 +134,14 @@ Requires:	tachyon
 ## FIXME some zope modules are required...
 ## Requires:	zope
 
-Patch0:		sage-3.2.3.patch
-Patch1:		sage-3.2.3-sage_scripts.patch
-Patch2:		sage-3.2.3-env-vars.patch
-
+Patch0:		sage-3.4.2.patch
+Patch1:		sage-3.4.2-sage_scripts.patch
+Patch2:		sage-3.4.2-env-vars.patch
 
 # PyString_FromString() will crash if receiving a null string,
 # that comes from dlerror if there are no errors, and the error
 # was checking for libsingular.so at the wrong placd.
-Patch3:		sage-3.2.3-libsingular.patch
-
-# newer libm4ri renames some symbols...
-Patch4:		sage-3.2.3-libm4ri.patch
-
-Patch5:		sage-3.2.3-notebook.patch
-Patch6:		sage-3.2.3-native-execute.patch
+Patch3:		sage-3.4.2-libsingular.patch
 
 %description
 Sage is a free open-source mathematics software system licensed
@@ -156,12 +150,12 @@ packages into a common Python-based interface.
 
 
 ########################################################################
-%package	doc
-Summary:	Documentation for sagemath
-Group:		Development/Other
+# %#package	doc
+# Summary:	Documentation for sagemath
+# Group:		Development/Other
 
-%description	doc
-This package constains sagemath documentation.
+# %#description	doc
+# This package constains sagemath documentation.
 
 
 ########################################################################
@@ -183,17 +177,15 @@ tar jxf spkg/standard/sage_scripts-%{version}.spkg -C spkg/build
 rm -f spkg/build/sage_scripts-%{version}/*.orig
 tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
 tar jxf spkg/standard/elliptic_curves-0.1.spkg -C spkg/build
-tar jxf spkg/standard/extcode-3.2.3.spkg -C spkg/build
-tar jxf spkg/standard/doc-3.2.3.spkg -C spkg/build
-tar jxf spkg/standard/examples-3.2.3.spkg -C spkg/build
+tar jxf spkg/standard/extcode-%{version}.spkg -C spkg/build
+# tar jxf spkg/standard/doc-%#{version}.spkg -C spkg/build
+tar jxf spkg/standard/examples-%{version}.spkg -C spkg/build
+tar jxvf spkg/standard/dsage-1.0.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 
 ########################################################################
@@ -209,7 +201,11 @@ pushd spkg/build/sage-%{version}
 	scons
     popd
     # some .c files are not (re)generated
-    find . -name \*.pyx -exec touch {} \;
+    find . -name \*.pyx -o -name \*.pxd -exec touch {} \;
+    python ./setup.py build
+popd
+
+pushd spkg/build/dsage-1.0/src
     python ./setup.py build
 popd
 
@@ -238,6 +234,12 @@ pushd spkg/build/sage-%{version}
 	mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/templates
 	cp -fa server/notebook/templates/*.html %{buildroot}%{sagedatadir}/extcode/notebook/templates
     popd
+    mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/html
+    cp -fa doc/output/html %{buildroot}%{sagedatadir}/extcode/notebook/html
+popd
+
+pushd spkg/build/dsage-1.0/src
+    python setup.py install --root=%{buildroot}
 popd
 
 #------------------------------------------------------------------------
@@ -245,7 +247,6 @@ pushd spkg/build/sage_scripts-%{version}
     mkdir -p %{buildroot}%{sagedir}/bin
     cp -fa sage-* dsage_* *doctest.py ipy_profile_sage.py %{buildroot}%{sagedir}/bin
     cp -far ipython %{buildroot}%{sagedir}
-    cp -fa matplotlibrc %{buildroot}%{sagedir}
     cp -fa COPYING.txt %{buildroot}%{sagedir}
     pushd %{buildroot}%{sagedir}/bin
 	ln -sf %{_bindir}/python sage.bin
@@ -268,7 +269,7 @@ pushd spkg/build/elliptic_curves-0.1
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/extcode-3.2.3
+pushd spkg/build/extcode-%{version}
     mkdir -p %{buildroot}%{sagedatadir}/extcode
     cp -far gap images javascript maxima mwrank notebook pari pickle_jar sagebuild singular \
 	%{buildroot}%{sagedatadir}/extcode
@@ -278,9 +279,9 @@ pushd spkg/build/extcode-3.2.3
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/doc-3.2.3
-    cp -far html/* %{buildroot}/%{sagedir}/doc
-popd
+# pushd spkg/build/doc-%{version}
+#    cp -far html/* %{buildroot}/%{sagedir}/doc
+# popd
 
 #------------------------------------------------------------------------
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
@@ -288,11 +289,15 @@ pushd %{buildroot}%{sagedir}/bin/
     # not supported - only prebuilt packages for now
     rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
     rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
+    rm -f sage-{verify-pyc,check-64}
     # osx only
-    rm -f sage-{check-libraries.py,ldwrap,native-execute,open,osx-open}
+    rm -f sage-{check-libraries.py,ldwrap,open,osx-open}
     # windows only
     rm -f sage-rebase_sage.sh
 popd
+
+#------------------------------------------------------------------------
+mv -f %{buildroot}%{_prefix}/dsage/web %{buildroot}/%{sagedatadir}
 
 #------------------------------------------------------------------------
 cat > %{buildroot}%{_bindir}/sage << EOF
@@ -300,7 +305,7 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 
 export CUR=\`pwd\`
 export SAGE_ROOT="/"
-export SAGE_HOME="\$HOME/.sage/"
+export DOT_HOME="\$HOME/.sage/"
 mkdir -p \$SAGE_HOME
 export SAGE_DATA="%{sagedatadir}"
 export SAGE_LOCAL="%{sagedir}"
@@ -313,7 +318,7 @@ chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 mkdir -p %{buildroot}%{sagedir}/examples
-pushd spkg/build/examples-3.2.3
+pushd spkg/build/examples-%{version}
     cp -far ajax calculus comm_algebra example.py example.sage finance \
 	fortran gsl latex_embed linalg misc modsym programming \
 	test_all tests worksheets \
@@ -341,9 +346,9 @@ popd
 
 
 ########################################################################
-%files		doc
-%dir %{sagedir}/doc
-%{sagedir}/doc/*
+# %#files		doc
+# %#dir %#{sagedir}/doc
+# %#{sagedir}/doc/*
 
 
 ########################################################################
