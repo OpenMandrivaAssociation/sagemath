@@ -131,6 +131,8 @@ Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
 
+Obsoletes:	sagemath-doc < %{version}-%{release}
+
 ## FIXME some zope modules are required...
 ## Requires:	zope
 
@@ -142,6 +144,8 @@ Patch2:		sage-3.4.2-env-vars.patch
 # that comes from dlerror if there are no errors, and the error
 # was checking for libsingular.so at the wrong placd.
 Patch3:		sage-3.4.2-libsingular.patch
+
+Patch4:		sage-3.4.2-notebook.patch
 
 %description
 Sage is a free open-source mathematics software system licensed
@@ -186,6 +190,7 @@ tar jxvf spkg/standard/dsage-1.0.spkg -C spkg/build
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 
 ########################################################################
@@ -235,7 +240,7 @@ pushd spkg/build/sage-%{version}
 	cp -fa server/notebook/templates/*.html %{buildroot}%{sagedatadir}/extcode/notebook/templates
     popd
     mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/html
-    cp -fa doc/output/html %{buildroot}%{sagedatadir}/extcode/notebook/html
+    cp -fa doc/output/html/* %{buildroot}%{sagedatadir}/extcode/notebook/html
 popd
 
 pushd spkg/build/dsage-1.0/src
@@ -290,6 +295,7 @@ pushd %{buildroot}%{sagedir}/bin/
     rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
     rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
     rm -f sage-{verify-pyc,check-64}
+    rm -f *~
     # osx only
     rm -f sage-{check-libraries.py,ldwrap,open,osx-open}
     # windows only
@@ -305,8 +311,9 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 
 export CUR=\`pwd\`
 export SAGE_ROOT="/"
-export DOT_HOME="\$HOME/.sage/"
-mkdir -p \$SAGE_HOME
+export DOT_SAGE="\$HOME/.sage/"
+mkdir -p \$DOT_SAGE
+export SAGE_DOC="%{sagedir}/doc"
 export SAGE_DATA="%{sagedatadir}"
 export SAGE_LOCAL="%{sagedir}"
 export PATH=%{sagedir}/bin:%{_datadir}/singular/%{_arch}:\$PATH
