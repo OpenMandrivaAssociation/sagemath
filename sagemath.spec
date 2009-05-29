@@ -147,6 +147,10 @@ Patch3:		sage-3.4.2-libsingular.patch
 
 Patch4:		sage-3.4.2-notebook.patch
 
+# Correct build error by not including the "solaris_fixes.h"
+# header files.
+Patch5:		sage-3.4.2-solaris_fixes.h
+
 %description
 Sage is a free open-source mathematics software system licensed
 under the GPL. It combines the power of many existing open-source
@@ -191,6 +195,7 @@ tar jxvf spkg/standard/dsage-1.0.spkg -C spkg/build
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 
 ########################################################################
