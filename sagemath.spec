@@ -36,6 +36,7 @@ BuildRequires:	png-devel
 BuildRequires:	polybori-static-devel
 BuildRequires:	pynac-devel
 BuildRequires:	python-ghmm
+BuildRequires:	python-jinja
 BuildRequires:	python-processing
 BuildRequires:	qd-static-devel
 BuildRequires:	zn_poly-static-devel
