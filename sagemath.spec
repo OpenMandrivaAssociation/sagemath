@@ -33,7 +33,6 @@ BuildRequires:	libm4ri-devel
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
 BuildRequires:	png-devel
-BuildRequires:	polybori-devel
 BuildRequires:	polybori-static-devel
 BuildRequires:	pynac-devel
 BuildRequires:	python-ghmm
@@ -294,10 +293,10 @@ pushd %{buildroot}%{sagedir}/bin/
     # not supported - only prebuilt packages for now
     rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
     rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
-    rm -f sage-{verify-pyc,check-64}
+    rm -f sage-{verify-pyc,check-64,spkg*}
     rm -f *~
     # osx only
-    rm -f sage-{check-libraries.py,ldwrap,open,osx-open}
+    rm -f sage-{check-libraries.py,ldwrap,open,osx-open,README-osx.txt}
     # windows only
     rm -f sage-rebase_sage.sh
 popd
