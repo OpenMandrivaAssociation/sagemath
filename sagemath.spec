@@ -1,6 +1,9 @@
 %define		_enable_debug_packages	%{nil}
 %define		debug_package		%{nil}
 
+# Correct breakage of liblinbox.so and liblinboxsage.so
+%define		_disable_ld_as_needed	1
+
 %define		name			sagemath
 %define		sagedir			%{_datadir}/sage
 %define		sagedatadir		%{_localstatedir}/sage
@@ -149,7 +152,7 @@ Patch4:		sage-3.4.2-notebook.patch
 
 # Correct build error by not including the "solaris_fixes.h"
 # header files.
-Patch5:		sage-3.4.2-solaris_fixes.h
+Patch5:		sage-3.4.2-solaris_fixes.patch
 
 %description
 Sage is a free open-source mathematics software system licensed
