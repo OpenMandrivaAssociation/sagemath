@@ -41,6 +41,7 @@ BuildRequires:	pynac-devel
 BuildRequires:	python-ghmm
 BuildRequires:	python-jinja
 BuildRequires:	python-processing
+BuildRequires:	python-sphinx
 BuildRequires:	qd-static-devel
 BuildRequires:	zn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
@@ -134,8 +135,6 @@ Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
 
-Obsoletes:	sagemath-doc < %{version}-%{release}
-
 ## FIXME some zope modules are required...
 ## Requires:	zope
 
@@ -154,6 +153,8 @@ Patch4:		sage-3.4.2-notebook.patch
 # header files.
 Patch5:		sage-3.4.2-solaris_fixes.patch
 
+Patch6:		sage-3.4.2-doc.patch
+
 %description
 Sage is a free open-source mathematics software system licensed
 under the GPL. It combines the power of many existing open-source
@@ -161,12 +162,12 @@ packages into a common Python-based interface.
 
 
 ########################################################################
-# %#package	doc
-# Summary:	Documentation for sagemath
-# Group:		Development/Other
+%package	doc
+Summary:	Documentation for sagemath
+Group:		Development/Other
 
-# %#description	doc
-# This package constains sagemath documentation.
+%description	doc
+This package constains sagemath documentation.
 
 
 ########################################################################
@@ -189,9 +190,9 @@ rm -f spkg/build/sage_scripts-%{version}/*.orig
 tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
 tar jxf spkg/standard/elliptic_curves-0.1.spkg -C spkg/build
 tar jxf spkg/standard/extcode-%{version}.spkg -C spkg/build
-# tar jxf spkg/standard/doc-%#{version}.spkg -C spkg/build
 tar jxf spkg/standard/examples-%{version}.spkg -C spkg/build
-tar jxvf spkg/standard/dsage-1.0.spkg -C spkg/build
+tar jxf spkg/standard/dsage-1.0.spkg -C spkg/build
+tar jxf spkg/standard/jsmath-3.6b.p1.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
@@ -199,6 +200,7 @@ tar jxvf spkg/standard/dsage-1.0.spkg -C spkg/build
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 
 ########################################################################
@@ -247,8 +249,6 @@ pushd spkg/build/sage-%{version}
 	mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/templates
 	cp -fa server/notebook/templates/*.html %{buildroot}%{sagedatadir}/extcode/notebook/templates
     popd
-    mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/html
-    cp -fa doc/output/html/* %{buildroot}%{sagedatadir}/extcode/notebook/html
 popd
 
 pushd spkg/build/dsage-1.0/src
@@ -284,17 +284,12 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/extcode-%{version}
     mkdir -p %{buildroot}%{sagedatadir}/extcode
-    cp -far gap images javascript maxima mwrank notebook pari pickle_jar sagebuild singular \
+    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular \
 	%{buildroot}%{sagedatadir}/extcode
     pushd %{buildroot}%{sagedatadir}/extcode/notebook/java
-	ln -sf %{_datadir}/jmol jmol
+	rm -f jmol && ln -sf %{_datadir}/jmol jmol
     popd
 popd
-
-#------------------------------------------------------------------------
-# pushd spkg/build/doc-%{version}
-#    cp -far html/* %{buildroot}/%{sagedir}/doc
-# popd
 
 #------------------------------------------------------------------------
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
@@ -311,7 +306,9 @@ pushd %{buildroot}%{sagedir}/bin/
 popd
 
 #------------------------------------------------------------------------
-mv -f %{buildroot}%{_prefix}/dsage/web %{buildroot}/%{sagedatadir}
+rm -fr %{buildroot}/%{sagedatadir}/web &&
+    mv -f %{buildroot}%{_prefix}/dsage/web %{buildroot}/%{sagedatadir} &&
+    rmdir %{buildroot}%{_prefix}/dsage
 
 #------------------------------------------------------------------------
 cat > %{buildroot}%{_bindir}/sage << EOF
@@ -332,12 +329,45 @@ EOF
 chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
+pushd spkg/build/jsmath-3.6b.p1
+    #   Pretend the jsmath version in jsmath spkg is the official one,
+    # and remove the copy in the extcode spkg, repacing it with a symlink.
+    rm -fr %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jsmath
+    cp -far src/* %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
+    rm -f %{buildroot}%{sagedatadir}/extcode/javascript &&
+	ln -sf %{sagedatadir}/extcode/notebook/javascript \
+	    %{buildroot}%{sagedatadir}/extcode
+popd
+
+#------------------------------------------------------------------------
 mkdir -p %{buildroot}%{sagedir}/examples
 pushd spkg/build/examples-%{version}
     cp -far ajax calculus comm_algebra example.py example.sage finance \
 	fortran gsl latex_embed linalg misc modsym programming \
 	test_all tests worksheets \
 	%{buildroot}%{sagedir}/examples
+popd
+
+#------------------------------------------------------------------------
+# Build documentation, using %{buildroot} environment, as it needs
+# to run and load sage python modules
+pushd spkg/build/sage-3.4.2/doc
+    export SAGE_ROOT=%{buildroot}
+    export DOT_SAGE=%{buildroot}/.sage
+    export SAGE_DOC=`pwd`
+    export SAGE_DATA=%{buildroot}%{sagedatadir}
+    export SAGE_LOCAL=%{buildroot}%{sagedir}
+    export PATH=%{buildroot}%{sagedir}/bin:%{_datadir}/singular/%{_arch}:$PATH
+    export SINGULARPATH=%{_datadir}/singular/LIB
+    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
+    export PYTHONPATH=%{buildroot}%{py_platsitedir}
+    # there we go
+    python common/builder.py all html
+    cp -far output/html %{buildroot}%{sagedir}/doc
+    rm -f %{buildroot}%{sagedatadir}/extcode/notebook/html &&
+	ln -sf %{sagedir}/doc/html %{buildroot}%{sagedatadir}/extcode/notebook/html
+    # some "user setup" files will be installed there...
+    rm -fr $DOT_SAGE
 popd
 
 
@@ -361,9 +391,9 @@ popd
 
 
 ########################################################################
-# %#files		doc
-# %#dir %#{sagedir}/doc
-# %#{sagedir}/doc/*
+%files		doc
+%dir %{sagedir}/doc
+%{sagedir}/doc/*
 
 
 ########################################################################
