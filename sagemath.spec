@@ -207,11 +207,11 @@ export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 export DESTDIR=%{buildroot}
 
 pushd spkg/build/sage-%{version}
+    # some .c files are not (re)generated
+    find . -name \*.pyx -o -name \*.pxd -exec touch {} \;
     pushd c_lib
 	scons
     popd
-    # some .c files are not (re)generated
-    find . -name \*.pyx -o -name \*.pxd -exec touch {} \;
     python ./setup.py build
 popd
 
