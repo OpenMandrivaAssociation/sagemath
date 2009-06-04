@@ -189,7 +189,7 @@ tar jxf spkg/standard/extcode-%{version}.spkg -C spkg/build
 tar jxf spkg/standard/examples-%{version}.spkg -C spkg/build
 tar jxf spkg/standard/dsage-1.0.spkg -C spkg/build
 tar jxf spkg/standard/jsmath-3.6b.p1.spkg -C spkg/build
-tar jxvf tinyMCE-3.2.0.2.p0.spkg spkg/build
+tar jxf spkg/standard/tinyMCE-3.2.0.2.p0.spkg spkg/build
 
 %patch0 -p1
 %patch1 -p1
