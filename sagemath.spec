@@ -189,6 +189,7 @@ tar jxf spkg/standard/extcode-%{version}.spkg -C spkg/build
 tar jxf spkg/standard/examples-%{version}.spkg -C spkg/build
 tar jxf spkg/standard/dsage-1.0.spkg -C spkg/build
 tar jxf spkg/standard/jsmath-3.6b.p1.spkg -C spkg/build
+tar jxvf tinyMCE-3.2.0.2.p0.spkg spkg/build
 
 %patch0 -p1
 %patch1 -p1
@@ -212,6 +213,10 @@ pushd spkg/build/sage-%{version}
     pushd c_lib
 	scons
     popd
+    ###---
+    rm -f sage/ext/interpreters/wrapper_cdf.c
+    touch sage/ext/interpreters/wrapper_cdf.p??
+    ###---
     python ./setup.py build
 popd
 
@@ -332,6 +337,11 @@ pushd spkg/build/jsmath-3.6b.p1
     rm -f %{buildroot}%{sagedatadir}/extcode/javascript &&
 	ln -sf %{sagedatadir}/extcode/notebook/javascript \
 	    %{buildroot}%{sagedatadir}/extcode
+popd
+
+pushd spkg/build/tinyMCE-3.2.0.2.p0
+    rm -fr %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/tiny_mce
+    cp -far src/tinymce/jscripts/tiny_mce %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
 popd
 
 #------------------------------------------------------------------------
