@@ -42,6 +42,8 @@ BuildRequires:	python-ghmm
 BuildRequires:	python-jinja
 BuildRequires:	python-processing
 BuildRequires:	python-sphinx
+BuildRequires:	python-twisted-core
+BuildRequires:	python-twisted-web2
 BuildRequires:	qd-static-devel
 BuildRequires:	zn_poly-static-devel
 BuildRequires:	linalg-linbox-devel
