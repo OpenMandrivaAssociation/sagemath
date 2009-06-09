@@ -19,43 +19,44 @@ URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:	boost-devel
-BuildRequires:	gcc-gfortran
-BuildRequires:	libpari-devel
-BuildRequires:	libatlas-devel
-BuildRequires:	libblas-devel
-BuildRequires:	libxml2-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
+BuildRequires:	flex bison
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
+BuildRequires:	gcc-gfortran
 BuildRequires:	gd-devel
 BuildRequires:	ghmm-devel
 BuildRequires:	gsl-devel
 BuildRequires:	iml
+BuildRequires:	ipython
+BuildRequires:	libatlas-devel
+BuildRequires:	libblas-devel
 BuildRequires:	libm4ri-devel
+BuildRequires:	libpari-devel
+BuildRequires:	libxml2-devel
+BuildRequires:	linalg-linbox-devel
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
 BuildRequires:	png-devel
 BuildRequires:	polybori-static-devel
 BuildRequires:	pynac-devel
+BuildRequires:	python-cython
 BuildRequires:	python-ghmm
 BuildRequires:	python-jinja
+BuildRequires:	python-numpy-devel
 BuildRequires:	python-processing
+BuildRequires:	python-setuptools
 BuildRequires:	python-sphinx
 BuildRequires:	python-twisted-core
 BuildRequires:	python-twisted-web2
 BuildRequires:	qd-static-devel
-BuildRequires:	zn_poly-static-devel
-BuildRequires:	linalg-linbox-devel
-BuildRequires:	python-cython
-BuildRequires:	python-numpy-devel
-BuildRequires:	python-setuptools
-BuildRequires:	flex bison
 BuildRequires:	readline-devel
+BuildRequires:	scons
 BuildRequires:	singular-devel
 BuildRequires:	singular-static-devel
 BuildRequires:	symmetrica-static-devel
-BuildRequires:	scons
+BuildRequires:	zn_poly-static-devel
 
 # This is actually, mainly a listing of spkgs
 Requires:	bzip2
