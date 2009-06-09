@@ -190,6 +190,7 @@ tar jxf spkg/standard/examples-%{version}.spkg -C spkg/build
 tar jxf spkg/standard/dsage-1.0.spkg -C spkg/build
 tar jxf spkg/standard/jsmath-3.6b.p1.spkg -C spkg/build
 tar jxf spkg/standard/tinyMCE-3.2.0.2.p0.spkg -C spkg/build
+tar jxf spkg/standard/jquery-1.2.6.p0.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
@@ -213,10 +214,6 @@ pushd spkg/build/sage-%{version}
     pushd c_lib
 	scons
     popd
-    ###---
-    rm -f sage/ext/interpreters/wrapper_cdf.c
-    touch sage/ext/interpreters/wrapper_cdf.p??
-    ###---
     python ./setup.py build
 popd
 
@@ -330,9 +327,6 @@ chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 pushd spkg/build/jsmath-3.6b.p1
-    #   Pretend the jsmath version in jsmath spkg is the official one,
-    # and remove the copy in the extcode spkg, repacing it with a symlink.
-    rm -fr %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jsmath
     cp -far src/* %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
     rm -f %{buildroot}%{sagedatadir}/extcode/javascript &&
 	ln -sf %{sagedatadir}/extcode/notebook/javascript \
@@ -340,8 +334,14 @@ pushd spkg/build/jsmath-3.6b.p1
 popd
 
 pushd spkg/build/tinyMCE-3.2.0.2.p0
-    rm -fr %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/tiny_mce
     cp -far src/tinymce/jscripts/tiny_mce %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
+popd
+
+pushd spkg/build/jquery-1.2.6.p0
+    cp -f patches/jquery.event.extendedclick.js src/jquery-plugins
+    cp -far src/jquery %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
+    mkdir -p %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jquery/plugins
+    cp -far src/jquery-plugins/* %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jquery/plugins
 popd
 
 #------------------------------------------------------------------------
