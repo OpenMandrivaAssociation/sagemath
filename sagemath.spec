@@ -252,7 +252,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 pushd spkg/build/dsage-1.0/src
-    python setup.py install --root=%{buildroot}
+    python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
 popd
 
 #------------------------------------------------------------------------
