@@ -194,6 +194,7 @@ tar jxf spkg/standard/dsage-1.0.spkg -C spkg/build
 tar jxf spkg/standard/jsmath-3.6b.p1.spkg -C spkg/build
 tar jxf spkg/standard/tinyMCE-3.2.0.2.p0.spkg -C spkg/build
 tar jxf spkg/standard/jquery-1.2.6.p0.spkg -C spkg/build
+tar jxf spkg/standard/jqueryui-1.6r807svn.p0.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
@@ -330,10 +331,12 @@ chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 pushd spkg/build/jsmath-3.6b.p1
-    cp -far src/* %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
+    cp -far src/jsmath %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
     rm -f %{buildroot}%{sagedatadir}/extcode/javascript &&
 	ln -sf %{sagedatadir}/extcode/notebook/javascript \
 	    %{buildroot}%{sagedatadir}/extcode
+    mkdir -p %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jsmath/fonts
+    cp -far src/msbm10 %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jsmath/fonts
 popd
 
 pushd spkg/build/tinyMCE-3.2.0.2.p0
@@ -345,6 +348,13 @@ pushd spkg/build/jquery-1.2.6.p0
     cp -far src/jquery %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
     mkdir -p %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jquery/plugins
     cp -far src/jquery-plugins/* %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jquery/plugins
+popd
+
+pushd spkg/build/jqueryui-1.6r807svn.p0
+    cp -far patches/sage patches/flora src/themes
+    mkdir -p %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jqueryui
+    cp -far src/*LICENSE.txt src/themes src/ui/minified/* \
+	%{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jqueryui
 popd
 
 #------------------------------------------------------------------------
