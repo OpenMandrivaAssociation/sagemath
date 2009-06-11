@@ -1,3 +1,8 @@
+## FIXME
+# gap support is completely broken -- actually, sage is starting because
+# a (not initially intentional) bug where a directory is used as gap
+# workspace...
+
 %define		_enable_debug_packages	%{nil}
 %define		debug_package		%{nil}
 
@@ -13,7 +18,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	3.4.2
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -61,6 +66,7 @@ BuildRequires:	zn_poly-static-devel
 # This is actually, mainly a listing of spkgs
 Requires:	bzip2
 Requires:	clisp
+Requires:	eclib-mwrank
 Requires:	ecm
 Requires:	flint
 
@@ -154,6 +160,16 @@ Patch4:		sage-3.4.2-notebook.patch
 
 Patch5:		sage-3.4.2-doc.patch
 
+#   Sage clisp uses a hack to disable readline support, that is set
+# by another custom script. But either using clisp or sbcl backend,
+# and --disable-readline maxima command line, etc, it always generates
+# truncated output.
+#   This patch just removes the requirement of an extra script that
+# doesn't truly correct the problem.
+#   The problem is somewhere else (sage uses python 2.5, earlier
+# version of python-pexpect, etc... needs more debugging)
+Patch6: 	sage-3.4.2-maxima.patch
+
 %description
 Sage is a free open-source mathematics software system licensed
 under the GPL. It combines the power of many existing open-source
@@ -202,6 +218,7 @@ tar jxf spkg/standard/jqueryui-1.6r807svn.p0.spkg -C spkg/build
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 
 ########################################################################
