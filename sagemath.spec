@@ -93,7 +93,7 @@ Requires:	libm4ri-devel
 
 Requires:	lcalc
 Requires:	linalg-linbox
-Requires:	maxima
+Requires:	maxima xmaxima
 
 # Requires:	mercurial
 
