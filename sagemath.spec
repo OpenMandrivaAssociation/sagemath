@@ -1,8 +1,3 @@
-## FIXME
-# gap support is completely broken -- actually, sage is starting because
-# a (not initially intentional) bug where a directory is used as gap
-# workspace...
-
 %define		_enable_debug_packages	%{nil}
 %define		debug_package		%{nil}
 
@@ -18,7 +13,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	3.4.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
