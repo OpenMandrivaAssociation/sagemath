@@ -24,6 +24,7 @@ BuildRequires:	ecm-devel
 BuildRequires:	flex bison
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
+BuildRequires:	gap-system
 BuildRequires:	gcc-gfortran
 BuildRequires:	gd-devel
 BuildRequires:	ghmm-devel
