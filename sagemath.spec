@@ -5,15 +5,18 @@
 %define		_disable_ld_as_needed	1
 
 %define		name			sagemath
-%define		sagedir			%{_datadir}/sage
-%define		sagedatadir		%{_localstatedir}/sage
+%define		SAGE_ROOT		%{_datadir}/sage
+%define		SAGE_LOCAL		%{SAGE_ROOT}/local
+%define		SAGE_DEVEL		%{SAGE_ROOT}/devel
+%define		SAGE_DOC		%{SAGE_ROOT}/doc
+%define		SAGE_DATA		%{_localstatedir}/sage
 
 Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	3.4.2
-Release:	%mkrel 4
+Version:	4.0.1
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -143,8 +146,9 @@ Requires:	tachyon
 ## FIXME some zope modules are required...
 ## Requires:	zope
 
-Patch0:		sage-3.4.2.patch
-Patch1:		sage-3.4.2-sage_scripts.patch
+Patch0:		sage-4.0.1.patch
+
+Patch1:		sage-4.0.1-sage_scripts.patch
 Patch2:		sage-3.4.2-env-vars.patch
 
 # PyString_FromString() will crash if receiving a null string,
@@ -152,7 +156,7 @@ Patch2:		sage-3.4.2-env-vars.patch
 # was checking for libsingular.so at the wrong placd.
 Patch3:		sage-3.4.2-libsingular.patch
 
-Patch4:		sage-3.4.2-notebook.patch
+Patch4:		sage-4.0.1-notebook.patch
 
 Patch5:		sage-3.4.2-doc.patch
 
@@ -202,7 +206,7 @@ tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
 tar jxf spkg/standard/elliptic_curves-0.1.spkg -C spkg/build
 tar jxf spkg/standard/extcode-%{version}.spkg -C spkg/build
 tar jxf spkg/standard/examples-%{version}.spkg -C spkg/build
-tar jxf spkg/standard/dsage-1.0.spkg -C spkg/build
+tar jxf spkg/standard/dsage-1.0.1.spkg -C spkg/build
 tar jxf spkg/standard/jsmath-3.6b.p1.spkg -C spkg/build
 tar jxf spkg/standard/tinyMCE-3.2.0.2.p0.spkg -C spkg/build
 tar jxf spkg/standard/jquery-1.2.6.p0.spkg -C spkg/build
@@ -210,104 +214,108 @@ tar jxf spkg/standard/jqueryui-1.6r807svn.p0.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#%#patch2 -p1
+#%#patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
+#%#patch5 -p1
+#%#patch6 -p1
 
+# if executing prep, clean buildroot
+rm -rf %{buildroot}
 
-########################################################################
-%build
-export SAGE_ROOT=/
-export SAGE_FORTRAN=%{_bindir}/gfortran
-export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
+export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
+export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
+export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
+mkdir -p $SAGE_ROOT $SAGE_LOCAL $SAGE_DEVEL
 
-export DESTDIR=%{buildroot}
+# match sage rebuild setup
+mkdir -p $SAGE_DEVEL/sage
+ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
+
+# match system packages as sage packages
+ln -sf %{_libdir} $SAGE_LOCAL/lib
+ln -sf %{_includedir} $SAGE_LOCAL/include
 
 pushd spkg/build/sage-%{version}
     # some .c files are not (re)generated
     find . -name \*.pyx -o -name \*.pxd -exec touch {} \;
+popd
+
+
+########################################################################
+%build
+export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
+export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
+export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
+
+# FIXME still required?
+export SAGE_FORTRAN=%{_bindir}/gfortran
+export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
+export DESTDIR=%{buildroot}
+
+pushd spkg/build/sage-%{version}
     pushd c_lib
 	scons
     popd
     python ./setup.py build
 popd
 
-pushd spkg/build/dsage-1.0/src
+pushd spkg/build/dsage-1.0.1/src
     python ./setup.py build
 popd
 
 
 ########################################################################
 %install
+export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
+export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
+export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
+export SAGE_DATA=%{buildroot}%{SAGE_DATA}
+export SAGE_DOC=%{buildroot}%{SAGE_DOC}
+
+export DESTDIR=%{buildroot}
+
 #rm -rf %#{buildroot}
 
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
-mkdir -p %{buildroot}%{sagedatadir}
-mkdir -p %{buildroot}%{sagedir}/doc
+mkdir -p $SAGE_DATA
+mkdir -p $SAGE_DOC
 # FIXME this is required for the notebook()
-mkdir -p %{buildroot}%{sagedatadir}/extcode/sage
-
-export DESTDIR=%{buildroot}
+mkdir -p $SAGE_DATA/extcode/sage
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     python setup.py install --root=%{buildroot}
     cp -fa c_lib/libcsage.so %{buildroot}%{_libdir}
-    mkdir -p %{buildroot}%{sagedir}/devel
     pushd sage
-        find . -name \*.pxi -o -name \*.pxd -o -name \*.py -exec install -D -m 644 {} %{buildroot}%{sagedir}/devel/{} \;
 	# install sage notebook templates
-	mkdir -p %{buildroot}%{sagedatadir}/extcode/notebook/templates
-	cp -fa server/notebook/templates/*.html %{buildroot}%{sagedatadir}/extcode/notebook/templates
+	mkdir -p $SAGE_DATA/extcode/notebook/templates
+	cp -fa server/notebook/templates/*.html $SAGE_DATA/extcode/notebook/templates
     popd
 popd
 
-pushd spkg/build/dsage-1.0/src
+pushd spkg/build/dsage-1.0.1/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
 popd
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage_scripts-%{version}
-    mkdir -p %{buildroot}%{sagedir}/bin
-    cp -fa sage-* dsage_* *doctest.py ipy_profile_sage.py %{buildroot}%{sagedir}/bin
-    cp -far ipython %{buildroot}%{sagedir}
-    cp -fa COPYING.txt %{buildroot}%{sagedir}
-    pushd %{buildroot}%{sagedir}/bin
+    mkdir -p $SAGE_LOCAL/bin
+    cp -fa sage-* dsage_* *doctest.py ipy_profile_sage.py $SAGE_LOCAL/bin
+    cp -far ipython $SAGE_ROOT
+    cp -fa COPYING.txt $SAGE_ROOT
+    pushd $SAGE_LOCAL/bin
 	ln -sf %{_bindir}/python sage.bin
 	ln -sf %{_bindir}/Singular sage_singular
 	ln -sf %{_bindir}/gp sage_pari
-    popd
-popd
-
-#------------------------------------------------------------------------
-pushd spkg/build/conway_polynomials-0.2
-    mkdir -p %{buildroot}%{sagedatadir}/conway_polynomials
-    cp -fa src/conway_polynomials/* %{buildroot}%{sagedatadir}/conway_polynomials
-popd
-
-#------------------------------------------------------------------------
-pushd spkg/build/elliptic_curves-0.1
-    cp -fa cremona_mini/src/cremona_mini %{buildroot}%{sagedatadir}
-    mkdir -p %{buildroot}%{sagedatadir}/ellcurves
-    cp -fa ellcurves/rank* %{buildroot}%{sagedatadir}/ellcurves
-popd
-
-#------------------------------------------------------------------------
-pushd spkg/build/extcode-%{version}
-    mkdir -p %{buildroot}%{sagedatadir}/extcode
-    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular \
-	%{buildroot}%{sagedatadir}/extcode
-    pushd %{buildroot}%{sagedatadir}/extcode/notebook/java
-	rm -f jmol && ln -sf %{_datadir}/jmol jmol
+	ln -sf %{_bindir}/gap gap_stamp
     popd
 popd
 
 #------------------------------------------------------------------------
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
-pushd %{buildroot}%{sagedir}/bin/
+pushd $SAGE_LOCAL/bin/
     # not supported - only prebuilt packages for now
     rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
     rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
@@ -320,8 +328,31 @@ pushd %{buildroot}%{sagedir}/bin/
 popd
 
 #------------------------------------------------------------------------
-rm -fr %{buildroot}/%{sagedatadir}/web &&
-    mv -f %{buildroot}%{_prefix}/dsage/web %{buildroot}/%{sagedatadir} &&
+pushd spkg/build/conway_polynomials-0.2
+    mkdir -p $SAGE_DATA/conway_polynomials
+    cp -fa src/conway_polynomials/* $SAGE_DATA/conway_polynomials
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/elliptic_curves-0.1
+    cp -fa cremona_mini/src/cremona_mini $SAGE_DATA
+    mkdir -p $SAGE_DATA/ellcurves
+    cp -fa ellcurves/rank* $SAGE_DATA/ellcurves
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/extcode-%{version}
+    mkdir -p $SAGE_DATA/extcode
+    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular \
+	$SAGE_DATA/extcode
+    pushd $SAGE_DATA/extcode/notebook/java
+	rm -f jmol && ln -sf %{_datadir}/jmol jmol
+    popd
+popd
+
+#------------------------------------------------------------------------
+rm -fr $SAGE_DATA/web &&
+    mv -f %{buildroot}%{_prefix}/dsage/web $SAGE_DATA &&
     rmdir %{buildroot}%{_prefix}/dsage
 
 #------------------------------------------------------------------------
@@ -329,78 +360,76 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
 
 export CUR=\`pwd\`
-export SAGE_ROOT="/"
 export DOT_SAGE="\$HOME/.sage/"
 mkdir -p \$DOT_SAGE
-export SAGE_DOC="%{sagedir}/doc"
-export SAGE_DATA="%{sagedatadir}"
-export SAGE_LOCAL="%{sagedir}"
-export PATH=%{sagedir}/bin:%{_datadir}/singular/%{_arch}:\$PATH
+export SAGE_ROOT="$SAGE_ROOT"
+export SAGE_LOCAL="$SAGE_LOCAL"
+export SAGE_DATA="$SAGE_DATA"
+export PATH=$SAGE_LOCAL/bin:%{_datadir}/singular/%{_arch}:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
-%{sagedir}/bin/sage-sage "\$@"
+$SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
 chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 pushd spkg/build/jsmath-3.6b.p1
-    cp -far src/jsmath %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
-    rm -f %{buildroot}%{sagedatadir}/extcode/javascript &&
-	ln -sf %{sagedatadir}/extcode/notebook/javascript \
-	    %{buildroot}%{sagedatadir}/extcode
-    mkdir -p %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jsmath/fonts
-    cp -far src/msbm10 %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jsmath/fonts
+    cp -far src/jsmath $SAGE_DATA/extcode/notebook/javascript
+    rm -f $SAGE_DATA/extcode/javascript &&
+	ln -sf %{SAGE_DATA}/extcode/notebook/javascript \
+	    $SAGE_DATA/extcode
+    mkdir -p $SAGE_DATA/extcode/notebook/javascript/jsmath/fonts
+    cp -far src/msbm10 $SAGE_DATA/extcode/notebook/javascript/jsmath/fonts
 popd
 
 pushd spkg/build/tinyMCE-3.2.0.2.p0
-    cp -far src/tinymce/jscripts/tiny_mce %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
+    cp -far src/tinymce/jscripts/tiny_mce $SAGE_DATA/extcode/notebook/javascript
 popd
 
 pushd spkg/build/jquery-1.2.6.p0
     cp -f patches/jquery.event.extendedclick.js src/jquery-plugins
-    cp -far src/jquery %{buildroot}/%{sagedatadir}/extcode/notebook/javascript
-    mkdir -p %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jquery/plugins
-    cp -far src/jquery-plugins/* %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jquery/plugins
+    cp -far src/jquery $SAGE_DATA/extcode/notebook/javascript
+    mkdir -p $SAGE_DATA/extcode/notebook/javascript/jquery/plugins
+    cp -far src/jquery-plugins/* $SAGE_DATA/extcode/notebook/javascript/jquery/plugins
 popd
 
 pushd spkg/build/jqueryui-1.6r807svn.p0
     cp -far patches/sage patches/flora src/themes
-    mkdir -p %{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jqueryui
+    mkdir -p $SAGE_DATA/extcode/notebook/javascript/jqueryui
     cp -far src/*LICENSE.txt src/themes src/ui/minified/* \
-	%{buildroot}/%{sagedatadir}/extcode/notebook/javascript/jqueryui
+	$SAGE_DATA/extcode/notebook/javascript/jqueryui
 popd
 
 #------------------------------------------------------------------------
-mkdir -p %{buildroot}%{sagedir}/examples
+mkdir -p $SAGE_ROOT/examples
 pushd spkg/build/examples-%{version}
     cp -far ajax calculus comm_algebra example.py example.sage finance \
 	fortran gsl latex_embed linalg misc modsym programming \
 	test_all tests worksheets \
-	%{buildroot}%{sagedir}/examples
+	$SAGE_ROOT/examples
 popd
 
 #------------------------------------------------------------------------
 # Build documentation, using %{buildroot} environment, as it needs
 # to run and load sage python modules
-pushd spkg/build/sage-3.4.2/doc
-    export SAGE_ROOT=%{buildroot}
+pushd spkg/build/sage-%{version}/doc
     export DOT_SAGE=%{buildroot}/.sage
     export SAGE_DOC=`pwd`
-    export SAGE_DATA=%{buildroot}%{sagedatadir}
-    export SAGE_LOCAL=%{buildroot}%{sagedir}
-    export PATH=%{buildroot}%{sagedir}/bin:%{_datadir}/singular/%{_arch}:$PATH
+    export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:%{_datadir}/singular/%{_arch}:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
-    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{_datadir}/singular/%{_arch}:$LD_LIBRARY_PATH
     export PYTHONPATH=%{buildroot}%{py_platsitedir}
     # there we go
     python common/builder.py all html
-    cp -far output/html %{buildroot}%{sagedir}/doc
-    rm -f %{buildroot}%{sagedatadir}/extcode/notebook/html &&
-	ln -sf %{sagedir}/doc/html %{buildroot}%{sagedatadir}/extcode/notebook/html
+    cp -far output/html $SAGE_DOC
+    rm -f $SAGE_DATA/extcode/notebook/html &&
+	ln -sf %{SAGE_DOC}/html $SAGE_DATA/extcode/notebook/html
     # some "user setup" files will be installed there...
     rm -fr $DOT_SAGE
 popd
 
+# Script was used to build documentation 
+perl -pi -e 's|%{buildroot}||g;' %{buildroot}%{_bindir}/sage
 
 ########################################################################
 %clean
@@ -413,21 +442,21 @@ popd
 %dir %{py_platsitedir}/sage
 %{py_platsitedir}/*.egg-info
 %{py_platsitedir}/sage/*
-%dir %{sagedatadir}
-%{sagedatadir}/*
-%dir %{sagedir}
-%{sagedir}/*
+%dir %{SAGE_DATA}
+%{SAGE_DATA}/*
+%dir %{SAGE_ROOT}
+%{SAGE_ROOT}/*
 %{_bindir}/*
 %{_libdir}/*.so
 
 
 ########################################################################
 %files		doc
-%dir %{sagedir}/doc
-%{sagedir}/doc/*
+%dir %{SAGE_DOC}
+%{SAGE_DOC}/*
 
 
 ########################################################################
 %files		examples
-%dir %{sagedir}/examples
-%{sagedir}/examples/*
+%dir %{SAGE_ROOT}/examples
+%{SAGE_ROOT}/examples/*
