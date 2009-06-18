@@ -1,8 +1,6 @@
 %define		_enable_debug_packages	%{nil}
 %define		debug_package		%{nil}
 
-%define		testing			1
-
 # Correct breakage of liblinbox.so and liblinboxsage.so
 %define		_disable_ld_as_needed	1
 
@@ -157,28 +155,8 @@ Obsoletes:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
 Patch0:		sage-4.0.1.patch
-
 Patch1:		sage-4.0.1-sage_scripts.patch
-Patch2:		sage-3.4.2-env-vars.patch
-
-# PyString_FromString() will crash if receiving a null string,
-# that comes from dlerror if there are no errors, and the error
-# was checking for libsingular.so at the wrong placd.
-Patch3:		sage-3.4.2-libsingular.patch
-
-Patch4:		sage-4.0.1-notebook.patch
-
-Patch5:		sage-3.4.2-doc.patch
-
-#   Sage clisp uses a hack to disable readline support, that is set
-# by another custom script. But either using clisp or sbcl backend,
-# and --disable-readline maxima command line, etc, it always generates
-# truncated output.
-#   This patch just removes the requirement of an extra script that
-# doesn't truly correct the problem.
-#   The problem is somewhere else (sage uses python 2.5, earlier
-# version of python-pexpect, etc... needs more debugging)
-Patch6: 	sage-3.4.2-maxima.patch
+Patch2:		sage-4.0.1-notebook.patch
 
 #------------------------------------------------------------------------
 %description
@@ -207,11 +185,7 @@ tar jxf spkg/standard/jqueryui-1.6r807svn.p0.spkg -C spkg/build
 
 %patch0 -p1
 %patch1 -p1
-#%#patch2 -p1
-#%#patch3 -p1
-%patch4 -p1
-#%#patch5 -p1
-#%#patch6 -p1
+%patch2 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -229,11 +203,6 @@ ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 
-pushd spkg/build/sage-%{version}
-    # some .c files are not (re)generated
-    find . -name \*.pyx -o -name \*.pxd -exec touch {} \;
-popd
-
 
 ########################################################################
 %build
@@ -250,6 +219,8 @@ pushd spkg/build/sage-%{version}
     pushd c_lib
 	scons
     popd
+    # some .c files are not (re)generated
+    find . -name \*.pyx -o -name \*.pxd -exec touch {} \;
     python ./setup.py build
 popd
 
@@ -273,14 +244,13 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage $SAGE_LOCAL/notebook/javascript
 
-%if %{testing}
 #------------------------------------------------------------------------
-# This is required when using --short-circuit to test changes
+# This is only required when using --short-circuit to test changes
 rm -f $SAGE_DEVEL/sage/{dsage,sage} $SAGE_LOCAL/{include,lib}
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
-%endif
+
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
@@ -435,7 +405,7 @@ perl -pi -e 's|%{buildroot}||g;' %{buildroot}%{_bindir}/sage
 ln -sf %{py_platsitedir}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{py_platsitedir}/dsage $SAGE_DEVEL/sage/dsage
 # required by notebook()
-ln -sf %{py_platsitedir}/sage $SAGE_DATA/extcode/sage
+ln -sf %{py_platsitedir} $SAGE_DATA/extcode/sage
 
 ########################################################################
 %clean
