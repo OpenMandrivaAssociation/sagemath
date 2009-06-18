@@ -1,6 +1,8 @@
 %define		_enable_debug_packages	%{nil}
 %define		debug_package		%{nil}
 
+%define		testing			1
+
 # Correct breakage of liblinbox.so and liblinboxsage.so
 %define		_disable_ld_as_needed	1
 
@@ -9,7 +11,7 @@
 %define		SAGE_LOCAL		%{SAGE_ROOT}/local
 %define		SAGE_DEVEL		%{SAGE_ROOT}/devel
 %define		SAGE_DOC		%{SAGE_ROOT}/doc
-%define		SAGE_DATA		%{_localstatedir}/sage
+%define		SAGE_DATA		%{SAGE_ROOT}/data
 
 Name:		%{name}
 Group:		Sciences/Mathematics
@@ -21,6 +23,7 @@ Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
+#------------------------------------------------------------------------
 BuildRequires:	boost-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
@@ -62,6 +65,7 @@ BuildRequires:	singular-static-devel
 BuildRequires:	symmetrica-static-devel
 BuildRequires:	zn_poly-static-devel
 
+#------------------------------------------------------------------------
 # This is actually, mainly a listing of spkgs
 Requires:	bzip2
 Requires:	clisp
@@ -143,9 +147,15 @@ Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
 
+#------------------------------------------------------------------------
 ## FIXME some zope modules are required...
 ## Requires:	zope
 
+#------------------------------------------------------------------------
+Obsoletes:	sage-doc <= 3.4.2
+Obsoletes:	sage-examples <= 3.4.2
+
+#------------------------------------------------------------------------
 Patch0:		sage-4.0.1.patch
 
 Patch1:		sage-4.0.1-sage_scripts.patch
@@ -170,28 +180,11 @@ Patch5:		sage-3.4.2-doc.patch
 # version of python-pexpect, etc... needs more debugging)
 Patch6: 	sage-3.4.2-maxima.patch
 
+#------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
 under the GPL. It combines the power of many existing open-source
 packages into a common Python-based interface.
-
-
-########################################################################
-%package	doc
-Summary:	Documentation for sagemath
-Group:		Development/Other
-
-%description	doc
-This package constains sagemath documentation.
-
-
-########################################################################
-%package	examples
-Summary:	Sagemath example scripts and tests
-Group:		Development/Other
-
-%description	examples
-This package constains sagemath example scripts and tests.
 
 
 ########################################################################
@@ -248,9 +241,9 @@ export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
 
-# FIXME still required?
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
+
 export DESTDIR=%{buildroot}
 
 pushd spkg/build/sage-%{version}
@@ -275,14 +268,19 @@ export SAGE_DOC=%{buildroot}%{SAGE_DOC}
 
 export DESTDIR=%{buildroot}
 
-#rm -rf %#{buildroot}
-
+#------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
-mkdir -p $SAGE_DATA
-mkdir -p $SAGE_DOC
-# FIXME this is required for the notebook()
-mkdir -p $SAGE_DATA/extcode/sage
+mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage $SAGE_LOCAL/notebook/javascript
+
+%if %{testing}
+#------------------------------------------------------------------------
+# This is required when using --short-circuit to test changes
+rm -f $SAGE_DEVEL/sage/{dsage,sage} $SAGE_LOCAL/{include,lib}
+ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
+ln -sf %{_libdir} $SAGE_LOCAL/lib
+ln -sf %{_includedir} $SAGE_LOCAL/include
+%endif
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
@@ -319,7 +317,7 @@ pushd $SAGE_LOCAL/bin/
     # not supported - only prebuilt packages for now
     rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
     rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
-    rm -f sage-{verify-pyc,check-64,spkg*}
+    rm -f sage-{verify-pyc,hardcode_sage_root,check-64,spkg*,update*,starts}
     rm -f *~
     # osx only
     rm -f sage-{check-libraries.py,ldwrap,open,osx-open,README-osx.txt}
@@ -345,15 +343,17 @@ pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_DATA/extcode
     cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular \
 	$SAGE_DATA/extcode
-    pushd $SAGE_DATA/extcode/notebook/java
+    mkdir -p $SAGE_LOCAL/java
+    pushd $SAGE_LOCAL/java
 	rm -f jmol && ln -sf %{_datadir}/jmol jmol
     popd
 popd
 
 #------------------------------------------------------------------------
-rm -fr $SAGE_DATA/web &&
-    mv -f %{buildroot}%{_prefix}/dsage/web $SAGE_DATA &&
-    rmdir %{buildroot}%{_prefix}/dsage
+if [ -d %{buildroot}%{_prefix}/dsage ]; then
+    rm -fr $SAGE_LOCAL/dsage
+    mv -f %{buildroot}%{_prefix}/dsage $SAGE_LOCAL
+fi
 
 #------------------------------------------------------------------------
 cat > %{buildroot}%{_bindir}/sage << EOF
@@ -365,8 +365,10 @@ mkdir -p \$DOT_SAGE
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
 export SAGE_DATA="$SAGE_DATA"
-export PATH=$SAGE_LOCAL/bin:%{_datadir}/singular/%{_arch}:\$PATH
+export SAGE_DOC="$SAGE_DOC"
+export PATH=$SAGE_LOCAL/bin:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
+export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
@@ -374,30 +376,27 @@ chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 pushd spkg/build/jsmath-3.6b.p1
-    cp -far src/jsmath $SAGE_DATA/extcode/notebook/javascript
-    rm -f $SAGE_DATA/extcode/javascript &&
-	ln -sf %{SAGE_DATA}/extcode/notebook/javascript \
-	    $SAGE_DATA/extcode
-    mkdir -p $SAGE_DATA/extcode/notebook/javascript/jsmath/fonts
-    cp -far src/msbm10 $SAGE_DATA/extcode/notebook/javascript/jsmath/fonts
+    cp -far src/jsmath $SAGE_LOCAL/notebook/javascript
+    mkdir -p $SAGE_LOCAL/notebook/javascript/jsmath/fonts
+    cp -far src/msbm10 $SAGE_LOCAL/notebook/javascript/jsmath/fonts
 popd
 
 pushd spkg/build/tinyMCE-3.2.0.2.p0
-    cp -far src/tinymce/jscripts/tiny_mce $SAGE_DATA/extcode/notebook/javascript
+    cp -far src/tinymce/jscripts/tiny_mce $SAGE_LOCAL/notebook/javascript
 popd
 
 pushd spkg/build/jquery-1.2.6.p0
     cp -f patches/jquery.event.extendedclick.js src/jquery-plugins
-    cp -far src/jquery $SAGE_DATA/extcode/notebook/javascript
-    mkdir -p $SAGE_DATA/extcode/notebook/javascript/jquery/plugins
-    cp -far src/jquery-plugins/* $SAGE_DATA/extcode/notebook/javascript/jquery/plugins
+    cp -far src/jquery $SAGE_LOCAL/notebook/javascript
+    mkdir -p $SAGE_LOCAL/notebook/javascript/jquery/plugins
+    cp -far src/jquery-plugins/* $SAGE_LOCAL/notebook/javascript/jquery/plugins
 popd
 
 pushd spkg/build/jqueryui-1.6r807svn.p0
     cp -far patches/sage patches/flora src/themes
-    mkdir -p $SAGE_DATA/extcode/notebook/javascript/jqueryui
+    mkdir -p $SAGE_LOCAL/notebook/javascript/jqueryui
     cp -far src/*LICENSE.txt src/themes src/ui/minified/* \
-	$SAGE_DATA/extcode/notebook/javascript/jqueryui
+	$SAGE_LOCAL/notebook/javascript/jqueryui
 popd
 
 #------------------------------------------------------------------------
@@ -415,21 +414,28 @@ popd
 pushd spkg/build/sage-%{version}/doc
     export DOT_SAGE=%{buildroot}/.sage
     export SAGE_DOC=`pwd`
-    export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:%{_datadir}/singular/%{_arch}:$PATH
+    export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
-    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{_datadir}/singular/%{_arch}:$LD_LIBRARY_PATH
+    export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
+    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
     export PYTHONPATH=%{buildroot}%{py_platsitedir}
     # there we go
     python common/builder.py all html
-    cp -far output/html $SAGE_DOC
-    rm -f $SAGE_DATA/extcode/notebook/html &&
-	ln -sf %{SAGE_DOC}/html $SAGE_DATA/extcode/notebook/html
+    export SAGE_DOC=%{buildroot}%{SAGE_DOC}
+    cp -far output $SAGE_DOC
     # some "user setup" files will be installed there...
     rm -fr $DOT_SAGE
 popd
 
 # Script was used to build documentation 
 perl -pi -e 's|%{buildroot}||g;' %{buildroot}%{_bindir}/sage
+
+#------------------------------------------------------------------------
+# Fixup links
+ln -sf %{py_platsitedir}/sage $SAGE_DEVEL/sage/sage
+ln -sf %{py_platsitedir}/dsage $SAGE_DEVEL/sage/dsage
+# required by notebook()
+ln -sf %{py_platsitedir}/sage $SAGE_DATA/extcode/sage
 
 ########################################################################
 %clean
@@ -440,23 +446,11 @@ perl -pi -e 's|%{buildroot}||g;' %{buildroot}%{_bindir}/sage
 %files
 %defattr(-,root,root)
 %dir %{py_platsitedir}/sage
-%{py_platsitedir}/*.egg-info
+%dir %{py_platsitedir}/dsage
 %{py_platsitedir}/sage/*
-%dir %{SAGE_DATA}
-%{SAGE_DATA}/*
+%{py_platsitedir}/dsage/*
+%{py_platsitedir}/*.egg-info
 %dir %{SAGE_ROOT}
 %{SAGE_ROOT}/*
 %{_bindir}/*
 %{_libdir}/*.so
-
-
-########################################################################
-%files		doc
-%dir %{SAGE_DOC}
-%{SAGE_DOC}/*
-
-
-########################################################################
-%files		examples
-%dir %{SAGE_ROOT}/examples
-%{SAGE_ROOT}/examples/*
