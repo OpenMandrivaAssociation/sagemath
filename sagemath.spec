@@ -16,7 +16,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.0.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
