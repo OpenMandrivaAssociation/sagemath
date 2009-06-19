@@ -16,7 +16,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.0.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -145,7 +145,6 @@ Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
 
-#------------------------------------------------------------------------
 ## FIXME some zope modules are required...
 ## Requires:	zope
 
@@ -169,19 +168,16 @@ packages into a common Python-based interface.
 %prep
 %setup -q -n sage-%{version}
 
-mkdir -p spkg/build
-tar jxf spkg/standard/sage-%{version}.spkg -C spkg/build
-tar jxf spkg/standard/sage_scripts-%{version}.spkg -C spkg/build
-rm -f spkg/build/sage_scripts-%{version}/*.orig
-tar jxf spkg/standard/conway_polynomials-0.2.spkg -C spkg/build
-tar jxf spkg/standard/elliptic_curves-0.1.spkg -C spkg/build
-tar jxf spkg/standard/extcode-%{version}.spkg -C spkg/build
-tar jxf spkg/standard/examples-%{version}.spkg -C spkg/build
-tar jxf spkg/standard/dsage-1.0.1.spkg -C spkg/build
-tar jxf spkg/standard/jsmath-3.6b.p1.spkg -C spkg/build
-tar jxf spkg/standard/tinyMCE-3.2.0.2.p0.spkg -C spkg/build
-tar jxf spkg/standard/jquery-1.2.6.p0.spkg -C spkg/build
-tar jxf spkg/standard/jqueryui-1.6r807svn.p0.spkg -C spkg/build
+pushd spkg
+    mkdir -p build
+    for pkg in sage-%{version} sage_scripts-%{version} conway_polynomials-0.2 \
+	elliptic_curves-0.1 extcode-%{version} examples-%{version} \
+	dsage-1.0.1 jsmath-3.6b.p1 tinyMCE-3.2.0.2.p0 \
+	jquery-1.2.6.p0 jqueryui-1.6r807svn.p0; do
+	tar jxf standard/$pkg.spkg -C build
+    done
+    rm -f build/sage_scripts-%{version}/*.orig
+popd
 
 %patch0 -p1
 %patch1 -p1
@@ -220,7 +216,7 @@ pushd spkg/build/sage-%{version}
 	scons
     popd
     # some .c files are not (re)generated
-    find . -name \*.pyx -o -name \*.pxd -exec touch {} \;
+    find . \( -name \*.pyx -o -name \*.pxd \) -exec touch {} \;
     python ./setup.py build
 popd
 
@@ -242,15 +238,11 @@ export DESTDIR=%{buildroot}
 #------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
+rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib}
 mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage $SAGE_LOCAL/notebook/javascript
-
-#------------------------------------------------------------------------
-# This is only required when using --short-circuit to test changes
-rm -f $SAGE_DEVEL/sage/{dsage,sage} $SAGE_LOCAL/{include,lib}
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
-
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
@@ -258,8 +250,7 @@ pushd spkg/build/sage-%{version}
     cp -fa c_lib/libcsage.so %{buildroot}%{_libdir}
     pushd sage
 	# install sage notebook templates
-	mkdir -p $SAGE_DATA/extcode/notebook/templates
-	cp -fa server/notebook/templates/*.html $SAGE_DATA/extcode/notebook/templates
+	cp -fa server/notebook/templates %{buildroot}%{py_platsitedir}/sage/server/notebook
     popd
 popd
 
@@ -402,10 +393,10 @@ perl -pi -e 's|%{buildroot}||g;' %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 # Fixup links
-ln -sf %{py_platsitedir}/sage $SAGE_DEVEL/sage/sage
-ln -sf %{py_platsitedir}/dsage $SAGE_DEVEL/sage/dsage
-# required by notebook()
+rm -fr $SAGE_DEVEL/sage $SAGE_DATA/extcode/sage
+ln -sf %{py_platsitedir} $SAGE_DEVEL/sage
 ln -sf %{py_platsitedir} $SAGE_DATA/extcode/sage
+rm -f %{buildroot}%{py_platsitedir}/site-packages
 
 ########################################################################
 %clean
