@@ -11,12 +11,16 @@
 %define		SAGE_DOC		%{SAGE_ROOT}/doc
 %define		SAGE_DATA		%{SAGE_ROOT}/data
 
+# Need this because as of sage 4.0.1, it only works "correctly" with python-pexpect 2.0
+%define		use_sage_pexpect	1
+%define		SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
+
 Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.0.1
-Release:	%mkrel 3
+Release:	%mkrel 4
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -177,6 +181,10 @@ pushd spkg
 	tar jxf standard/$pkg.spkg -C build
     done
     rm -f build/sage_scripts-%{version}/*.orig
+
+%if %{use_sage_pexpect}
+    tar jxf standard/pexpect-2.0.p3.spkg -C build
+%endif
 popd
 
 %patch0 -p1
@@ -259,6 +267,14 @@ pushd spkg/build/dsage-1.0.1/src
 popd
 
 #------------------------------------------------------------------------
+%if %{use_sage_pexpect}
+pushd spkg/build/pexpect-2.0.p3/src
+    mkdir -p %{buildroot}%{SAGE_PYTHONPATH}
+    cp -f {ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{SAGE_PYTHONPATH}
+popd
+%endif
+
+#------------------------------------------------------------------------
 pushd spkg/build/sage_scripts-%{version}
     mkdir -p $SAGE_LOCAL/bin
     cp -fa sage-* dsage_* *doctest.py ipy_profile_sage.py $SAGE_LOCAL/bin
@@ -330,6 +346,9 @@ export SAGE_DOC="$SAGE_DOC"
 export PATH=$SAGE_LOCAL/bin:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
 export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
+%if %{use_sage_pexpect}
+export PYTHONPATH="%{buildroot}%{SAGE_PYTHONPATH}"
+%endif
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
