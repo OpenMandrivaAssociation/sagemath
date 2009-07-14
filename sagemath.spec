@@ -19,8 +19,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.0.1
-Release:	%mkrel 4
+Version:	4.1
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -157,9 +157,9 @@ Obsoletes:	sage-doc <= 3.4.2
 Obsoletes:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.0.1.patch
-Patch1:		sage-4.0.1-sage_scripts.patch
-Patch2:		sage-4.0.1-notebook.patch
+Patch0:		sage-4.1.patch
+Patch1:		sage-4.1-sage_scripts.patch
+Patch2:		sage-4.1-notebook.patch
 
 #------------------------------------------------------------------------
 %description
@@ -176,14 +176,14 @@ pushd spkg
     mkdir -p build
     for pkg in sage-%{version} sage_scripts-%{version} conway_polynomials-0.2 \
 	elliptic_curves-0.1 extcode-%{version} examples-%{version} \
-	dsage-1.0.1 jsmath-3.6b.p1 tinyMCE-3.2.0.2.p0 \
+	dsage-1.0.1.p0 jsmath-3.6b.p1 tinyMCE-3.2.0.2.p0 \
 	jquery-1.2.6.p0 jqueryui-1.6r807svn.p0; do
 	tar jxf standard/$pkg.spkg -C build
     done
     rm -f build/sage_scripts-%{version}/*.orig
 
 %if %{use_sage_pexpect}
-    tar jxf standard/pexpect-2.0.p3.spkg -C build
+    tar jxf standard/pexpect-2.0.p4.spkg -C build
 %endif
 popd
 
@@ -228,7 +228,7 @@ pushd spkg/build/sage-%{version}
     python ./setup.py build
 popd
 
-pushd spkg/build/dsage-1.0.1/src
+pushd spkg/build/dsage-1.0.1.p0/src
     python ./setup.py build
 popd
 
@@ -262,13 +262,13 @@ pushd spkg/build/sage-%{version}
     popd
 popd
 
-pushd spkg/build/dsage-1.0.1/src
+pushd spkg/build/dsage-1.0.1.p0/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
 popd
 
 #------------------------------------------------------------------------
 %if %{use_sage_pexpect}
-pushd spkg/build/pexpect-2.0.p3/src
+pushd spkg/build/pexpect-2.0.p4/src
     mkdir -p %{buildroot}%{SAGE_PYTHONPATH}
     cp -f {ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{SAGE_PYTHONPATH}
 popd
