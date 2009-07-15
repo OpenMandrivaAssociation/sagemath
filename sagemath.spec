@@ -60,6 +60,7 @@ BuildRequires:	python-sphinx
 BuildRequires:	python-twisted-core
 BuildRequires:	python-twisted-web2
 BuildRequires:	qd-static-devel
+BuildRequires:	ratpoints
 BuildRequires:	readline-devel
 BuildRequires:	scons
 BuildRequires:	singular-devel
