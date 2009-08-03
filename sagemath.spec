@@ -20,8 +20,9 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
+Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -161,6 +162,7 @@ Obsoletes:	sage-examples <= 3.4.2
 Patch0:		sage-4.1.patch
 Patch1:		sage-4.1-sage_scripts.patch
 Patch2:		sage-4.1-notebook.patch
+Patch3:		sage-4.1-wiki.patch
 
 #------------------------------------------------------------------------
 %description
@@ -191,6 +193,7 @@ popd
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -252,6 +255,17 @@ mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage $SAGE_LOCAL/notebook/javascript
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
+ln -sf %{_datadir} $SAGE_LOCAL/share
+
+#------------------------------------------------------------------------
+# install moin changes
+pushd %{buildroot}
+    tar jxf %{SOURCE1}
+popd
+
+# make jsMath available to moin
+mkdir -p %{buildroot}%{_datadir}/moin/htdocs
+ln -sf %{_datadir}/sage/local/notebook/javascript/jsmath %{buildroot}%{_datadir}/moin/htdocs/jsmath
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
