@@ -250,7 +250,7 @@ export DESTDIR=%{buildroot}
 #------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
-rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib}
+rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share}
 mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage $SAGE_LOCAL/notebook/javascript
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
