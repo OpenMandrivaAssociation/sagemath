@@ -445,6 +445,10 @@ rm -f %{buildroot}%{py_platsitedir}/site-packages
 %{py_platsitedir}/sage/*
 %{py_platsitedir}/dsage/*
 %{py_platsitedir}/*.egg-info
+# MoinMoin extra files
+%{py_platsitedir}/MoinMoin/macro/*
+%{py_platsitedir}/MoinMoin/parser/*
+%{_datadir}/moin/htdocs/jsmath
 %dir %{SAGE_ROOT}
 %{SAGE_ROOT}/*
 %{_bindir}/*
