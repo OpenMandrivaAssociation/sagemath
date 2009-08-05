@@ -20,7 +20,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 3
+Release:	%mkrel 4
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -143,6 +143,7 @@ Requires:	python-sqlite2
 Requires:	python-sympy
 Requires:	python-twisted-core
 Requires:	python-twisted-web2
+Requires:	python-zodb3
 Requires:	R-base
 
 ## rubiks-20070912.p8.spkg
@@ -370,6 +371,7 @@ export SINGULARPATH=%{_datadir}/singular/LIB
 export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 %if %{use_sage_pexpect}
 export PYTHONPATH="%{buildroot}%{SAGE_PYTHONPATH}"
+export SAGE_CBLAS=cblas
 %endif
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
@@ -408,6 +410,24 @@ pushd spkg/build/examples-%{version}
 	fortran gsl latex_embed linalg misc modsym programming \
 	test_all tests worksheets \
 	$SAGE_ROOT/examples
+popd
+
+#------------------------------------------------------------------------
+# fixup cython interface:
+# o link with proper atlas
+# o install csage headers
+# o install .pxi and .pxd files
+pushd spkg/build/sage-%{version}
+    # make atlas/blas available to compiled sources
+    perl -pi -e							\
+	"s|^(extra_link_args =).*|\$1 ['-L%{_libdir}/atlas']|;"
+	%{buildroot}/%{py_platsitedir}/sage/misc/cython.py
+    # make csage headers available
+    mkdir -p %{buildroot}/%{_incluedir}/csage
+    cp -fa c_lib/include/* %{buildroot}/%{_incluedir}/csage
+    for f in ``find sage \( -name \*.pxi -o -name \*.pxd \)`; do
+	install -D -m 0644 $f %{buildroot}/%{py_platsitedir}/$f
+    done
 popd
 
 #------------------------------------------------------------------------
@@ -460,3 +480,5 @@ rm -f %{buildroot}%{py_platsitedir}/site-packages
 %{SAGE_ROOT}/*
 %{_bindir}/*
 %{_libdir}/*.so
+%dir %{_includedir}/csage
+%{_includedir}/csage/*
