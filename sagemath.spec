@@ -265,7 +265,7 @@ pushd %{buildroot}
     # move files in /usr/lib/python... to /usr/lib64/python...
     mkdir -p ./%{py_platsitedir}/MoinMoin
     mv ./%{py_puresitedir}/MoinMoin/* ./%{py_platsitedir}/MoinMoin
-    rm -fr ./%{py_platsitedir}/MoinMoin
+    rm -fr ./%{py_puresitedir}/MoinMoin
 %endif
 popd
 
