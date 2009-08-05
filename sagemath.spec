@@ -27,7 +27,8 @@ URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 #------------------------------------------------------------------------
-BuildRequires:	/usr/bin/latex
+# rpm -q --whatprovides '/usr/bin/latex'
+BuildRequires:	texlive-latex
 BuildRequires:	boost-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
