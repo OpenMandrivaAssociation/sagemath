@@ -420,13 +420,13 @@ popd
 # o install .pxi and .pxd files
 pushd spkg/build/sage-%{version}
     # make atlas/blas available to compiled sources
-    perl -pi -e							\
-	"s|^(extra_link_args =).*|\$1 ['-L%{_libdir}/atlas']|;"
+    perl -pi -e								\
+	's|^(extra_link_args =).*|$1 ["-L%{_libdir}/atlas"]|;'		\
 	%{buildroot}/%{py_platsitedir}/sage/misc/cython.py
     # make csage headers available
-    mkdir -p %{buildroot}/%{_incluedir}/csage
-    cp -fa c_lib/include/* %{buildroot}/%{_incluedir}/csage
-    for f in ``find sage \( -name \*.pxi -o -name \*.pxd \)`; do
+    mkdir -p %{buildroot}/%{_includedir}/csage
+    cp -fa c_lib/include/* %{buildroot}/%{_includedir}/csage
+    for f in `find sage \( -name \*.pxi -o -name \*.pxd \)`; do
 	install -D -m 0644 $f %{buildroot}/%{py_platsitedir}/$f
     done
 popd
