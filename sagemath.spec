@@ -429,6 +429,11 @@ pushd spkg/build/sage-%{version}
     for f in `find sage \( -name \*.pxi -o -name \*.pxd \)`; do
 	install -D -m 0644 $f %{buildroot}/%{py_platsitedir}/$f
     done
+    # need this or will not "find" the files in the directory, and
+    # fail to link with gmp
+    # FIXME sagemath is no longer using gmp by default, but mpir
+    # (licence issue, with gmp being gpl 3, and mpir gpl 2)
+    touch %{buildroot}/%{py_platsitedir}/sage/libs/gmp/__init__.py
 popd
 
 #------------------------------------------------------------------------
