@@ -20,14 +20,13 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 5
+Release:	%mkrel 6
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 #------------------------------------------------------------------------
-# rpm -q --whatprovides '/usr/bin/latex'
 BuildRequires:	texlive-latex
 BuildRequires:	boost-devel
 BuildRequires:	eclib-devel
@@ -72,7 +71,6 @@ BuildRequires:	symmetrica-static-devel
 BuildRequires:	zn_poly-static-devel
 
 #------------------------------------------------------------------------
-# This is actually, mainly a listing of spkgs
 Requires:	bzip2
 Requires:	clisp
 Requires:	eclib-mwrank
@@ -144,7 +142,11 @@ Requires:	python-sqlite2
 Requires:	python-sympy
 Requires:	python-twisted-core
 Requires:	python-twisted-web2
+
+# FIXME only enough dependencies to run example.sage were added to distro
+# see package url for information on other listed dependencies
 Requires:	python-zodb3
+
 Requires:	R-base
 
 ## rubiks-20070912.p8.spkg
@@ -153,9 +155,6 @@ Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
-
-## FIXME some zope modules are required...
-## Requires:	zope
 
 #------------------------------------------------------------------------
 Obsoletes:	sage-doc <= 3.4.2
@@ -166,6 +165,7 @@ Patch0:		sage-4.1.patch
 Patch1:		sage-4.1-sage_scripts.patch
 Patch2:		sage-4.1-notebook.patch
 Patch3:		sage-4.1-wiki.patch
+Patch4:		sage-4.1-doc.patch
 
 #------------------------------------------------------------------------
 %description
@@ -197,6 +197,7 @@ popd
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
