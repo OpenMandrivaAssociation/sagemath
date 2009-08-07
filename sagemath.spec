@@ -182,8 +182,7 @@ packages into a common Python-based interface.
 
 pushd spkg
     mkdir -p build
-    for pkg in	
-		conway_polynomials-0.2		\
+    for pkg in	conway_polynomials-0.2		\
 		dsage-1.0.1.p0			\
 		elliptic_curves-0.1		\
 		examples-%{version}		\
@@ -238,11 +237,11 @@ LDFLAGS = -lpari
 CC = gcc
 
 genus2reduction:
-	${CC} ${CFLAGS} ${LDFLAGS} -o genus2reduction genus2reduction.c
+	\${CC} \${CFLAGS} \${LDFLAGS} -o genus2reduction genus2reduction.c
 
 install: genus2reduction
-	mkdir -p ${DESTDIR}/%{SAGE_LOCAL}/bin
-	install -p $< ${DESTDIR}/%{SAGE_LOCAL}/bin
+	mkdir -p \${DESTDIR}/%{SAGE_LOCAL}/bin
+	install -p \$< \${DESTDIR}/%{SAGE_LOCAL}/bin
 
 clean:
 	rm -f genus2reduction
