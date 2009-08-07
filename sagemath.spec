@@ -76,6 +76,7 @@ Requires:	clisp
 Requires:	eclib-mwrank
 Requires:	ecm
 Requires:	flint
+Requires:	fplll
 
 ## flintqs-20070817.p3.spkg	( no longer available upstream )
 
@@ -85,6 +86,7 @@ Requires:	gd-utils
 ## genus2reduction-0.3.p4.spkg 
 
 Requires:	gcc-gfortran
+Requires:	gfan
 Requires:	gp2c pari pari-data libpari-devel
 
 ## graphs-20070722.spkg 
@@ -180,10 +182,22 @@ packages into a common Python-based interface.
 
 pushd spkg
     mkdir -p build
-    for pkg in sage-%{version} sage_scripts-%{version} conway_polynomials-0.2 \
-	elliptic_curves-0.1 extcode-%{version} examples-%{version} \
-	dsage-1.0.1.p0 jsmath-3.6b.p1 tinyMCE-3.2.0.2.p0 \
-	jquery-1.2.6.p0 jqueryui-1.6r807svn.p0; do
+    for pkg in	
+		conway_polynomials-0.2		\
+		dsage-1.0.1.p0			\
+		elliptic_curves-0.1		\
+		examples-%{version}		\
+		extcode-%{version}		\
+		genus2reduction-0.3.p5		\
+		graphs-20070722			\
+		jquery-1.2.6.p0			\
+		jqueryui-1.6r807svn.p0		\
+		jsmath-3.6b.p1			\
+		polytopes_db-20080430		\
+		sage-%{version}			\
+		sage_scripts-%{version}		\
+		tinyMCE-3.2.0.2.p0		\
+    ; do
 	tar jxf standard/$pkg.spkg -C build
     done
     rm -f build/sage_scripts-%{version}/*.orig
@@ -215,6 +229,26 @@ ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 
+#------------------------------------------------------------------------
+pushd spkg/build/genus2reduction-0.3.p5/src
+# based on debian patch
+cat > Makefile << EOF
+CFLAGS = -O2 -I%{_includedir}/pari
+LDFLAGS = -lpari
+CC = gcc
+
+genus2reduction:
+	${CC} ${CFLAGS} ${LDFLAGS} -o genus2reduction genus2reduction.c
+
+install: genus2reduction
+	mkdir -p ${DESTDIR}/%{SAGE_LOCAL}/bin
+	install -p $< ${DESTDIR}/%{SAGE_LOCAL}/bin
+
+clean:
+	rm -f genus2reduction
+EOF
+popd
+
 
 ########################################################################
 %build
@@ -227,6 +261,7 @@ export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 
 export DESTDIR=%{buildroot}
 
+#------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     pushd c_lib
 	scons
@@ -236,8 +271,14 @@ pushd spkg/build/sage-%{version}
     python ./setup.py build
 popd
 
+#------------------------------------------------------------------------
 pushd spkg/build/dsage-1.0.1.p0/src
     python ./setup.py build
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/genus2reduction-0.3.p5/src
+    %make
 popd
 
 
@@ -314,6 +355,11 @@ pushd spkg/build/sage_scripts-%{version}
 popd
 
 #------------------------------------------------------------------------
+pushd spkg/build/genus2reduction-0.3.p5/src
+    %makeinstall_std
+popd
+
+#------------------------------------------------------------------------
 rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 pushd $SAGE_LOCAL/bin/
     # not supported - only prebuilt packages for now
@@ -349,6 +395,18 @@ pushd spkg/build/extcode-%{version}
     pushd $SAGE_LOCAL/java
 	rm -f jmol && ln -sf %{_datadir}/jmol jmol
     popd
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/graphs-20070722
+    mkdir -p $SAGE_DATA/graphs
+    cp -fa graphs/* $SAGE_DATA/graphs
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/polytopes_db-20080430
+    mkdir -p $SAGE_DATA/reflexive_polytopes
+    cp -fa reflexive_polytopes/* $SAGE_DATA/reflexive_polytopes
 popd
 
 #------------------------------------------------------------------------
