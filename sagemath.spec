@@ -20,7 +20,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 7
+Release:	%mkrel 8
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -168,6 +168,7 @@ Patch1:		sage-4.1-sage_scripts.patch
 Patch2:		sage-4.1-notebook.patch
 Patch3:		sage-4.1-wiki.patch
 Patch4:		sage-4.1-doc.patch
+Patch5:		sage-4.1-dsage.patch
 
 #------------------------------------------------------------------------
 %description
@@ -211,6 +212,7 @@ popd
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -430,8 +432,8 @@ export SINGULARPATH=%{_datadir}/singular/LIB
 export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 %if %{use_sage_pexpect}
 export PYTHONPATH="%{buildroot}%{SAGE_PYTHONPATH}"
-export SAGE_CBLAS=cblas
 %endif
+export SAGE_CBLAS=cblas
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
