@@ -442,6 +442,8 @@ export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 export PYTHONPATH="%{buildroot}%{SAGE_PYTHONPATH}"
 %endif
 export SAGE_CBLAS=cblas
+export SAGE_FORTRAN=%{_bindir}/gfortran
+export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
