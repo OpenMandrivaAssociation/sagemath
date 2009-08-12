@@ -27,7 +27,7 @@ URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 #------------------------------------------------------------------------
-BuildRequires:	texlive-latex
+BuildRequires:	tetex-latex
 BuildRequires:	boost-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
@@ -78,19 +78,11 @@ Requires:	ecm
 Requires:	flint
 Requires:	fplll
 
-## flintqs-20070817.p3.spkg	( no longer available upstream )
-
 Requires:	gap-system gap-system-packages
 Requires:	gd-utils
-
-## genus2reduction-0.3.p4.spkg 
-
 Requires:	gcc-gfortran
 Requires:	gfan
 Requires:	gp2c pari pari-data libpari-devel
-
-## graphs-20070722.spkg 
-
 Requires:	ipython
 Requires:	jmol
 Requires:	libatlas
@@ -116,9 +108,6 @@ Requires:	libmpfi-devel
 Requires:	palp
 Requires:	perl
 Requires:	polymake
-
-## polytopes_db-20080430.spkg
-
 Requires:	pynac-devel
 Requires:	python
 Requires:	python-cvxopt
@@ -150,9 +139,6 @@ Requires:	python-twisted-web2
 Requires:	python-zodb3
 
 Requires:	R-base
-
-## rubiks-20070912.p8.spkg
-
 Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
@@ -188,12 +174,14 @@ pushd spkg
 		elliptic_curves-0.1		\
 		examples-%{version}		\
 		extcode-%{version}		\
+		flintqs-20070817.p4		\
 		genus2reduction-0.3.p5		\
 		graphs-20070722			\
 		jquery-1.2.6.p0			\
 		jqueryui-1.6r807svn.p0		\
 		jsmath-3.6b.p1			\
 		polytopes_db-20080430		\
+		rubiks-20070912.p9		\
 		sage-%{version}			\
 		sage_scripts-%{version}		\
 		tinyMCE-3.2.0.2.p0		\
@@ -278,8 +266,18 @@ pushd spkg/build/dsage-1.0.1.p0/src
 popd
 
 #------------------------------------------------------------------------
+pushd spkg/build/flintqs-20070817.p4/src
+    %make CPP="g++ %{optflags} -fPIC"
+popd
+
+#------------------------------------------------------------------------
 pushd spkg/build/genus2reduction-0.3.p5/src
     %make
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/rubiks-20070912.p9/src
+    %make CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}"
 popd
 
 
@@ -356,8 +354,18 @@ pushd spkg/build/sage_scripts-%{version}
 popd
 
 #------------------------------------------------------------------------
+pushd spkg/build/flintqs-20070817.p4/src
+    cp -fa QuadraticSieve $SAGE_LOCAL/bin
+popd
+
+#------------------------------------------------------------------------
 pushd spkg/build/genus2reduction-0.3.p5/src
     %makeinstall_std
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/rubiks-20070912.p9/src
+    make DESTDIR=%{buildroot} PREFIX=%{SAGE_LOCAL} INSTALL=cp install
 popd
 
 #------------------------------------------------------------------------
