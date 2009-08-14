@@ -20,7 +20,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 8
+Release:	%mkrel 9
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -155,9 +155,10 @@ Patch2:		sage-4.1-notebook.patch
 Patch3:		sage-4.1-wiki.patch
 Patch4:		sage-4.1-doc.patch
 Patch5:		sage-4.1-dsage.patch
+Patch6:		sage-4.1-python2.6.patch
 # http://trac.sagemath.org/sage_trac/ticket/6542
 # tachyon ouput seems broken in sage-4.1
-Patch6:		trac_6542_tachyon_tostr.2.patch
+Patch7:		trac_6542_tachyon_tostr.2.patch
 
 #------------------------------------------------------------------------
 %description
@@ -204,9 +205,10 @@ popd
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 pushd spkg/build/sage-%{version}
-%patch6 -p1
+%patch7 -p1
 popd
 
 # if executing prep, clean buildroot
