@@ -85,26 +85,28 @@ Requires:	gfan
 Requires:	gp2c pari pari-data libpari-devel
 Requires:	ipython
 Requires:	jmol
+Requires:	lcalc
+
 Requires:	libatlas
 Requires:	libblas
-
-# FIXME unversioned .so
-Requires:	libeclib-devel
-
-Requires:	ntl
-Requires:	libopencdk
 
 # FIXME .a and .so files (this is also a sage specific library)
 Requires:	libm4ri-devel
 
-Requires:	lcalc
+# FIXME unversioned .so
+Requires:	libeclib-devel
+
+Requires:	libmpfi-devel
+Requires:	libopencdk
+
 Requires:	linalg-linbox
 Requires:	maxima xmaxima
 
 # Requires:	mercurial
 
 Requires:	moin
-Requires:	libmpfi-devel
+Requires:	ntl
+Requires:	octave
 Requires:	palp
 Requires:	perl
 Requires:	polymake
@@ -139,6 +141,7 @@ Requires:	python-twisted-web2
 Requires:	python-zodb3
 
 Requires:	R-base
+Requires:	scilab
 Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
@@ -407,7 +410,7 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_DATA/extcode
-    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular \
+    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular octave scilab \
 	$SAGE_DATA/extcode
     mkdir -p $SAGE_LOCAL/java
     pushd $SAGE_LOCAL/java
