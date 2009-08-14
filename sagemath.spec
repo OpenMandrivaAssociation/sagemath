@@ -71,6 +71,7 @@ BuildRequires:	symmetrica-static-devel
 BuildRequires:	zn_poly-static-devel
 
 #------------------------------------------------------------------------
+Requires:	axiom
 Requires:	bzip2
 Requires:	clisp
 Requires:	eclib-mwrank
