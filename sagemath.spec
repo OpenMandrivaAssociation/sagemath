@@ -160,9 +160,11 @@ Patch3:		sage-4.1-wiki.patch
 Patch4:		sage-4.1-doc.patch
 Patch5:		sage-4.1-dsage.patch
 Patch6:		sage-4.1-python2.6.patch
+Patch7:		sage-4.1-lisp.patch
 # http://trac.sagemath.org/sage_trac/ticket/6542
 # tachyon ouput seems broken in sage-4.1
-Patch7:		trac_6542_tachyon_tostr.2.patch
+Patch8:		trac_6542_tachyon_tostr.2.patch
+# make lisp interface functional
 
 #------------------------------------------------------------------------
 %description
@@ -210,9 +212,10 @@ popd
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 pushd spkg/build/sage-%{version}
-%patch7 -p1
+%patch8 -p1
 popd
 
 # if executing prep, clean buildroot
