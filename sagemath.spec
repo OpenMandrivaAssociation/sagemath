@@ -141,6 +141,8 @@ Requires:	python-twisted-web2
 # see package url for information on other listed dependencies
 Requires:	python-zodb3
 
+Requires:	qepcad
+
 Requires:	R-base
 Requires:	scilab
 Requires:	singular
@@ -161,10 +163,10 @@ Patch4:		sage-4.1-doc.patch
 Patch5:		sage-4.1-dsage.patch
 Patch6:		sage-4.1-python2.6.patch
 Patch7:		sage-4.1-lisp.patch
+Patch8:		sage-4.1-qepcad.patch
 # http://trac.sagemath.org/sage_trac/ticket/6542
 # tachyon ouput seems broken in sage-4.1
-Patch8:		trac_6542_tachyon_tostr.2.patch
-# make lisp interface functional
+Patch100:	trac_6542_tachyon_tostr.2.patch
 
 #------------------------------------------------------------------------
 %description
@@ -213,9 +215,10 @@ popd
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 pushd spkg/build/sage-%{version}
-%patch8 -p1
+%patch100 -p1
 popd
 
 # if executing prep, clean buildroot
