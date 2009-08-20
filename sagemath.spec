@@ -100,6 +100,9 @@ Requires:	libeclib-devel
 Requires:	libmpfi-devel
 Requires:	libopencdk
 
+# currently in non-free due to lack of license information
+Suggests:	lie
+
 Requires:	linalg-linbox
 Requires:	maxima xmaxima
 
@@ -167,6 +170,7 @@ Patch5:		sage-4.1-dsage.patch
 Patch6:		sage-4.1-python2.6.patch
 Patch7:		sage-4.1-lisp.patch
 Patch8:		sage-4.1-qepcad.patch
+Patch9:		sage-4.1-lie.patch
 # http://trac.sagemath.org/sage_trac/ticket/6542
 # tachyon ouput seems broken in sage-4.1
 Patch100:	trac_6542_tachyon_tostr.2.patch
@@ -219,6 +223,7 @@ popd
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
@@ -420,7 +425,20 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_DATA/extcode
-    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular octave scilab QEPCAD genus2reduction \
+    cp -far			\
+	QEPCAD			\
+	gap			\
+	genus2reduction		\
+	images			\
+	maxima			\
+	mwrank			\
+	notebook		\
+	octave			\
+	pari			\
+	pickle_jar		\
+	sagebuild		\
+	scilab			\
+	singular		\
 	$SAGE_DATA/extcode
     mkdir -p $SAGE_LOCAL/java
     pushd $SAGE_LOCAL/java
