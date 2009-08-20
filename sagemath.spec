@@ -20,7 +20,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 9
+Release:	%mkrel 10
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -419,7 +419,7 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_DATA/extcode
-    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular octave scilab \
+    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular octave scilab QEPCAD \
 	$SAGE_DATA/extcode
     mkdir -p $SAGE_LOCAL/java
     pushd $SAGE_LOCAL/java
