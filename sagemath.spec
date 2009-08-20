@@ -141,7 +141,9 @@ Requires:	python-twisted-web2
 # see package url for information on other listed dependencies
 Requires:	python-zodb3
 
+%ifarch %{ix86}
 Requires:	qepcad
+%endif
 
 Requires:	R-base
 Requires:	scilab
