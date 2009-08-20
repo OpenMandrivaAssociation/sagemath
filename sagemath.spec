@@ -111,6 +111,7 @@ Requires:	octave
 Requires:	palp
 Requires:	perl
 Requires:	polymake
+Requires:	povray
 Requires:	pynac-devel
 Requires:	python
 Requires:	python-cvxopt
@@ -419,7 +420,7 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_DATA/extcode
-    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular octave scilab QEPCAD \
+    cp -far gap images maxima mwrank notebook pari pickle_jar sagebuild singular octave scilab QEPCAD genus2reduction \
 	$SAGE_DATA/extcode
     mkdir -p $SAGE_LOCAL/java
     pushd $SAGE_LOCAL/java
