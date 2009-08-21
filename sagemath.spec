@@ -470,7 +470,8 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 
 export CUR=\`pwd\`
 export DOT_SAGE="\$HOME/.sage/"
-mkdir -p \$DOT_SAGE
+mkdir -p \$DOT_SAGE/tmp
+export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
 export SAGE_DATA="$SAGE_DATA"
