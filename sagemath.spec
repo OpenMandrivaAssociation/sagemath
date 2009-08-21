@@ -352,6 +352,9 @@ pushd spkg/build/sage-%{version}
 	# install sage notebook templates
 	cp -fa server/notebook/templates %{buildroot}%{py_platsitedir}/sage/server/notebook
     popd
+    # install documentation sources
+    rm -fr $SAGE_DOC/{common,en,fr}
+    cp -far doc/ $SAGE_DOC
 popd
 
 pushd spkg/build/dsage-1.0.1.p0/src
