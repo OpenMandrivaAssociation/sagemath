@@ -4,6 +4,16 @@
 # Correct breakage of liblinbox.so and liblinboxsage.so
 %define		_disable_ld_as_needed	1
 
+# for now, instead of adding a % check and patching some files, do it
+# under this condition so that it can be done after building documentation
+%define		with_check		1
+# seconds - default is 60 * 6 - 6 minutes
+%define		SAGE_TIMEOUT		60
+# default is 30 * 60 - 30 minutes
+%define		SAGE_TIMEOUT_LONG	300
+# basically, only interested on errors first, later check the time consuming
+# tests that may fail other then due to a timeout...
+
 %define		name			sagemath
 %define		SAGE_ROOT		%{_datadir}/sage
 %define		SAGE_LOCAL		%{SAGE_ROOT}/local
@@ -20,54 +30,100 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 10
+Release:	%mkrel 11
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 #------------------------------------------------------------------------
-BuildRequires:	tetex-latex
+%if %{with_check}
+BuildRequires:	axiom
+%endif
 BuildRequires:	boost-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
+%if %{with_check}
+BuildRequires:	eclib-mwrank
+%endif
 BuildRequires:	flex bison
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
 BuildRequires:	gap-system
+%if %{with_check}
+BuildRequires:	gap-system-packages
+%endif
 BuildRequires:	gcc-gfortran
 BuildRequires:	gd-devel
+%if %{with_check}
+BuildRequires:	gfan
+%endif
 BuildRequires:	ghmm-devel
+%if %{with_check}
+BuildRequires:	gp2c pari pari-data libpari-devel
+%endif
 BuildRequires:	gsl-devel
 BuildRequires:	iml
 BuildRequires:	ipython
+%if %{with_check}
+BuildRequires:	lcalc
+%endif
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
 BuildRequires:	libm4ri-devel
 BuildRequires:	libpari-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	linalg-linbox-devel
+%if %{with_check}
+BuildRequires:	maxima-runtime-clisp
+%endif
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
+%if %{with_check}
+BuildRequires:	octave
+BuildRequires:	palp
+%endif
 BuildRequires:	png-devel
 BuildRequires:	polybori-static-devel
+%if %{with_check}
+BuildRequires:	polymake
+%endif
 BuildRequires:	pynac-devel
 BuildRequires:	python-cython
 BuildRequires:	python-ghmm
 BuildRequires:	python-jinja
+%if %{with_check}
+BuildRequires:	python-matplotlib
+BuildRequires:	python-networkx
+%endif
 BuildRequires:	python-numpy-devel
+%if %{with_check}
+BuildRequires:	python-polybori
+%endif
 BuildRequires:	python-processing
 BuildRequires:	python-setuptools
+BuildRequires:	python-scipy
 BuildRequires:	python-sphinx
+%if %{with_check}
+BuildRequires:	python-sqlalchemy
+BuildRequires:	python-sympy
+%endif
 BuildRequires:	python-twisted-core
 BuildRequires:	python-twisted-web2
 BuildRequires:	qd-static-devel
+%if %{with_check}
+BuildRequires:	python-zodb3
+%endif
 BuildRequires:	ratpoints
+%if %{with_check}
+BuildRequires:	R-base
+%endif
 BuildRequires:	readline-devel
 BuildRequires:	scons
 BuildRequires:	singular-devel
 BuildRequires:	singular-static-devel
 BuildRequires:	symmetrica-static-devel
+BuildRequires:	tetex-latex
 BuildRequires:	zn_poly-static-devel
 
 #------------------------------------------------------------------------
@@ -78,10 +134,9 @@ Requires:	eclib-mwrank
 Requires:	ecm
 Requires:	flint
 Requires:	fplll
-
 Requires:	gap-system gap-system-packages
-Requires:	gd-utils
 Requires:	gcc-gfortran
+Requires:	gd-utils
 Requires:	gfan
 Requires:	gp2c pari pari-data libpari-devel
 Requires:	ipython
@@ -472,18 +527,18 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
 
 export CUR=\`pwd\`
-export DOT_SAGE="\$HOME/.sage/"
+##export DOT_SAGE="\$HOME/.sage/"
 mkdir -p \$DOT_SAGE/tmp
 export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
 export SAGE_DATA="$SAGE_DATA"
-export SAGE_DOC="$SAGE_DOC"
+##export SAGE_DOC="$SAGE_DOC"
 export PATH=$SAGE_LOCAL/bin:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
 export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 %if %{use_sage_pexpect}
-export PYTHONPATH="%{buildroot}%{SAGE_PYTHONPATH}"
+##export PYTHONPATH="%{buildroot}%{SAGE_PYTHONPATH}"
 %endif
 export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
@@ -555,6 +610,7 @@ popd
 # to run and load sage python modules
 pushd spkg/build/sage-%{version}/doc
     export DOT_SAGE=%{buildroot}/.sage
+    mkdir -p $DOT_SAGE/tmp
     export SAGE_DOC=`pwd`
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
@@ -565,12 +621,28 @@ pushd spkg/build/sage-%{version}/doc
     python common/builder.py all html
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
     cp -far output $SAGE_DOC
+
+
+    #--------------------------------------------------------------------
+%if %{with_check}
+    %if %{use_sage_pexpect}
+    cp -f $SAGE_ROOT/site-packages/{ANSI,FSM,pexpect,pxssh,screen}.py $PYTHONPATH
+    %endif
+    sage -testall --verbose || :
+    cp -f $DOT_SAGE/tmp/test.log $SAGE_DOC
+    %if %{use_sage_pexpect}
+    rm -f $PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py
+    %endif
+%endif
+
+    #--------------------------------------------------------------------
     # some "user setup" files will be installed there...
     rm -fr $DOT_SAGE
 popd
 
+#------------------------------------------------------------------------
 # Script was used to build documentation 
-perl -pi -e 's|%{buildroot}||g;' %{buildroot}%{_bindir}/sage
+perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 # Fixup links
