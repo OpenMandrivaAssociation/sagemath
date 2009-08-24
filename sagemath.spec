@@ -609,7 +609,13 @@ popd
 # Build documentation, using %{buildroot} environment, as it needs
 # to run and load sage python modules
 pushd spkg/build/sage-%{version}/doc
-    export DOT_SAGE=%{buildroot}/.sage
+    # Big hack (tm)
+    # when passing the full buildroot path, the pexpect interface fails
+    # to communicate with gap, due to too long workspace pathname
+    # (that is longer then 80 characters)
+    # export DOT_SAGE=%{buildroot}/.sage
+    export DOT_SAGE=/tmp/sage$$
+
     mkdir -p $DOT_SAGE/tmp
     export SAGE_DOC=`pwd`
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:$PATH
