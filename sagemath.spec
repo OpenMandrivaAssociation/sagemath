@@ -23,6 +23,10 @@
 
 # Need this because as of sage 4.0.1, it only works "correctly" with python-pexpect 2.0
 %define		use_sage_pexpect	1
+
+# Need this because as of sage 4.1, it only works "corretly" with python-networkx 0.36
+%define		use_sage_networkx	1
+
 %define		SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
 
 Name:		%{name}
@@ -40,84 +44,116 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 %if %{with_check}
 BuildRequires:	axiom
 %endif
+
 BuildRequires:	boost-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
+
 %if %{with_check}
 BuildRequires:	eclib-mwrank
 %endif
+
 BuildRequires:	flex bison
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
 BuildRequires:	gap-system
+
 %if %{with_check}
 BuildRequires:	gap-system-packages
 %endif
+
 BuildRequires:	gcc-gfortran
 BuildRequires:	gd-devel
+
 %if %{with_check}
 BuildRequires:	gfan
 %endif
+
 BuildRequires:	ghmm-devel
+
 %if %{with_check}
 BuildRequires:	gp2c pari pari-data libpari-devel
 %endif
+
 BuildRequires:	gsl-devel
 BuildRequires:	iml
 BuildRequires:	ipython
+
 %if %{with_check}
 BuildRequires:	lcalc
 %endif
+
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
 BuildRequires:	libm4ri-devel
 BuildRequires:	libpari-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	linalg-linbox-devel
+
 %if %{with_check}
 BuildRequires:	maxima-runtime-clisp
 %endif
+
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
+
 %if %{with_check}
 BuildRequires:	octave
 BuildRequires:	palp
 %endif
+
 BuildRequires:	png-devel
 BuildRequires:	polybori-static-devel
+
 %if %{with_check}
 BuildRequires:	polymake
 %endif
+
 BuildRequires:	pynac-devel
 BuildRequires:	python-cython
 BuildRequires:	python-ghmm
 BuildRequires:	python-jinja
+
 %if %{with_check}
 BuildRequires:	python-matplotlib
+  %if !%{use_sage_networkx}
 BuildRequires:	python-networkx
+  %endif
 %endif
+
 BuildRequires:	python-numpy-devel
+
 %if %{with_check}
+  %if !%{use_sage_pexpect}
+Requires:	python-pexpect
+  %endif
 BuildRequires:	python-polybori
 %endif
+
 BuildRequires:	python-processing
 BuildRequires:	python-setuptools
 BuildRequires:	python-scipy
 BuildRequires:	python-sphinx
+
 %if %{with_check}
 BuildRequires:	python-sqlalchemy
 BuildRequires:	python-sympy
 %endif
+
 BuildRequires:	python-twisted-core
 BuildRequires:	python-twisted-web2
 BuildRequires:	qd-static-devel
+
 %if %{with_check}
 BuildRequires:	python-zodb3
 %endif
+
 BuildRequires:	ratpoints
+
 %if %{with_check}
 BuildRequires:	R-base
 %endif
+
 BuildRequires:	readline-devel
 BuildRequires:	scons
 BuildRequires:	singular-devel
@@ -178,10 +214,18 @@ Requires:	python-gd
 Requires:	python-ghmm
 Requires:	python-gnutls
 Requires:	python-jinja
+
+%if !%{use_sage_networkx}
 Requires:	python-networkx
+%endif
+
 Requires:	python-matplotlib
 Requires:	python-numpy
+
+%if !%{use_sage_pexpect}
 Requires:	python-pexpect
+%endif
+
 Requires:	python-polybori
 Requires:	python-processing
 Requires:	python-pycrypto
@@ -267,6 +311,10 @@ pushd spkg
 
 %if %{use_sage_pexpect}
     tar jxf standard/pexpect-2.0.p4.spkg -C build
+%endif
+
+%if %{use_sage_networkx}
+    tar jxf standard/networkx-0.99.p1-fake_really-0.36.p0.spkg -C build
 %endif
 popd
 
@@ -372,6 +420,7 @@ export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
 export SAGE_DATA=%{buildroot}%{SAGE_DATA}
 export SAGE_DOC=%{buildroot}%{SAGE_DOC}
+export SAGE_PYTHONPATH=%{buildroot}%{SAGE_PYTHONPATH}
 
 export DESTDIR=%{buildroot}
 
@@ -421,8 +470,18 @@ popd
 #------------------------------------------------------------------------
 %if %{use_sage_pexpect}
 pushd spkg/build/pexpect-2.0.p4/src
-    mkdir -p %{buildroot}%{SAGE_PYTHONPATH}
-    cp -f {ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{SAGE_PYTHONPATH}
+    mkdir -p $SAGE_PYTHONPATH
+    cp -f {ANSI,FSM,pexpect,pxssh,screen}.py $SAGE_PYTHONPATH
+popd
+%endif
+
+#------------------------------------------------------------------------
+%if %{use_sage_networkx}
+pushd spkg/build/networkx-0.99.p1-fake_really-0.36.p0/src
+    mkdir -p $SAGE_PYTHONPATH
+    python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
+    mv -f %{buildroot}/%{_datadir}/doc/* $SAGE_DOC
+    rmdir %{buildroot}/%{_datadir}/doc
 popd
 %endif
 
@@ -540,7 +599,7 @@ export PATH=$SAGE_LOCAL/bin:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
 export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 %if %{use_sage_pexpect}
-##export PYTHONPATH="%{buildroot}%{SAGE_PYTHONPATH}"
+##export PYTHONPATH="$SAGE_PYTHONPATH"
 %endif
 export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
@@ -632,43 +691,50 @@ pushd spkg/build/sage-%{version}/doc
 
 
     #--------------------------------------------------------------------
-
 # known failures:
 # 1. several dsage tests fail
 # 	apparently the root cause is when it tries to create a file under
-# 	/usr/lib/python2.6/site-packages what causes an permission error
-# 2. networkx XGraph doesn't exist anymore.
-# sage/graphs/graph.py
-#	from http://networkx.lanl.gov/reference/api_0.99.html?highlight=xgraph
-#	- Graph -> Graph (self loops allowed now, default edge data is 1)
-#	- DiGraph -> DiGraph (self loops allowed now, default edge data is 1)
-#	- XGraph(multiedges=False) -> Graph
-#	- XGraph(multiedges=True) -> MultiGraph
-#	- XDiGraph(multiedges=False) -> DiGraph
-#	- XDiGraph(multiedges=True) -> MultiDiGraph
-# * hopefully corrected in newer sage versions, or later can try to patch
-# 3. package management is done with rpm
+# 	/usr/lib/python2.6/site-packages, what causes a permission error
+# 2. ...
+# crypto/mq/mpolynomialsystem.py
+#	result is correct, but has the "header text"
+#	-%<-
+#	doctest:16: DeprecationWarning: the sets module is deprecated
+#	doctest:18: DeprecationWarning: 
+#	**********************************************************
+#	matplotlib.numerix and all its subpackages are deprecated.
+#	They will be removed soon.  Please use numpy instead.
+#	**********************************************************
+#	<BLANKLINE>
+#	-%<-
+# 3. ...
+# misc/functional.py
+#	same is 2.
+# 4. package management is done with rpm
 # sage/misc/package.py
 # * could do something like implement 'sage -f' as 'rpm -q --requires sagemath'
-# 4. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
+# 5. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
 # sage/misc/sage_eval.py
 #	results differ for 'R:=PolynomialRing(Rationals,["x"]);'
 #	gap 4.4.10 returns: 'PolynomialRing(..., [ x ])'
 #	gap 4.4.12 returns: 'Rationals[x]'
-# 5. networkx XDiGraph doesn't exist anymore.
-# sage/misc/classgraph.py
-# * same comments as 1.
-# 6. a lot of networkx failures due to api change (478 passed and 41 failed.)
-# sage/databases/database.py
 
 %if %{with_check}
     %if %{use_sage_pexpect}
-    cp -f $SAGE_ROOT/site-packages/{ANSI,FSM,pexpect,pxssh,screen}.py $PYTHONPATH
+	cp -f $SAGE_ROOT/site-packages/{ANSI,FSM,pexpect,pxssh,screen}.py $PYTHONPATH
+    %endif
+    %if %{use_sage_networkx}
+	# move in buildroot because PYTHONPATH is already overriden
+	mv -f %{buildroot}%{SAGE_PYTHONPATH}/networkx* $PYTHONPATH
     %endif
     sage -testall --verbose || :
     cp -f $DOT_SAGE/tmp/test.log $SAGE_DOC
     %if %{use_sage_pexpect}
-    rm -f $PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py
+	rm -f $PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py
+    %endif
+    %if %{use_sage_networkx}
+	# revert back to directory where it will be installed
+	mv -f $PYTHONPATH/networkx* %{buildroot}%{SAGE_PYTHONPATH}
     %endif
 %endif
 
