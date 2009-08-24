@@ -634,7 +634,10 @@ pushd spkg/build/sage-%{version}/doc
     #--------------------------------------------------------------------
 
 # known failures:
-# 1. networkx-xgraph doesn't exist anymore.
+# 1. several dsage tests fail
+# 	apparently the root cause is when it tries to create a file under
+# 	/usr/lib/python2.6/site-packages what causes an permission error
+# 2. networkx XGraph doesn't exist anymore.
 # sage/graphs/graph.py
 #	from http://networkx.lanl.gov/reference/api_0.99.html?highlight=xgraph
 #	- Graph -> Graph (self loops allowed now, default edge data is 1)
@@ -644,10 +647,19 @@ pushd spkg/build/sage-%{version}/doc
 #	- XDiGraph(multiedges=False) -> DiGraph
 #	- XDiGraph(multiedges=True) -> MultiDiGraph
 # * hopefully corrected in newer sage versions, or later can try to patch
-# 2. package management is done with rpm
+# 3. package management is done with rpm
 # sage/misc/package.py
 # * could do something like implement 'sage -f' as 'rpm -q --requires sagemath'
-
+# 4. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
+# sage/misc/sage_eval.py
+#	results differ for 'R:=PolynomialRing(Rationals,["x"]);'
+#	gap 4.4.10 returns: 'PolynomialRing(..., [ x ])'
+#	gap 4.4.12 returns: 'Rationals[x]'
+# 5. networkx XDiGraph doesn't exist anymore.
+# sage/misc/classgraph.py
+# * same comments as 1.
+# 6. a lot of networkx failures due to api change (478 passed and 41 failed.)
+# sage/databases/database.py
 
 %if %{with_check}
     %if %{use_sage_pexpect}
