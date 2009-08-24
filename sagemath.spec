@@ -226,6 +226,7 @@ Patch6:		sage-4.1-python2.6.patch
 Patch7:		sage-4.1-lisp.patch
 Patch8:		sage-4.1-qepcad.patch
 Patch9:		sage-4.1-lie.patch
+Patch10:	sage-4.1-sagedoc.patch
 # http://trac.sagemath.org/sage_trac/ticket/6542
 # tachyon ouput seems broken in sage-4.1
 Patch100:	trac_6542_tachyon_tostr.2.patch
@@ -279,6 +280,7 @@ popd
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
@@ -630,6 +632,23 @@ pushd spkg/build/sage-%{version}/doc
 
 
     #--------------------------------------------------------------------
+
+# known failures:
+# 1. networkx-xgraph doesn't exist anymore.
+# sage/graphs/graph.py
+#	from http://networkx.lanl.gov/reference/api_0.99.html?highlight=xgraph
+#	- Graph -> Graph (self loops allowed now, default edge data is 1)
+#	- DiGraph -> DiGraph (self loops allowed now, default edge data is 1)
+#	- XGraph(multiedges=False) -> Graph
+#	- XGraph(multiedges=True) -> MultiGraph
+#	- XDiGraph(multiedges=False) -> DiGraph
+#	- XDiGraph(multiedges=True) -> MultiDiGraph
+# * hopefully corrected in newer sage versions, or later can try to patch
+# 2. package management is done with rpm
+# sage/misc/package.py
+# * could do something like implement 'sage -f' as 'rpm -q --requires sagemath'
+
+
 %if %{with_check}
     %if %{use_sage_pexpect}
     cp -f $SAGE_ROOT/site-packages/{ANSI,FSM,pexpect,pxssh,screen}.py $PYTHONPATH
