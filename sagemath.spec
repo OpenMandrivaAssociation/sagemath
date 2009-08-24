@@ -159,6 +159,11 @@ BuildRequires:	scons
 BuildRequires:	singular-devel
 BuildRequires:	singular-static-devel
 BuildRequires:	symmetrica-static-devel
+
+%if %{with_check}
+BuildRequires:	tachyon
+%endif
+
 BuildRequires:	tetex-latex
 BuildRequires:	zn_poly-static-devel
 
@@ -480,6 +485,7 @@ popd
 pushd spkg/build/networkx-0.99.p1-fake_really-0.36.p0/src
     mkdir -p $SAGE_PYTHONPATH
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
+    rm -fr $SAGE_DOC/networkx*
     mv -f %{buildroot}/%{_datadir}/doc/* $SAGE_DOC
     rmdir %{buildroot}/%{_datadir}/doc
 popd
@@ -709,7 +715,7 @@ pushd spkg/build/sage-%{version}/doc
 #	-%<-
 # 3. ...
 # misc/functional.py
-#	same is 2.
+#	same as 2.
 # 4. package management is done with rpm
 # sage/misc/package.py
 # * could do something like implement 'sage -f' as 'rpm -q --requires sagemath'
