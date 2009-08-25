@@ -276,6 +276,7 @@ Patch7:		sage-4.1-lisp.patch
 Patch8:		sage-4.1-qepcad.patch
 Patch9:		sage-4.1-lie.patch
 Patch10:	sage-4.1-sagedoc.patch
+Patch11:	sage-4.1-list_plot.patch
 # http://trac.sagemath.org/sage_trac/ticket/6542
 # tachyon ouput seems broken in sage-4.1
 Patch100:	trac_6542_tachyon_tostr.2.patch
@@ -334,6 +335,7 @@ popd
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
@@ -595,7 +597,7 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 
 export CUR=\`pwd\`
 ##export DOT_SAGE="\$HOME/.sage/"
-mkdir -p \$DOT_SAGE/tmp
+mkdir -p \$DOT_SAGE/{dsage,tmp}
 export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
@@ -683,7 +685,7 @@ pushd spkg/build/sage-%{version}/doc
     # export DOT_SAGE=%{buildroot}/.sage
     export DOT_SAGE=/tmp/sage$$
 
-    mkdir -p $DOT_SAGE/tmp
+    mkdir -p $DOT_SAGE/{dsage,tmp}
     export SAGE_DOC=`pwd`
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
@@ -731,6 +733,9 @@ pushd spkg/build/sage-%{version}/doc
     %endif
     %if %{use_sage_networkx}
 	# move in buildroot because PYTHONPATH is already overriden
+	# Note: if you ^C during the sage -testall below, this must
+	# be removed before doing a '--short-circuit -bi' again
+	# or add a 'trap' to the rpm script?
 	mv -f %{buildroot}%{SAGE_PYTHONPATH}/networkx* $PYTHONPATH
     %endif
     sage -testall --verbose || :
