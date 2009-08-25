@@ -24,10 +24,10 @@
 # Need this because as of sage 4.0.1, it only works "correctly" with python-pexpect 2.0
 %define		use_sage_pexpect	1
 
-# Need this because as of sage 4.1, it only works "corretly" with python-networkx 0.36
+# Need this because as of sage 4.1, it only works "correctly" with python-networkx 0.36
 %define		use_sage_networkx	1
 
-# Need this because as of sage 4.1, dsage only works "corretly" with python-sqlalchemy 0.4.6
+# Need this because as of sage 4.1, dsage only works "correctly" with python-sqlalchemy 0.4.6
 %define		use_sage_sqlalchemy	1
 
 %define		SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
@@ -447,6 +447,7 @@ export DESTDIR=%{buildroot}
 #------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
+mkdir -p $SAGE_PYTHONPATH
 rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share}
 mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage $SAGE_LOCAL/notebook/javascript
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
@@ -490,7 +491,6 @@ popd
 #------------------------------------------------------------------------
 %if %{use_sage_pexpect}
 pushd spkg/build/pexpect-2.0.p4/src
-    mkdir -p $SAGE_PYTHONPATH
     cp -f {ANSI,FSM,pexpect,pxssh,screen}.py $SAGE_PYTHONPATH
 popd
 %endif
@@ -498,7 +498,6 @@ popd
 #------------------------------------------------------------------------
 %if %{use_sage_networkx}
 pushd spkg/build/networkx-0.99.p1-fake_really-0.36.p0/src
-    mkdir -p $SAGE_PYTHONPATH
     rm -fr $SAGE_PYTHONPATH/networkx*
     rm -fr %{buildroot}%{py_platsitedir}/networkx*
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
@@ -511,7 +510,6 @@ popd
 #------------------------------------------------------------------------
 %if %{use_sage_sqlalchemy}
 pushd spkg/build/sqlalchemy-0.4.6.p1/src
-    mkdir -p $SAGE_PYTHONPATH
     rm -fr $SAGE_PYTHONPATH/{SQLA,sqla}lchemy*
     rm -fr %{buildroot}%{py_platsitedir}/{SQLA,sqla}lchemy*
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
