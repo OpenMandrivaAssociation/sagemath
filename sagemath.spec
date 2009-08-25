@@ -27,6 +27,9 @@
 # Need this because as of sage 4.1, it only works "corretly" with python-networkx 0.36
 %define		use_sage_networkx	1
 
+# Need this because as of sage 4.1, dsage only works "corretly" with python-sqlalchemy 0.4.6
+%define		use_sage_sqlalchemy	1
+
 %define		SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
 
 Name:		%{name}
@@ -136,7 +139,9 @@ BuildRequires:	python-scipy
 BuildRequires:	python-sphinx
 
 %if %{with_check}
+  %if !%{use_sage_sqlalchemy}
 BuildRequires:	python-sqlalchemy
+  %endif
 BuildRequires:	python-sympy
 %endif
 
@@ -239,7 +244,11 @@ Requires:	python-pygments
 # scipy should also provide the weave (http://www.scipy.org/Weave) dependency
 Requires:	python-scipy
 Requires:	python-sphinx
+
+%if !%{use_sage_sqlalchemy}
 Requires:	python-sqlalchemy
+%endif
+
 Requires:	python-sqlite2
 Requires:	python-sympy
 Requires:	python-twisted-core
@@ -321,6 +330,10 @@ pushd spkg
 
 %if %{use_sage_networkx}
     tar jxf standard/networkx-0.99.p1-fake_really-0.36.p0.spkg -C build
+%endif
+
+%if %{use_sage_sqlalchemy}
+    tar jxf standard/sqlalchemy-0.4.6.p1.spkg -C build
 %endif
 popd
 
@@ -486,10 +499,22 @@ popd
 %if %{use_sage_networkx}
 pushd spkg/build/networkx-0.99.p1-fake_really-0.36.p0/src
     mkdir -p $SAGE_PYTHONPATH
+    rm -fr $SAGE_PYTHONPATH/networkx*
+    rm -fr %{buildroot}%{py_platsitedir}/networkx*
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
     rm -fr $SAGE_DOC/networkx*
     mv -f %{buildroot}/%{_datadir}/doc/* $SAGE_DOC
     rmdir %{buildroot}/%{_datadir}/doc
+popd
+%endif
+
+#------------------------------------------------------------------------
+%if %{use_sage_sqlalchemy}
+pushd spkg/build/sqlalchemy-0.4.6.p1/src
+    mkdir -p $SAGE_PYTHONPATH
+    rm -fr $SAGE_PYTHONPATH/{SQLA,sqla}lchemy*
+    rm -fr %{buildroot}%{py_platsitedir}/{SQLA,sqla}lchemy*
+    python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
 popd
 %endif
 
@@ -700,10 +725,7 @@ pushd spkg/build/sage-%{version}/doc
 
     #--------------------------------------------------------------------
 # known failures:
-# 1. several dsage tests fail
-# 	apparently the root cause is when it tries to create a file under
-# 	/usr/lib/python2.6/site-packages, what causes a permission error
-# 2. ...
+# 1. ...
 # crypto/mq/mpolynomialsystem.py
 #	result is correct, but has the "header text"
 #	-%<-
@@ -715,13 +737,13 @@ pushd spkg/build/sage-%{version}/doc
 #	**********************************************************
 #	<BLANKLINE>
 #	-%<-
-# 3. ...
+# 2. ...
 # misc/functional.py
 #	same as 2.
-# 4. package management is done with rpm
+# 3. package management is done with rpm
 # sage/misc/package.py
 # * could do something like implement 'sage -f' as 'rpm -q --requires sagemath'
-# 5. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
+# 4. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
 # sage/misc/sage_eval.py
 #	results differ for 'R:=PolynomialRing(Rationals,["x"]);'
 #	gap 4.4.10 returns: 'PolynomialRing(..., [ x ])'
@@ -731,22 +753,34 @@ pushd spkg/build/sage-%{version}/doc
     %if %{use_sage_pexpect}
 	cp -f $SAGE_ROOT/site-packages/{ANSI,FSM,pexpect,pxssh,screen}.py $PYTHONPATH
     %endif
+
     %if %{use_sage_networkx}
 	# move in buildroot because PYTHONPATH is already overriden
-	# Note: if you ^C during the sage -testall below, this must
-	# be removed before doing a '--short-circuit -bi' again
-	# or add a 'trap' to the rpm script?
 	mv -f %{buildroot}%{SAGE_PYTHONPATH}/networkx* $PYTHONPATH
     %endif
+
+    %if %{use_sage_sqlalchemy}
+	# move in buildroot because PYTHONPATH is already overriden
+	mv -f %{buildroot}%{SAGE_PYTHONPATH}/{SQLA,sqla}lchemy* $PYTHONPATH
+    %endif
+
     sage -testall --verbose || :
     cp -f $DOT_SAGE/tmp/test.log $SAGE_DOC
+
     %if %{use_sage_pexpect}
 	rm -f $PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py
     %endif
+
     %if %{use_sage_networkx}
 	# revert back to directory where it will be installed
 	mv -f $PYTHONPATH/networkx* %{buildroot}%{SAGE_PYTHONPATH}
     %endif
+
+    %if %{use_sage_sqlalchemy}
+	# revert back to directory where it will be installed
+	mv -f $PYTHONPATH/{SQLA,sqla}lchemy* %{buildroot}%{SAGE_PYTHONPATH}
+    %endif
+
 %endif
 
     #--------------------------------------------------------------------
