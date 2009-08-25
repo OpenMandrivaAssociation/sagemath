@@ -762,7 +762,7 @@ pushd spkg/build/sage-%{version}/doc
 	mv -f %{buildroot}%{SAGE_PYTHONPATH}/{SQLA,sqla}lchemy* $PYTHONPATH
     %endif
 
-    sage -testall --verbose || :
+    SAGE_TIMEOUT=%{SAGE_TIMEOUT} SAGE_TIMEOUT_LONG=%{SAGE_TIMEOUT_LONG} sage -testall || :
     cp -f $DOT_SAGE/tmp/test.log $SAGE_DOC
 
     %if %{use_sage_pexpect}
