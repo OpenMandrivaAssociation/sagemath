@@ -18,7 +18,7 @@
 %define		SAGE_ROOT		%{_datadir}/sage
 %define		SAGE_LOCAL		%{SAGE_ROOT}/local
 %define		SAGE_DEVEL		%{SAGE_ROOT}/devel
-%define		SAGE_DOC		%{SAGE_ROOT}/doc
+%define		SAGE_DOC		%{SAGE_DEVEL}/doc
 %define		SAGE_DATA		%{SAGE_ROOT}/data
 
 # Need this because as of sage 4.0.1, it only works "correctly" with python-pexpect 2.0
@@ -37,7 +37,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 11
+Release:	%mkrel 12
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -481,7 +481,7 @@ pushd spkg/build/sage-%{version}
     popd
     # install documentation sources
     rm -fr $SAGE_DOC/{common,en,fr}
-    cp -far doc/ $SAGE_DOC
+    cp -far doc/{common,en,fr} $SAGE_DOC
 popd
 
 pushd spkg/build/dsage-1.0.1.p0/src
@@ -723,9 +723,7 @@ pushd spkg/build/sage-%{version}/doc
 
     #--------------------------------------------------------------------
 # known failures:
-# 1. ...
-# crypto/mq/mpolynomialsystem.py
-#	result is correct, but has the "header text"
+# 1. matplotlib.numerix warning:
 #	-%<-
 #	doctest:16: DeprecationWarning: the sets module is deprecated
 #	doctest:18: DeprecationWarning: 
@@ -735,17 +733,23 @@ pushd spkg/build/sage-%{version}/doc
 #	**********************************************************
 #	<BLANKLINE>
 #	-%<-
-# 2. ...
-# misc/functional.py
-#	same as 2.
-# 3. package management is done with rpm
+# followed by correct result in 79 files
+
+# 2. package management is done with rpm
 # sage/misc/package.py
 # * could do something like implement 'sage -f' as 'rpm -q --requires sagemath'
-# 4. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
+
+# 3. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
 # sage/misc/sage_eval.py
 #	results differ for 'R:=PolynomialRing(Rationals,["x"]);'
 #	gap 4.4.10 returns: 'PolynomialRing(..., [ x ])'
 #	gap 4.4.12 returns: 'Rationals[x]'
+
+# 4. pari 2.3.4 in Mandriva vs pari 2.3.3 in sage 4.1
+# running something like:
+# LD_PRELOAD=/home/pcpa/sage-4.1/local/lib/libpari-gmp.so.2:/home/pcpa/sage-4.1/local/lib/libgmp.so.3.4.4 sage
+# solves the issue
+# 
 
 %if %{with_check}
     %if %{use_sage_pexpect}
@@ -761,6 +765,10 @@ pushd spkg/build/sage-%{version}/doc
 	# move in buildroot because PYTHONPATH is already overriden
 	mv -f %{buildroot}%{SAGE_PYTHONPATH}/{SQLA,sqla}lchemy* $PYTHONPATH
     %endif
+
+    # make sage-test checking of 'devel' prefix happy
+    export SAGE_DOC=%{buildroot}%{SAGE_DOC}
+    rm -f $SAGE_ROOT/doc
 
     SAGE_TIMEOUT=%{SAGE_TIMEOUT} SAGE_TIMEOUT_LONG=%{SAGE_TIMEOUT_LONG} sage -testall || :
     cp -f $DOT_SAGE/tmp/test.log $SAGE_DOC
@@ -792,9 +800,10 @@ perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 # Fixup links
-rm -fr $SAGE_DEVEL/sage $SAGE_DATA/extcode/sage
+rm -fr $SAGE_DEVEL/sage $SAGE_DATA/extcode/sage $SAGE_ROOT/doc
 ln -sf %{py_platsitedir} $SAGE_DEVEL/sage
 ln -sf %{py_platsitedir} $SAGE_DATA/extcode/sage
+ln -sf %{SAGE_DOC} $SAGE_ROOT/doc
 rm -f %{buildroot}%{py_platsitedir}/site-packages
 
 ########################################################################
