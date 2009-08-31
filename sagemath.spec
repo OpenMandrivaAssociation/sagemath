@@ -113,6 +113,11 @@ BuildRequires:	polymake
 %endif
 
 BuildRequires:	pynac-devel
+
+%if %{with_check}
+BuildRequires:	python-cvxopt
+%endif
+
 BuildRequires:	python-cython
 BuildRequires:	python-ghmm
 BuildRequires:	python-jinja
@@ -142,6 +147,7 @@ BuildRequires:	python-sphinx
   %if !%{use_sage_sqlalchemy}
 BuildRequires:	python-sqlalchemy
   %endif
+BuildRequires:	python-sqlite2
 BuildRequires:	python-sympy
 %endif
 
@@ -198,7 +204,7 @@ Requires:	libm4ri-devel
 # FIXME unversioned .so
 Requires:	libeclib-devel
 
-Requires:	libmpfi-devel
+Requires:	mpfi-devel
 Requires:	libopencdk
 
 # currently in non-free due to lack of license information
@@ -271,7 +277,9 @@ Requires:	tachyon
 
 #------------------------------------------------------------------------
 Obsoletes:	sage-doc <= 3.4.2
+Conflicts:	sage-doc <= 3.4.2
 Obsoletes:	sage-examples <= 3.4.2
+Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
 Patch0:		sage-4.1.patch
@@ -580,6 +588,7 @@ pushd spkg/build/extcode-%{version}
 	gap			\
 	genus2reduction		\
 	images			\
+	magma			\
 	maxima			\
 	mwrank			\
 	notebook		\
