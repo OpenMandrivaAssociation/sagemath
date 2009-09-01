@@ -37,7 +37,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1
-Release:	%mkrel 13
+Release:	%mkrel 14
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -98,7 +98,7 @@ BuildRequires:	maxima-runtime-clisp
 %endif
 
 BuildRequires:	mpfi-devel
-BuildRequires:	ntl-devel
+BuildRequires:	ntl-devel > 5.5.2-1
 
 %if %{with_check}
 BuildRequires:	octave
@@ -216,7 +216,7 @@ Requires:	maxima xmaxima
 # Requires:	mercurial
 
 Requires:	moin
-Requires:	ntl
+Requires:	ntl > 5.5.2-1
 Requires:	octave
 Requires:	palp
 Requires:	perl
@@ -644,7 +644,6 @@ export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
-export LD_PRELOAD=%{_libdir}/libntl.so
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
