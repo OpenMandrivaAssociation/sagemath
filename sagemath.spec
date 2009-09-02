@@ -4,15 +4,10 @@
 # Correct breakage of liblinbox.so and liblinboxsage.so
 %define		_disable_ld_as_needed	1
 
-# for now, instead of adding a % check and patching some files, do it
-# under this condition so that it can be done after building documentation
+# Run "sage -testall" after building documentation?
 %define		with_check		0
-# seconds - default is 60 * 6 - 6 minutes
 %define		SAGE_TIMEOUT		60
-# default is 30 * 60 - 30 minutes
 %define		SAGE_TIMEOUT_LONG	300
-# basically, only interested on errors first, later check the time consuming
-# tests that may fail other then due to a timeout...
 
 %define		name			sagemath
 %define		SAGE_ROOT		%{_datadir}/sage
@@ -99,7 +94,7 @@ BuildRequires:	maxima-runtime-clisp
 %endif
 
 BuildRequires:	mpfi-devel
-BuildRequires:	ntl-devel > 5.5.2-1
+BuildRequires:	ntl-devel >= 5.5.2-%{mkrel 2}
 
 %if %{with_check}
 BuildRequires:	octave
@@ -218,7 +213,7 @@ Requires:	maxima xmaxima
 # Requires:	mercurial
 
 Requires:	moin
-Requires:	ntl > 5.5.2-1
+Requires:	ntl >= 5.5.2-%{mkrel 2}
 Requires:	octave
 Requires:	palp
 Requires:	perl
@@ -641,6 +636,7 @@ export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
+export LD_PRELOAD=%{_libdir}/libntl.so:\$LD_PRELOAD
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
@@ -728,35 +724,6 @@ pushd spkg/build/sage-%{version}/doc
 
 
     #--------------------------------------------------------------------
-# known failures:
-# 1. matplotlib.numerix warning:
-#	-%<-
-#	doctest:16: DeprecationWarning: the sets module is deprecated
-#	doctest:18: DeprecationWarning: 
-#	**********************************************************
-#	matplotlib.numerix and all its subpackages are deprecated.
-#	They will be removed soon.  Please use numpy instead.
-#	**********************************************************
-#	<BLANKLINE>
-#	-%<-
-# followed by correct result in 79 files
-
-# 2. package management is done with rpm
-# sage/misc/package.py
-# * could do something like implement 'sage -f' as 'rpm -q --requires sagemath'
-
-# 3. sage 4.1 uses gap 4.4.10 and mandriva package is 4.4.12
-# sage/misc/sage_eval.py
-#	results differ for 'R:=PolynomialRing(Rationals,["x"]);'
-#	gap 4.4.10 returns: 'PolynomialRing(..., [ x ])'
-#	gap 4.4.12 returns: 'Rationals[x]'
-
-# 4. pari 2.3.4 in Mandriva vs pari 2.3.3 in sage 4.1
-# running something like:
-# LD_PRELOAD=/home/pcpa/sage-4.1/local/lib/libpari-gmp.so.2:/home/pcpa/sage-4.1/local/lib/libgmp.so.3.4.4 sage
-# solves the issue
-# 
-
 %if %{with_check}
     %if %{use_sage_pexpect}
 	cp -f $SAGE_ROOT/site-packages/{ANSI,FSM,pexpect,pxssh,screen}.py $PYTHONPATH
