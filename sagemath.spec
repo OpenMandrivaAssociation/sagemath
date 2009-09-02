@@ -675,7 +675,7 @@ popd
 mkdir -p $SAGE_ROOT/examples
 pushd spkg/build/examples-%{version}
     cp -far ajax calculus comm_algebra example.py example.sage finance \
-	fortran gsl latex_embed linalg misc modsym programming \
+	fortran gsl latex_embed linalg modsym programming \
 	test_all tests worksheets \
 	$SAGE_ROOT/examples
 popd
