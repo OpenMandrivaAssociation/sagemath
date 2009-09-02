@@ -36,8 +36,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.1
-Release:	%mkrel 14
+Version:	4.1.1
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -282,21 +282,17 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.1.patch
-Patch1:		sage-4.1-sage_scripts.patch
-Patch2:		sage-4.1-notebook.patch
-Patch3:		sage-4.1-wiki.patch
-Patch4:		sage-4.1-doc.patch
-Patch5:		sage-4.1-dsage.patch
-Patch6:		sage-4.1-python2.6.patch
-Patch7:		sage-4.1-lisp.patch
-Patch8:		sage-4.1-qepcad.patch
-Patch9:		sage-4.1-lie.patch
-Patch10:	sage-4.1-sagedoc.patch
-Patch11:	sage-4.1-list_plot.patch
-# http://trac.sagemath.org/sage_trac/ticket/6542
-# tachyon ouput seems broken in sage-4.1
-Patch100:	trac_6542_tachyon_tostr.2.patch
+Patch0:		sage-4.1.1.patch
+Patch1:		sage-4.1.1-sage_scripts.patch
+Patch2:		sage-4.1.1-notebook.patch
+Patch3:		sage-4.1.1-wiki.patch
+Patch4:		sage-4.1.1-dsage.patch
+Patch5:		sage-4.1.1-python2.6.patch
+Patch6:		sage-4.1.1-lisp.patch
+Patch7:		sage-4.1.1-qepcad.patch
+Patch8:		sage-4.1.1-lie.patch
+Patch9:		sage-4.1.1-sagedoc.patch
+Patch10:	sage-4.1.1-list_plot.patch
 
 #------------------------------------------------------------------------
 %description
@@ -326,7 +322,7 @@ pushd spkg
 		rubiks-20070912.p9		\
 		sage-%{version}			\
 		sage_scripts-%{version}		\
-		tinyMCE-3.2.0.2.p0		\
+		tinyMCE-3.2.4.1			\
     ; do
 	tar jxf standard/$pkg.spkg -C build
     done
@@ -349,18 +345,12 @@ popd
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
-
-pushd spkg/build/sage-%{version}
-%patch100 -p1
-popd
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -656,7 +646,7 @@ pushd spkg/build/jsmath-3.6b.p1
     cp -far src/msbm10 $SAGE_LOCAL/notebook/javascript/jsmath/fonts
 popd
 
-pushd spkg/build/tinyMCE-3.2.0.2.p0
+pushd spkg/build/tinyMCE-3.2.4.1
     cp -far src/tinymce/jscripts/tiny_mce $SAGE_LOCAL/notebook/javascript
 popd
 
