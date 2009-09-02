@@ -6,7 +6,7 @@
 
 # for now, instead of adding a % check and patching some files, do it
 # under this condition so that it can be done after building documentation
-%define		with_check		1
+%define		with_check		0
 # seconds - default is 60 * 6 - 6 minutes
 %define		SAGE_TIMEOUT		60
 # default is 30 * 60 - 30 minutes
@@ -49,6 +49,7 @@ BuildRequires:	axiom
 %endif
 
 BuildRequires:	boost-devel
+BuildRequires:	cliquer-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
 
@@ -181,6 +182,7 @@ BuildRequires:	zn_poly-static-devel
 #------------------------------------------------------------------------
 Requires:	axiom
 Requires:	bzip2
+Requires:	cliquer-devel
 Requires:	clisp
 Requires:	eclib-mwrank
 Requires:	ecm
@@ -293,6 +295,9 @@ Patch7:		sage-4.1.1-qepcad.patch
 Patch8:		sage-4.1.1-lie.patch
 Patch9:		sage-4.1.1-sagedoc.patch
 Patch10:	sage-4.1.1-list_plot.patch
+# This patch reverts to sage-4.1 behavior, that works with system's
+# cython-0.11.2, while sage patched it to use its spkg cython-0.11.1
+Patch11:	sage-4.1.1-revert-trac-4571.patch
 
 #------------------------------------------------------------------------
 %description
@@ -467,6 +472,7 @@ popd
 
 # make jsMath available to moin
 mkdir -p %{buildroot}%{_datadir}/moin/htdocs
+rm -f %{buildroot}%{_datadir}/moin/htdocs/jsmath
 ln -sf %{_datadir}/sage/local/notebook/javascript/jsmath %{buildroot}%{_datadir}/moin/htdocs/jsmath
 
 #------------------------------------------------------------------------
