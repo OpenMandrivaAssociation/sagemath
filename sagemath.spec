@@ -406,6 +406,8 @@ pushd spkg/build/sage-%{version}
     pushd c_lib
 	scons
     popd
+    # ensure proper/preferred libatlas is in linker path
+    perl -pi -e 's|^(extra_link_args = ).*|$1\["-L%{_libdir}/atlas"\]|;' sage/misc/cython.py
     # some .c files are not (re)generated
     find . \( -name \*.pyx -o -name \*.pxd \) -exec touch {} \;
     python ./setup.py build
