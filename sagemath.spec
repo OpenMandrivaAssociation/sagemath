@@ -32,7 +32,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -623,7 +623,7 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 
 export CUR=\`pwd\`
 ##export DOT_SAGE="\$HOME/.sage/"
-mkdir -p \$DOT_SAGE/{dsage,tmp}
+mkdir -p \$DOT_SAGE/{dsage,tmp,sympow}
 export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
@@ -638,6 +638,7 @@ export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
+export SYMPOW_DIR="\$DOT_SAGE/sympow"
 export LD_PRELOAD=%{_libdir}/libntl.so:\$LD_PRELOAD
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
