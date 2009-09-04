@@ -105,7 +105,7 @@ BuildRequires:	palp
 %endif
 
 BuildRequires:	png-devel
-BuildRequires:	polybori-static-devel
+BuildRequires:	polybori-devel
 
 %if %{with_check}
 BuildRequires:	polymake
