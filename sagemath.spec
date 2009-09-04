@@ -106,6 +106,7 @@ BuildRequires:	palp
 
 BuildRequires:	png-devel
 BuildRequires:	polybori-devel
+BuildConflicts:	polybori-static-devel
 
 %if %{with_check}
 BuildRequires:	polymake
