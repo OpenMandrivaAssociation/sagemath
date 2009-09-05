@@ -194,6 +194,9 @@ Requires:	gfan
 Requires:	gp2c pari pari-data libpari-devel
 Requires:	ipython
 Requires:	jmol
+
+Suggests:	kant-kash
+
 Requires:	lcalc
 
 Requires:	libatlas
@@ -582,6 +585,7 @@ popd
 pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_DATA/extcode
     cp -far			\
+	kash			\
 	QEPCAD			\
 	gap			\
 	genus2reduction		\
