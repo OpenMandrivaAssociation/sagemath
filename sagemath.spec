@@ -195,7 +195,9 @@ Requires:	gp2c pari pari-data libpari-devel
 Requires:	ipython
 Requires:	jmol
 
+%ifarch %{ix86}
 Suggests:	kant-kash
+%endif
 
 Requires:	lcalc
 
