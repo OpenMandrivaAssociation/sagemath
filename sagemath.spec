@@ -1,8 +1,5 @@
-#%#define		with_debug		%{nil}
-%define		with_debug		1
-
-%define		_enable_debug_packages	%{with_debug}
-%define		debug_package		%{with_debug}
+#%#define		_enable_debug_packages	%{nil}
+#%#define		debug_package		%{nil}
 
 # Correct breakage of liblinbox.so and liblinboxsage.so
 %define		_disable_ld_as_needed	1
