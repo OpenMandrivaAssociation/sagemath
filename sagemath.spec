@@ -87,6 +87,7 @@ BuildRequires:	lcalc
 
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
+BuildRequires:	libm4ri
 BuildRequires:	libm4ri-devel
 BuildConflicts:	libm4ri-static-devel
 BuildRequires:	libpari-devel
