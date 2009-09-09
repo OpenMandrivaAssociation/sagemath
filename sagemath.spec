@@ -88,6 +88,7 @@ BuildRequires:	lcalc
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
 BuildRequires:	libm4ri-devel
+BuildConflicts:	libm4ri-static-devel
 BuildRequires:	libpari-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	linalg-linbox-devel
@@ -97,6 +98,7 @@ BuildRequires:	maxima-runtime-clisp
 %endif
 
 BuildRequires:	mpfi-devel
+BuildConflicts:	mpfi-static-devel
 BuildRequires:	ntl-devel >= 5.5.2-%{mkrel 2}
 
 %if %{with_check}
@@ -168,7 +170,7 @@ BuildRequires:	R-base
 BuildRequires:	readline-devel
 BuildRequires:	scons
 BuildRequires:	singular-devel
-BuildRequires:	singular-static-devel
+BuildConflicts:	singular-static-devel
 BuildRequires:	symmetrica-static-devel
 
 %if %{with_check}
@@ -205,12 +207,12 @@ Requires:	libatlas
 Requires:	libblas
 
 # FIXME .a and .so files (this is also a sage specific library)
-Requires:	libm4ri-devel
+Requires:	libm4ri
 
 # FIXME unversioned .so
 Requires:	libeclib-devel
 
-Requires:	mpfi-devel
+Requires:	libmpfi
 Requires:	libopencdk
 
 # currently in non-free due to lack of license information
