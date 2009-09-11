@@ -32,7 +32,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -91,6 +91,7 @@ BuildRequires:	libxml2-devel
 BuildRequires:	linalg-linbox-devel
 
 %if %{with_check}
+BuildRequires:	macaulay2
 BuildRequires:	maxima-runtime-clisp
 %endif
 
@@ -216,6 +217,9 @@ Requires:	libopencdk
 Suggests:	lie
 
 Requires:	linalg-linbox
+
+Requires:	macaulay2
+
 Requires:	maxima xmaxima
 
 # Requires:	mercurial
@@ -591,6 +595,7 @@ pushd spkg/build/extcode-%{version}
 	gap			\
 	genus2reduction		\
 	images			\
+	macaulay2		\
 	magma			\
 	maxima			\
 	mwrank			\
