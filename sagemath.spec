@@ -71,7 +71,7 @@ BuildRequires:	gfan
 BuildRequires:	ghmm-devel
 
 %if %{with_check}
-BuildRequires:	gp2c pari pari-data libpari-devel
+BuildRequires:	gp2c pari pari-data
 %endif
 
 BuildRequires:	gsl-devel
@@ -91,7 +91,9 @@ BuildRequires:	libxml2-devel
 BuildRequires:	linalg-linbox-devel
 
 %if %{with_check}
+  %ifarch %{ix86}
 BuildRequires:	macaulay2
+  %endif
 BuildRequires:	maxima-runtime-clisp
 %endif
 
@@ -218,7 +220,9 @@ Suggests:	lie
 
 Requires:	linalg-linbox
 
+%ifarch %{ix86}
 Requires:	macaulay2
+%endif
 
 Requires:	maxima xmaxima
 
