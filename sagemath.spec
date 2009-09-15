@@ -310,6 +310,10 @@ Patch10:	sage-4.1.1-list_plot.patch
 # cython-0.11.2, while sage patched it to use its spkg cython-0.11.1
 Patch11:	sage-4.1.1-revert-trac-4571.patch
 
+# doctest corrections for newer maxima
+# http://trac.sagemath.org/sage_trac/attachment/ticket/6699/maxima_doctests.patch
+Patch100:	maxima_doctests.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -368,6 +372,10 @@ popd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+
+pushd spkg/build/sage-%{version}
+%patch100 -p1
+popd
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -738,6 +746,10 @@ pushd spkg/build/sage-%{version}/doc
     export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
     export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
     export PYTHONPATH=%{buildroot}%{py_platsitedir}
+
+    # need this or python may also crash
+    export LD_PRELOAD=%{_libdir}/libntl.so:%{_libdir}/libpolybori.so:\$LD_PRELOAD
+
     # there we go
     python common/builder.py all html
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
