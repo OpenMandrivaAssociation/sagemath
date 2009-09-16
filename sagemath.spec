@@ -94,7 +94,7 @@ BuildRequires:	linalg-linbox-devel
   %ifarch %{ix86}
 BuildRequires:	macaulay2
   %endif
-BuildRequires:	maxima-runtime-clisp
+BuildRequires:	maxima-runtime-clisp >= 5.19.2
 %endif
 
 BuildRequires:	mpfi-devel
@@ -224,7 +224,8 @@ Requires:	linalg-linbox
 Requires:	macaulay2
 %endif
 
-Requires:	maxima xmaxima
+Requires:	maxima >= 5.19.2
+Requires:	xmaxima
 
 # Requires:	mercurial
 
