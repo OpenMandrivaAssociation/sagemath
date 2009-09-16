@@ -141,6 +141,11 @@ BuildRequires:	python-polybori
 %endif
 
 BuildRequires:	python-processing
+
+%if %{with_check}
+BuildRequires:	python-rpy python-rpy2
+%endif
+
 BuildRequires:	python-setuptools
 BuildRequires:	python-scipy
 BuildRequires:	python-sphinx
@@ -260,6 +265,8 @@ Requires:	python-polybori
 Requires:	python-processing
 Requires:	python-pycrypto
 Requires:	python-pygments
+
+BuildRequires:	python-rpy python-rpy2
 
 # scipy should also provide the weave (http://www.scipy.org/Weave) dependency
 Requires:	python-scipy
