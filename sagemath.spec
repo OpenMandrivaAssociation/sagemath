@@ -1,5 +1,5 @@
-#%#define		_enable_debug_packages	%{nil}
-#%#define		debug_package		%{nil}
+%define		_enable_debug_packages	%{nil}
+%define		debug_package		%{nil}
 
 # Correct breakage of liblinbox.so and liblinboxsage.so
 %define		_disable_ld_as_needed	1
@@ -94,7 +94,7 @@ BuildRequires:	linalg-linbox-devel
   %ifarch %{ix86}
 BuildRequires:	macaulay2
   %endif
-BuildRequires:	maxima-runtime-clisp >= 5.19.2
+BuildRequires:	maxima-runtime-clisp >= 5.19.1
 %endif
 
 BuildRequires:	mpfi-devel
@@ -229,7 +229,7 @@ Requires:	linalg-linbox
 Requires:	macaulay2
 %endif
 
-Requires:	maxima >= 5.19.2
+Requires:	maxima >= 5.19.1
 Requires:	xmaxima
 
 # Requires:	mercurial
