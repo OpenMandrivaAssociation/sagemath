@@ -317,6 +317,7 @@ Patch10:	sage-4.1.1-list_plot.patch
 # This patch reverts to sage-4.1 behavior, that works with system's
 # cython-0.11.2, while sage patched it to use its spkg cython-0.11.1
 Patch11:	sage-4.1.1-revert-trac-4571.patch
+Patch12:	sage-4.1.1-mpmath.patch
 
 # doctest corrections for newer maxima
 # http://trac.sagemath.org/sage_trac/attachment/ticket/6699/maxima_doctests.patch
@@ -387,6 +388,7 @@ popd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
