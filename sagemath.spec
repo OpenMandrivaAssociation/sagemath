@@ -32,7 +32,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1.1
-Release:	%mkrel 4
+Release:	%mkrel 5
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -44,6 +44,11 @@ BuildRequires:	axiom
 %endif
 
 BuildRequires:	boost-devel
+
+%if %{with_check}
+BuildRequires:	cddlib-devel
+%endif
+
 BuildRequires:	cliquer-devel
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
@@ -188,6 +193,7 @@ BuildRequires:	zn_poly-static-devel
 #------------------------------------------------------------------------
 Requires:	axiom
 Requires:	bzip2
+Requires:	cddlib-devel
 Requires:	cliquer-devel
 Requires:	clisp
 Requires:	eclib-mwrank
@@ -676,7 +682,7 @@ export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
 export SAGE_DATA="$SAGE_DATA"
 ##export SAGE_DOC="$SAGE_DOC"
-export PATH=$SAGE_LOCAL/bin:\$PATH
+export PATH=$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
 export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
 %if %{use_sage_pexpect}
@@ -762,7 +768,7 @@ pushd spkg/build/sage-%{version}/doc
 
     mkdir -p $DOT_SAGE/{dsage,tmp}
     export SAGE_DOC=`pwd`
-    export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:$PATH
+    export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
     export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
     export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
