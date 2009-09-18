@@ -33,7 +33,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1.1
-Release:	%mkrel 5
+Release:	%mkrel 6
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -631,22 +631,28 @@ popd
 pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_DATA/extcode
     cp -far			\
-	kash			\
-	QEPCAD			\
 	gap			\
 	genus2reduction		\
+	gnuplot			\
 	images			\
+	kash			\
 	macaulay2		\
 	magma			\
+	maple			\
+	matlab			\
+	mathematica		\
 	maxima			\
+	MuPAD			\
 	mwrank			\
 	notebook		\
 	octave			\
 	pari			\
 	pickle_jar		\
+	QEPCAD			\
 	sagebuild		\
 	scilab			\
 	singular		\
+	sobj			\
 	$SAGE_DATA/extcode
     mkdir -p $SAGE_LOCAL/java
     pushd $SAGE_LOCAL/java
