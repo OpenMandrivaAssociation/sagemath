@@ -1,5 +1,6 @@
-%define		_enable_debug_packages	%{nil}
-%define		debug_package		%{nil}
+# uncomment to DISABLE build of debug packages
+#%#define		_enable_debug_packages	%{nil}
+#%#define		debug_package		%{nil}
 
 # Correct breakage of liblinbox.so and liblinboxsage.so
 %define		_disable_ld_as_needed	1
@@ -131,6 +132,7 @@ BuildRequires:	python-jinja
 
 %if %{with_check}
 BuildRequires:	python-matplotlib
+BuildRequires:	python-mpmath
   %if !%{use_sage_networkx}
 BuildRequires:	python-networkx
   %endif
@@ -261,6 +263,7 @@ Requires:	python-networkx
 %endif
 
 Requires:	python-matplotlib
+Requires:	python-mpmath
 Requires:	python-numpy
 
 %if !%{use_sage_pexpect}
@@ -323,7 +326,6 @@ Patch10:	sage-4.1.1-list_plot.patch
 # This patch reverts to sage-4.1 behavior, that works with system's
 # cython-0.11.2, while sage patched it to use its spkg cython-0.11.1
 Patch11:	sage-4.1.1-revert-trac-4571.patch
-Patch12:	sage-4.1.1-mpmath.patch
 
 # doctest corrections for newer maxima
 # http://trac.sagemath.org/sage_trac/attachment/ticket/6699/maxima_doctests.patch
@@ -394,7 +396,6 @@ popd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
