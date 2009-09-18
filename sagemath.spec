@@ -243,10 +243,11 @@ Requires:	xmaxima
 # Requires:	mercurial
 
 Requires:	moin
-Requires:	ntl >= 5.5.2-%{mkrel 2}
+Requires:	ntl-devel >= 5.5.2-%{mkrel 2}
 Requires:	octave
 Requires:	palp
 Requires:	perl
+Requires:	polybori-devel
 Requires:	polymake
 Requires:	povray
 Requires:	pynac-devel
