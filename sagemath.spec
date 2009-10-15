@@ -33,7 +33,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.1.1
-Release:	%mkrel 6
+Release:	%mkrel 7
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -332,12 +332,16 @@ Patch11:	sage-4.1.1-revert-trac-4571.patch
 # http://trac.sagemath.org/sage_trac/attachment/ticket/6699/maxima_doctests.patch
 Patch100:	maxima_doctests.patch
 
+# http://trac.sagemath.org/sage_trac/ticket/7023
+# [with spkg, patch; needs review] Upgrade to Cython 0.11.3
+Patch101:	7023-cython-0.11.3.patch
+
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch101:	sage-4.1.1-networkx.patch
+Patch102:	sage-4.1.1-networkx.patch
 
 #------------------------------------------------------------------------
 %description
@@ -400,10 +404,11 @@ popd
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
+%patch101 -p1
 popd
 
 %if %{use_sage_networkx}
-%patch101 -p1
+%patch102 -p1
 %endif
 
 # if executing prep, clean buildroot
