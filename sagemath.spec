@@ -508,8 +508,9 @@ export DESTDIR=%{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p $SAGE_PYTHONPATH
-rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share}
-mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage $SAGE_LOCAL/notebook/javascript
+rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share,notebook}
+mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage
+ln -sf %{SAGE_DATA}/extcode/notebook $SAGE_LOCAL/notebook
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
@@ -548,6 +549,13 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/sagenb-0.4/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
+    # FIXME needs more then just path adjusting
+    rm -f %{buildroot}%{_bindir}/sage3d
+    # remove duplicated jmol (that only works with sage)
+    rm -f %{buildroot}%{_bindir}/jmol
+    rm -fr %{buildroot}%{py_platsitedir}/sagenb/data/jmol
+    # and use system one
+    ln -sf %{datadir}/jmol %{py_platsitedir}/sagenb/data/jmol
 popd
 
 #------------------------------------------------------------------------
@@ -666,10 +674,6 @@ pushd spkg/build/extcode-%{version}
 	singular		\
 	sobj			\
 	$SAGE_DATA/extcode
-    mkdir -p $SAGE_LOCAL/java
-    pushd $SAGE_LOCAL/java
-	rm -f jmol && ln -sf %{_datadir}/jmol jmol
-    popd
 popd
 
 #------------------------------------------------------------------------
@@ -696,6 +700,7 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 
 export CUR=\`pwd\`
 ##export DOT_SAGE="\$HOME/.sage/"
+export DOT_SAGENB="\$DOT_SAGE"
 mkdir -p \$DOT_SAGE/{dsage,tmp,sympow}
 export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
