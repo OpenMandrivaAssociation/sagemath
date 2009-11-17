@@ -32,8 +32,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.1.1
-Release:	%mkrel 8
+Version:	4.2
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -97,10 +97,8 @@ BuildRequires:	libxml2-devel
 BuildRequires:	linalg-linbox-devel
 
 %if %{with_check}
-  %ifarch %{ix86}
 BuildRequires:	macaulay2
-  %endif
-BuildRequires:	maxima-runtime-clisp >= 5.19.1
+BuildRequires:	maxima-runtime >= 5.19.1
 %endif
 
 BuildRequires:	mpfi-devel
@@ -113,6 +111,7 @@ BuildRequires:	palp
 %endif
 
 BuildRequires:	png-devel
+BuildRequires:	polybori
 BuildRequires:	polybori-devel
 BuildConflicts:	polybori-static-devel
 
@@ -197,7 +196,7 @@ Requires:	axiom
 Requires:	bzip2
 Requires:	cddlib-devel
 Requires:	cliquer-devel
-Requires:	clisp
+Requires:	ecl
 Requires:	eclib-mwrank
 Requires:	ecm
 Requires:	flint
@@ -247,6 +246,7 @@ Requires:	ntl-devel >= 5.5.2-%{mkrel 2}
 Requires:	octave
 Requires:	palp
 Requires:	perl
+Requires:	polybori
 Requires:	polybori-devel
 Requires:	polymake
 Requires:	povray
@@ -313,36 +313,32 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.1.1.patch
-Patch1:		sage-4.1.1-sage_scripts.patch
-Patch2:		sage-4.1.1-notebook.patch
-Patch3:		sage-4.1.1-wiki.patch
-Patch4:		sage-4.1.1-dsage.patch
-Patch5:		sage-4.1.1-python2.6.patch
-Patch6:		sage-4.1.1-lisp.patch
-Patch7:		sage-4.1.1-qepcad.patch
-Patch8:		sage-4.1.1-lie.patch
-Patch9:		sage-4.1.1-sagedoc.patch
-Patch10:	sage-4.1.1-list_plot.patch
-# This patch reverts to sage-4.1 behavior, that works with system's
-# cython-0.11.2, while sage patched it to use its spkg cython-0.11.1
-Patch11:	sage-4.1.1-revert-trac-4571.patch
-Patch12:	sage-4.1.1-jmol-signed-jars.patch
-
-# doctest corrections for newer maxima
-# http://trac.sagemath.org/sage_trac/attachment/ticket/6699/maxima_doctests.patch
-Patch100:	maxima_doctests.patch
+Patch0:		sage-4.2.patch
+Patch1:		sage-4.2-sage_scripts.patch
+Patch2:		sage-4.2-notebook.patch
+Patch3:		sage-4.2-wiki.patch
+Patch4:		sage-4.2-dsage.patch
+Patch5:		sage-4.2-python2.6.patch
+Patch7:		sage-4.2-qepcad.patch
+Patch8:		sage-4.2-lie.patch
+Patch9:		sage-4.2-sagedoc.patch
+Patch10:	sage-4.2-list_plot.patch
+Patch11:	sage-4.2-jmol-signed-jars.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/7023
 # [with spkg, patch; needs review] Upgrade to Cython 0.11.3
-Patch101:	7023-cython-0.11.3.patch
+Patch100:	7023-cython-0.11.3.patch
+
+# setup.py change removed as still using 0.11.3
+# http://trac.sagemath.org/sage_trac/attachment/ticket/7272/7272-cython-0.12.patch
+Patch101:	7272-cython-0.12.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch102:	sage-4.1.1-networkx.patch
+Patch102:	sage-4.2-networkx.patch
 
 #------------------------------------------------------------------------
 %description
@@ -365,14 +361,11 @@ pushd spkg
 		flintqs-20070817.p4		\
 		genus2reduction-0.3.p5		\
 		graphs-20070722			\
-		jquery-1.2.6.p0			\
-		jqueryui-1.6r807svn.p0		\
-		jsmath-3.6b.p1			\
 		polytopes_db-20080430		\
 		rubiks-20070912.p9		\
 		sage-%{version}			\
+		sagenb-0.4			\
 		sage_scripts-%{version}		\
-		tinyMCE-3.2.4.1			\
     ; do
 	tar jxf standard/$pkg.spkg -C build
     done
@@ -383,7 +376,7 @@ pushd spkg
 %endif
 
 %if %{use_sage_networkx}
-    tar jxf standard/networkx-0.99.p1-fake_really-0.36.p0.spkg -C build
+    tar jxf standard/networkx-0.99.p1-fake_really-0.36.p1.spkg -C build
 %endif
 
 %if %{use_sage_sqlalchemy}
@@ -395,14 +388,13 @@ popd
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %patch5 -p1
-%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
@@ -470,6 +462,11 @@ pushd spkg/build/sage-%{version}
     perl -pi -e 's|^(extra_link_args = ).*|$1\["-L%{_libdir}/atlas"\]|;' sage/misc/cython.py
     # some .c files are not (re)generated
     find . \( -name \*.pyx -o -name \*.pxd \) -exec touch {} \;
+    python ./setup.py build
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/sagenb-0.4/src
     python ./setup.py build
 popd
 
@@ -546,6 +543,12 @@ pushd spkg/build/sage-%{version}
     cp -far doc/{common,en,fr} $SAGE_DOC
 popd
 
+#------------------------------------------------------------------------
+pushd spkg/build/sagenb-0.4/src
+    python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
+popd
+
+#------------------------------------------------------------------------
 pushd spkg/build/dsage-1.0.1.p0/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
 popd
@@ -559,7 +562,7 @@ popd
 
 #------------------------------------------------------------------------
 %if %{use_sage_networkx}
-pushd spkg/build/networkx-0.99.p1-fake_really-0.36.p0/src
+pushd spkg/build/networkx-0.99.p1-fake_really-0.36.p1/src
     rm -fr $SAGE_PYTHONPATH/networkx*
     rm -fr %{buildroot}%{py_platsitedir}/networkx*
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
@@ -696,6 +699,7 @@ export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
 export SAGE_DATA="$SAGE_DATA"
+export SAGE_DEVEL="$SAGE_DEVEL"
 ##export SAGE_DOC="$SAGE_DOC"
 export PATH=$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
@@ -863,8 +867,10 @@ rm -f %{buildroot}%{py_platsitedir}/site-packages
 %files
 %defattr(-,root,root)
 %dir %{py_platsitedir}/sage
+%dir %{py_platsitedir}/sagenb
 %dir %{py_platsitedir}/dsage
 %{py_platsitedir}/sage/*
+%{py_platsitedir}/sagenb/*
 %{py_platsitedir}/dsage/*
 %{py_platsitedir}/*.egg-info
 # MoinMoin extra files
