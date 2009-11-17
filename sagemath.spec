@@ -324,6 +324,7 @@ Patch8:		sage-4.2-lie.patch
 Patch9:		sage-4.2-sagedoc.patch
 Patch10:	sage-4.2-list_plot.patch
 Patch11:	sage-4.2-jmol-signed-jars.patch
+Patch12:	sage-4.2-sagenb.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/7023
 # [with spkg, patch; needs review] Upgrade to Cython 0.11.3
@@ -395,6 +396,7 @@ popd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
@@ -711,36 +713,11 @@ export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
 export SYMPOW_DIR="\$DOT_SAGE/sympow"
-export LD_PRELOAD=%{_libdir}/libntl.so:%{_libdir}/libpolybori.so:\$LD_PRELOAD
+# export LD_PRELOAD=%{_libdir}/libntl.so:%{_libdir}/libpolybori.so:\$LD_PRELOAD
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
 chmod +x %{buildroot}%{_bindir}/sage
-
-#------------------------------------------------------------------------
-pushd spkg/build/jsmath-3.6b.p1
-    cp -far src/jsmath $SAGE_LOCAL/notebook/javascript
-    mkdir -p $SAGE_LOCAL/notebook/javascript/jsmath/fonts
-    cp -far src/msbm10 $SAGE_LOCAL/notebook/javascript/jsmath/fonts
-popd
-
-pushd spkg/build/tinyMCE-3.2.4.1
-    cp -far src/tinymce/jscripts/tiny_mce $SAGE_LOCAL/notebook/javascript
-popd
-
-pushd spkg/build/jquery-1.2.6.p0
-    cp -f patches/jquery.event.extendedclick.js src/jquery-plugins
-    cp -far src/jquery $SAGE_LOCAL/notebook/javascript
-    mkdir -p $SAGE_LOCAL/notebook/javascript/jquery/plugins
-    cp -far src/jquery-plugins/* $SAGE_LOCAL/notebook/javascript/jquery/plugins
-popd
-
-pushd spkg/build/jqueryui-1.6r807svn.p0
-    cp -far patches/sage patches/flora src/themes
-    mkdir -p $SAGE_LOCAL/notebook/javascript/jqueryui
-    cp -far src/*LICENSE.txt src/themes src/ui/minified/* \
-	$SAGE_LOCAL/notebook/javascript/jqueryui
-popd
 
 #------------------------------------------------------------------------
 mkdir -p $SAGE_ROOT/examples
@@ -794,7 +771,7 @@ pushd spkg/build/sage-%{version}/doc
     export PYTHONPATH=%{buildroot}%{py_platsitedir}
 
     # need this or python may also crash
-    export LD_PRELOAD=%{_libdir}/libntl.so:%{_libdir}/libpolybori.so:$LD_PRELOAD
+    # export LD_PRELOAD=%{_libdir}/libntl.so:%{_libdir}/libpolybori.so:$LD_PRELOAD
 
     # there we go
     python common/builder.py all html
