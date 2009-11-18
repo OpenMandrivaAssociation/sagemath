@@ -555,7 +555,7 @@ pushd spkg/build/sagenb-0.4/src
     rm -f %{buildroot}%{_bindir}/jmol
     rm -fr %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     # and use system one
-    ln -sf %{datadir}/jmol %{py_platsitedir}/sagenb/data/jmol
+    ln -sf %{_datadir}/jmol %{buildroot}%{py_platsitedir}/sagenb/data/jmol
 popd
 
 #------------------------------------------------------------------------
