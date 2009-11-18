@@ -33,7 +33,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.2
-Release:	%mkrel 2
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -98,12 +98,12 @@ BuildRequires:	linalg-linbox-devel
 
 %if %{with_check}
 BuildRequires:	macaulay2
-BuildRequires:	maxima-runtime >= 5.19.1
+BuildRequires:	maxima-runtime
 %endif
 
 BuildRequires:	mpfi-devel
 BuildConflicts:	mpfi-static-devel
-BuildRequires:	ntl-devel >= 5.5.2-%{mkrel 2}
+BuildRequires:	ntl-devel
 
 %if %{with_check}
 BuildRequires:	octave
@@ -180,6 +180,7 @@ BuildRequires:	R-base
 
 BuildRequires:	readline-devel
 BuildRequires:	scons
+BuildRequires:	singular
 BuildRequires:	singular-devel
 BuildConflicts:	singular-static-devel
 BuildRequires:	symmetrica-static-devel
@@ -236,13 +237,13 @@ Requires:	linalg-linbox
 Requires:	macaulay2
 %endif
 
-Requires:	maxima >= 5.19.1
+Requires:	maxima
 Requires:	xmaxima
 
 # Requires:	mercurial
 
 Requires:	moin
-Requires:	ntl-devel >= 5.5.2-%{mkrel 2}
+Requires:	ntl-devel
 Requires:	octave
 Requires:	palp
 Requires:	perl
