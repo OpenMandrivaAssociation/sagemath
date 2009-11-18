@@ -323,8 +323,7 @@ Patch7:		sage-4.2-qepcad.patch
 Patch8:		sage-4.2-lie.patch
 Patch9:		sage-4.2-sagedoc.patch
 Patch10:	sage-4.2-list_plot.patch
-Patch11:	sage-4.2-jmol-signed-jars.patch
-Patch12:	sage-4.2-sagenb.patch
+Patch11:	sage-4.2-sagenb.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/7023
 # [with spkg, patch; needs review] Upgrade to Cython 0.11.3
@@ -396,7 +395,6 @@ popd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 
 pushd spkg/build/sage-%{version}
 %patch100 -p1
