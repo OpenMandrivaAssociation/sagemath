@@ -33,7 +33,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.2
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -509,7 +509,6 @@ mkdir -p %{buildroot}%{_libdir}
 mkdir -p $SAGE_PYTHONPATH
 rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share,notebook}
 mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage
-ln -sf %{SAGE_DATA}/extcode/notebook $SAGE_LOCAL/notebook
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
@@ -530,7 +529,7 @@ popd
 # make jsMath available to moin
 mkdir -p %{buildroot}%{_datadir}/moin/htdocs
 rm -f %{buildroot}%{_datadir}/moin/htdocs/jsmath
-ln -sf %{_datadir}/sage/local/notebook/javascript/jsmath %{buildroot}%{_datadir}/moin/htdocs/jsmath
+ln -sf %{SAGE_DATA}/extcode/notebook/javascript/jsmath %{buildroot}%{_datadir}/moin/htdocs/jsmath
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
