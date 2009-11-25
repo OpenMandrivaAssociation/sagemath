@@ -32,8 +32,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.2
-Release:	%mkrel 2
+Version:	4.2.1
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -322,7 +322,7 @@ Patch4:		sage-4.2-dsage.patch
 Patch5:		sage-4.2-python2.6.patch
 Patch7:		sage-4.2-qepcad.patch
 Patch8:		sage-4.2-lie.patch
-Patch9:		sage-4.2-sagedoc.patch
+Patch9:		sage-4.2.1-sagedoc.patch
 Patch10:	sage-4.2-list_plot.patch
 Patch11:	sage-4.2-sagenb.patch
 
@@ -365,7 +365,7 @@ pushd spkg
 		polytopes_db-20080430		\
 		rubiks-20070912.p9		\
 		sage-%{version}			\
-		sagenb-0.4			\
+		sagenb-0.4.3			\
 		sage_scripts-%{version}		\
     ; do
 	tar jxf standard/$pkg.spkg -C build
@@ -467,7 +467,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.4/src
+pushd spkg/build/sagenb-0.4.3/src
     python ./setup.py build
 popd
 
@@ -545,7 +545,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.4/src
+pushd spkg/build/sagenb-0.4.3/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
     rm -f %{buildroot}%{_bindir}/sage3d
@@ -716,7 +716,6 @@ export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
 export SYMPOW_DIR="\$DOT_SAGE/sympow"
-# export LD_PRELOAD=%{_libdir}/libntl.so:%{_libdir}/libpolybori.so:\$LD_PRELOAD
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
@@ -772,9 +771,6 @@ pushd spkg/build/sage-%{version}/doc
     export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
     export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
     export PYTHONPATH=%{buildroot}%{py_platsitedir}
-
-    # need this or python may also crash
-    # export LD_PRELOAD=%{_libdir}/libntl.so:%{_libdir}/libpolybori.so:$LD_PRELOAD
 
     # there we go
     python common/builder.py all html
