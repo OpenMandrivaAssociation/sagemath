@@ -330,7 +330,6 @@ Patch11:	sage-4.2-sagenb.patch
 # [with spkg, patch; needs review] Upgrade to Cython 0.11.3
 Patch100:	7023-cython-0.11.3.patch
 
-# setup.py change removed as still using 0.11.3
 # http://trac.sagemath.org/sage_trac/attachment/ticket/7272/7272-cython-0.12.patch
 Patch101:	7272-cython-0.12.patch
 
@@ -508,7 +507,7 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p $SAGE_PYTHONPATH
 rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share,notebook}
-mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_DEVEL/sage
+mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_LOCAL $SAGE_DEVEL/sage
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
