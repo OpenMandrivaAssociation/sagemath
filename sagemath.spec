@@ -32,8 +32,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.2.1
-Release:	%mkrel 2
+Version:	4.3
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -315,31 +315,24 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.2.patch
-Patch1:		sage-4.2-sage_scripts.patch
-Patch2:		sage-4.2-notebook.patch
-Patch3:		sage-4.2-wiki.patch
-Patch4:		sage-4.2-dsage.patch
-Patch5:		sage-4.2-python2.6.patch
-Patch7:		sage-4.2-qepcad.patch
-Patch8:		sage-4.2-lie.patch
-Patch9:		sage-4.2.1-sagedoc.patch
-Patch10:	sage-4.2-list_plot.patch
-Patch11:	sage-4.2-sagenb.patch
-
-# http://trac.sagemath.org/sage_trac/ticket/7023
-# [with spkg, patch; needs review] Upgrade to Cython 0.11.3
-Patch100:	7023-cython-0.11.3.patch
-
-# http://trac.sagemath.org/sage_trac/attachment/ticket/7272/7272-cython-0.12.patch
-Patch101:	7272-cython-0.12.patch
+Patch0:		sage-4.3.patch
+Patch1:		sage-4.3-sage_scripts.patch
+Patch2:		sage-4.3-notebook.patch
+Patch3:		sage-4.3-wiki.patch
+Patch4:		sage-4.3-dsage.patch
+Patch5:		sage-4.3-python2.6.patch
+Patch6:		sage-4.3-qepcad.patch
+Patch7:		sage-4.3-lie.patch
+Patch8:		sage-4.3-sagedoc.patch
+Patch9:		sage-4.3-list_plot.patch
+Patch10:	sage-4.3-sagenb.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch102:	sage-4.2-networkx.patch
+Patch100:	sage-4.3-networkx.patch
 
 #------------------------------------------------------------------------
 %description
@@ -361,11 +354,11 @@ pushd spkg
 		extcode-%{version}		\
 		flintqs-20070817.p4		\
 		genus2reduction-0.3.p5		\
-		graphs-20070722			\
+		graphs-20070722.p1		\
 		polytopes_db-20080430		\
-		rubiks-20070912.p9		\
+		rubiks-20070912.p10		\
 		sage-%{version}			\
-		sagenb-0.4.3			\
+		sagenb-0.4.8			\
 		sage_scripts-%{version}		\
     ; do
 	tar jxf standard/$pkg.spkg -C build
@@ -391,19 +384,14 @@ popd
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
-
-pushd spkg/build/sage-%{version}
-%patch100 -p1
-%patch101 -p1
-popd
 
 %if %{use_sage_networkx}
-%patch102 -p1
+%patch100 -p1
 %endif
 
 # if executing prep, clean buildroot
@@ -467,7 +455,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.4.3/src
+pushd spkg/build/sagenb-0.4.8/src
     python ./setup.py build
 popd
 
@@ -545,7 +533,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.4.3/src
+pushd spkg/build/sagenb-0.4.8/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
     rm -f %{buildroot}%{_bindir}/sage3d
