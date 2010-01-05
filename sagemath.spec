@@ -326,6 +326,7 @@ Patch7:		sage-4.3-lie.patch
 Patch8:		sage-4.3-sagedoc.patch
 Patch9:		sage-4.3-list_plot.patch
 Patch10:	sage-4.3-sagenb.patch
+Patch11:	sage-4.3-givaro.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
@@ -389,6 +390,7 @@ popd
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %if %{use_sage_networkx}
 %patch100 -p1
