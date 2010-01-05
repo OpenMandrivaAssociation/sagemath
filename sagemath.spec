@@ -475,7 +475,7 @@ pushd spkg/build/genus2reduction-0.3.p5/src
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/rubiks-20070912.p9/src
+pushd spkg/build/rubiks-20070912.p10/src
     %make CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}"
 popd
 
@@ -534,6 +534,7 @@ popd
 
 #------------------------------------------------------------------------
 pushd spkg/build/sagenb-0.4.8/src
+    rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
     rm -f %{buildroot}%{_bindir}/sage3d
@@ -602,7 +603,7 @@ pushd spkg/build/genus2reduction-0.3.p5/src
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/rubiks-20070912.p9/src
+pushd spkg/build/rubiks-20070912.p10/src
     make DESTDIR=%{buildroot} PREFIX=%{SAGE_LOCAL} INSTALL=cp install
 popd
 
@@ -663,7 +664,7 @@ pushd spkg/build/extcode-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/graphs-20070722
+pushd spkg/build/graphs-20070722.p1
     mkdir -p $SAGE_DATA/graphs
     cp -fa graphs/* $SAGE_DATA/graphs
 popd
