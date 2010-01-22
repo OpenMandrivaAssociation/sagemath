@@ -443,7 +443,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.6/src
+pushd spkg/build/sagenb-0.6/src/sagenb
     python ./setup.py build
 popd
 
@@ -491,6 +491,7 @@ pushd %{buildroot}
     tar jxf %{SOURCE1}
 %ifarch x86_64 ppc64
     # move files in /usr/lib/python... to /usr/lib64/python...
+    rm -fr ./%{py_platsitedir}/MoinMoin/*
     mkdir -p ./%{py_platsitedir}/MoinMoin
     mv ./%{py_puresitedir}/MoinMoin/* ./%{py_platsitedir}/MoinMoin
     rm -fr ./%{py_puresitedir}/MoinMoin
@@ -516,7 +517,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.6/src
+pushd spkg/build/sagenb-0.6/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
