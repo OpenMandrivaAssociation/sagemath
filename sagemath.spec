@@ -23,16 +23,13 @@
 # Need this because as of sage 4.1, it only works "correctly" with python-networkx 0.36
 %define		use_sage_networkx	1
 
-# Need this because as of sage 4.1, dsage only works "correctly" with python-sqlalchemy 0.4.6
-%define		use_sage_sqlalchemy	1
-
 %define		SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
 
 Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.3
+Version:	4.3.1
 Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
@@ -45,6 +42,8 @@ BuildRequires:	axiom
 %endif
 
 BuildRequires:	boost-devel
+
+BuildRequires:	cbc-devel
 
 %if %{with_check}
 BuildRequires:	cddlib-devel
@@ -75,6 +74,7 @@ BuildRequires:	gfan
 %endif
 
 BuildRequires:	ghmm-devel
+BuildRequires:	glpk-devel
 
 %if %{with_check}
 BuildRequires:	gp2c pari pari-data
@@ -158,9 +158,6 @@ BuildRequires:	python-scipy
 BuildRequires:	python-sphinx
 
 %if %{with_check}
-  %if !%{use_sage_sqlalchemy}
-BuildRequires:	python-sqlalchemy
-  %endif
 BuildRequires:	python-sqlite2
 BuildRequires:	python-sympy
 %endif
@@ -284,10 +281,6 @@ BuildRequires:	python-rpy python-rpy2
 Requires:	python-scipy
 Requires:	python-sphinx
 
-%if !%{use_sage_sqlalchemy}
-Requires:	python-sqlalchemy
-%endif
-
 Requires:	python-sqlite2
 Requires:	python-sympy
 Requires:	python-twisted-core
@@ -315,25 +308,24 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.3.patch
-Patch1:		sage-4.3-sage_scripts.patch
-Patch2:		sage-4.3-notebook.patch
-Patch3:		sage-4.3-wiki.patch
-Patch4:		sage-4.3-dsage.patch
-Patch5:		sage-4.3-python2.6.patch
-Patch6:		sage-4.3-qepcad.patch
-Patch7:		sage-4.3-lie.patch
-Patch8:		sage-4.3-sagedoc.patch
-Patch9:		sage-4.3-list_plot.patch
-Patch10:	sage-4.3-sagenb.patch
-Patch11:	sage-4.3-givaro.patch
+Patch0:		sage-4.3.1.patch
+Patch1:		sage-4.3.1-sage_scripts.patch
+Patch2:		sage-4.3.1-notebook.patch
+Patch3:		sage-4.3.1-wiki.patch
+Patch4:		sage-4.3.1-python2.6.patch
+Patch5:		sage-4.3.1-qepcad.patch
+Patch6:		sage-4.3.1-lie.patch
+Patch7:		sage-4.3.1-sagedoc.patch
+Patch8:		sage-4.3.1-list_plot.patch
+Patch9:		sage-4.3.1-sagenb.patch
+Patch10:	sage-4.3.1-givaro.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch100:	sage-4.3-networkx.patch
+Patch100:	sage-4.3.1-networkx.patch
 
 #------------------------------------------------------------------------
 %description
@@ -349,7 +341,6 @@ packages into a common Python-based interface.
 pushd spkg
     mkdir -p build
     for pkg in	conway_polynomials-0.2		\
-		dsage-1.0.1.p0			\
 		elliptic_curves-0.1		\
 		examples-%{version}		\
 		extcode-%{version}		\
@@ -359,7 +350,7 @@ pushd spkg
 		polytopes_db-20080430		\
 		rubiks-20070912.p10		\
 		sage-%{version}			\
-		sagenb-0.4.8			\
+		sagenb-0.6			\
 		sage_scripts-%{version}		\
     ; do
 	tar jxf standard/$pkg.spkg -C build
@@ -372,10 +363,6 @@ pushd spkg
 
 %if %{use_sage_networkx}
     tar jxf standard/networkx-0.99.p1-fake_really-0.36.p1.spkg -C build
-%endif
-
-%if %{use_sage_sqlalchemy}
-    tar jxf standard/sqlalchemy-0.4.6.p1.spkg -C build
 %endif
 popd
 
@@ -390,7 +377,6 @@ popd
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 
 %if %{use_sage_networkx}
 %patch100 -p1
@@ -447,7 +433,7 @@ export DESTDIR=%{buildroot}
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     pushd c_lib
-	scons
+	CXX=g++ scons
     popd
     # ensure proper/preferred libatlas is in linker path
     perl -pi -e 's|^(extra_link_args = ).*|$1\["-L%{_libdir}/atlas"\]|;' sage/misc/cython.py
@@ -457,12 +443,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.4.8/src
-    python ./setup.py build
-popd
-
-#------------------------------------------------------------------------
-pushd spkg/build/dsage-1.0.1.p0/src
+pushd spkg/build/sagenb-0.6/src
     python ./setup.py build
 popd
 
@@ -535,7 +516,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.4.8/src
+pushd spkg/build/sagenb-0.6/src
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
@@ -545,11 +526,6 @@ pushd spkg/build/sagenb-0.4.8/src
     rm -fr %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     # and use system one
     ln -sf %{_datadir}/jmol %{buildroot}%{py_platsitedir}/sagenb/data/jmol
-popd
-
-#------------------------------------------------------------------------
-pushd spkg/build/dsage-1.0.1.p0/src
-    python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
 popd
 
 #------------------------------------------------------------------------
@@ -572,18 +548,9 @@ popd
 %endif
 
 #------------------------------------------------------------------------
-%if %{use_sage_sqlalchemy}
-pushd spkg/build/sqlalchemy-0.4.6.p1/src
-    rm -fr $SAGE_PYTHONPATH/{SQLA,sqla}lchemy*
-    rm -fr %{buildroot}%{py_platsitedir}/{SQLA,sqla}lchemy*
-    python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
-popd
-%endif
-
-#------------------------------------------------------------------------
 pushd spkg/build/sage_scripts-%{version}
     mkdir -p $SAGE_LOCAL/bin
-    cp -fa sage-* dsage_* *doctest.py ipy_profile_sage.py $SAGE_LOCAL/bin
+    cp -fa sage-* *doctest.py ipy_profile_sage.py $SAGE_LOCAL/bin
     cp -far ipython $SAGE_ROOT
     cp -fa COPYING.txt $SAGE_ROOT
     pushd $SAGE_LOCAL/bin
@@ -678,19 +645,13 @@ pushd spkg/build/polytopes_db-20080430
 popd
 
 #------------------------------------------------------------------------
-if [ -d %{buildroot}%{_prefix}/dsage ]; then
-    rm -fr $SAGE_LOCAL/dsage
-    mv -f %{buildroot}%{_prefix}/dsage $SAGE_LOCAL
-fi
-
-#------------------------------------------------------------------------
 cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
 
 export CUR=\`pwd\`
 ##export DOT_SAGE="\$HOME/.sage/"
 export DOT_SAGENB="\$DOT_SAGE"
-mkdir -p \$DOT_SAGE/{dsage,tmp,sympow}
+mkdir -p \$DOT_SAGE/{tmp,sympow}
 export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
@@ -755,7 +716,7 @@ pushd spkg/build/sage-%{version}/doc
     # export DOT_SAGE=%{buildroot}/.sage
     export DOT_SAGE=/tmp/sage$$
 
-    mkdir -p $DOT_SAGE/{dsage,tmp}
+    mkdir -p $DOT_SAGE/tmp
     export SAGE_DOC=`pwd`
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
@@ -780,11 +741,6 @@ pushd spkg/build/sage-%{version}/doc
 	mv -f %{buildroot}%{SAGE_PYTHONPATH}/networkx* $PYTHONPATH
     %endif
 
-    %if %{use_sage_sqlalchemy}
-	# move in buildroot because PYTHONPATH is already overriden
-	mv -f %{buildroot}%{SAGE_PYTHONPATH}/{SQLA,sqla}lchemy* $PYTHONPATH
-    %endif
-
     # make sage-test checking of 'devel' prefix happy
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
     rm -f $SAGE_ROOT/doc
@@ -800,12 +756,6 @@ pushd spkg/build/sage-%{version}/doc
 	# revert back to directory where it will be installed
 	mv -f $PYTHONPATH/networkx* %{buildroot}%{SAGE_PYTHONPATH}
     %endif
-
-    %if %{use_sage_sqlalchemy}
-	# revert back to directory where it will be installed
-	mv -f $PYTHONPATH/{SQLA,sqla}lchemy* %{buildroot}%{SAGE_PYTHONPATH}
-    %endif
-
 %endif
 
     #--------------------------------------------------------------------
@@ -835,10 +785,8 @@ rm -f %{buildroot}%{py_platsitedir}/site-packages
 %defattr(-,root,root)
 %dir %{py_platsitedir}/sage
 %dir %{py_platsitedir}/sagenb
-%dir %{py_platsitedir}/dsage
 %{py_platsitedir}/sage/*
 %{py_platsitedir}/sagenb/*
-%{py_platsitedir}/dsage/*
 %{py_platsitedir}/*.egg-info
 # MoinMoin extra files
 %{py_platsitedir}/MoinMoin/macro/*
