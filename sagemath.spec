@@ -74,6 +74,7 @@ BuildRequires:	gfan
 %endif
 
 BuildRequires:	ghmm-devel
+BuildRequires:	givaro-devel
 BuildRequires:	glpk-devel
 
 %if %{with_check}
