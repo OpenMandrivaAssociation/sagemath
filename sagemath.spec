@@ -90,6 +90,7 @@ BuildRequires:	lcalc
 
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
+BuildRequires:	libgmpxx-devel
 BuildRequires:	libm4ri-devel
 BuildConflicts:	libm4ri-static-devel
 BuildRequires:	libpari-devel
