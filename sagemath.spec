@@ -453,7 +453,7 @@ export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 export DESTDIR=%{buildroot}
 
 %if %{pickle_hack}
-    export PYTHONPATH=%{buildroot}%{PYTHONPATH}
+    export PYTHONPATH=%{buildroot}%{SAGE_PYTHONPATH}
 %endif
 
 #------------------------------------------------------------------------
