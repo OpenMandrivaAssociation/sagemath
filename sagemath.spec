@@ -132,6 +132,7 @@ BuildRequires:	python-ghmm
 BuildRequires:	python-jinja
 
 BuildRequires:	python-matplotlib
+BuildRequires:	python-matplotlib-gtk
 BuildRequires:	python-mpmath
 
 %if %{with_check}
