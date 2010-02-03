@@ -2,8 +2,10 @@
 #%#define		_enable_debug_packages	%{nil}
 #%#define		debug_package		%{nil}
 
-# Correct breakage of liblinbox.so and liblinboxsage.so
-%define		_disable_ld_as_needed	1
+# http://groups.google.com/group/sage-devel/browse_thread/thread/56fa5c67a4b0f5f9/d64e75dcaeb1ba8e?lnk=gst&q=Question+about+pickle+in+python#d64e75dcaeb1ba8e
+# http://bugs.python.org/issue7689
+# This is required (in sage 4.3.1) to "fix" a large amount of doctest failures
+%define		pickle_hack		1
 
 # Run "sage -testall" after building documentation?
 %define		with_check		0
@@ -33,6 +35,7 @@ Version:	4.3.1
 Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
+Source2:	pickle.py
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -423,6 +426,20 @@ clean:
 EOF
 popd
 
+%if %{pickle_hack}
+    #   Do not use cPickle because a slightly different logic is required,
+    # as described in the python issue. It is required to check the copy_reg
+    # dispatch table before checking for instances of metaclasses
+    # (whatever that means :-)
+    pushd spkg/build/sage-%{version}
+	perl -pi -e 's/\b(cPickle|pickle)\b/Pickle/g' `find . \( -name \*.py -o -name \*.pyx -o -name \*.pxd \)`
+	# "Revert" one known wrong "hack" change
+	perl -pi -e 's/\bcopy_reg\.Pickle\b/copy_reg.pickle/g' `find . \( -name \*.py -o -name \*.pyx -o -name \*.pxd \)`
+	mkdir -p %{buildroot}%{SAGE_ROOT}/site-packages
+	# pickle.py -> Pickle.py to simplify search&replace
+	cp -f %{SOURCE2} %{buildroot}%{SAGE_ROOT}/site-packages/Pickle.py
+    popd
+%endif
 
 ########################################################################
 %build
@@ -434,6 +451,10 @@ export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 
 export DESTDIR=%{buildroot}
+
+%if %{pickle_hack}
+    export PYTHONPATH=%{buildroot}%{PYTHONPATH}
+%endif
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
@@ -476,6 +497,9 @@ export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
 export SAGE_DATA=%{buildroot}%{SAGE_DATA}
 export SAGE_DOC=%{buildroot}%{SAGE_DOC}
 export SAGE_PYTHONPATH=%{buildroot}%{SAGE_PYTHONPATH}
+%if %{pickle_hack}
+    export PYTHONPATH=$SAGE_PYTHONPATH
+%endif
 
 export DESTDIR=%{buildroot}
 
@@ -728,7 +752,10 @@ pushd spkg/build/sage-%{version}/doc
     export SINGULARPATH=%{_datadir}/singular/LIB
     export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
     export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
-    export PYTHONPATH=%{buildroot}%{py_platsitedir}
+
+    # FIXME (currently) only really needs to prepend current value of
+    # PYTHONPATH if %{pickle_hack} is set
+    export PYTHONPATH=$PYTHONPATH:%{buildroot}%{py_platsitedir}
 
     # there we go
     python common/builder.py all html
