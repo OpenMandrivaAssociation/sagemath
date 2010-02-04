@@ -237,9 +237,7 @@ Suggests:	lie
 
 Requires:	linalg-linbox
 
-%ifarch %{ix86}
 Requires:	macaulay2
-%endif
 
 Requires:	maxima
 Requires:	xmaxima
