@@ -32,7 +32,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.3.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 Source2:	pickle.py
@@ -326,6 +326,7 @@ Patch8:		sage-4.3.1-list_plot.patch
 Patch9:		sage-4.3.1-sagenb.patch
 Patch10:	sage-4.3.1-givaro.patch
 Patch11:	sage-4.3.1-gmp5.patch
+Patch12:	sage-4.3.1-pickle-hack.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
@@ -386,12 +387,23 @@ popd
 %patch10 -p1
 %patch11 -p1
 
+# if executing prep, clean buildroot
+rm -rf %{buildroot}
+
+%if %{pickle_hack}
+  #   Do not use cPickle because a slightly different logic is required,
+  # as described in the python issue. It is required to check the copy_reg
+  # dispatch table before checking for instances of metaclasses
+  # (whatever that means :-)
+  mkdir -p %{buildroot}%{SAGE_PYTHONPATH}
+  # pickle.py -> Pickle.py to simplify search&replace
+  cp -f %{SOURCE2} %{buildroot}%{SAGE_PYTHONPATH}/Pickle.py
+%patch12 -p1
+%endif
+
 %if %{use_sage_networkx}
 %patch100 -p1
 %endif
-
-# if executing prep, clean buildroot
-rm -rf %{buildroot}
 
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
@@ -426,20 +438,6 @@ clean:
 EOF
 popd
 
-%if %{pickle_hack}
-    #   Do not use cPickle because a slightly different logic is required,
-    # as described in the python issue. It is required to check the copy_reg
-    # dispatch table before checking for instances of metaclasses
-    # (whatever that means :-)
-    pushd spkg/build/sage-%{version}
-	perl -pi -e 's/\b(cPickle|pickle)\b/Pickle/g' `find . \( -name \*.py -o -name \*.pyx -o -name \*.pxd \)`
-	# "Revert" one known wrong "hack" change
-	perl -pi -e 's/\bcopy_reg\.Pickle\b/copy_reg.pickle/g' `find . \( -name \*.py -o -name \*.pyx -o -name \*.pxd \)`
-	mkdir -p %{buildroot}%{SAGE_ROOT}/site-packages
-	# pickle.py -> Pickle.py to simplify search&replace
-	cp -f %{SOURCE2} %{buildroot}%{SAGE_ROOT}/site-packages/Pickle.py
-    popd
-%endif
 
 ########################################################################
 %build
@@ -766,12 +764,12 @@ pushd spkg/build/sage-%{version}/doc
     #--------------------------------------------------------------------
 %if %{with_check}
     %if %{use_sage_pexpect}
-	cp -f $SAGE_ROOT/site-packages/{ANSI,FSM,pexpect,pxssh,screen}.py $PYTHONPATH
+	cp -f $SAGE_PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{py_platsitedir}
     %endif
 
     %if %{use_sage_networkx}
 	# move in buildroot because PYTHONPATH is already overriden
-	mv -f %{buildroot}%{SAGE_PYTHONPATH}/networkx* $PYTHONPATH
+	mv -f %{buildroot}%{SAGE_PYTHONPATH}/networkx* %{buildroot}%{py_platsitedir}
     %endif
 
     # make sage-test checking of 'devel' prefix happy
@@ -782,12 +780,12 @@ pushd spkg/build/sage-%{version}/doc
     cp -f $DOT_SAGE/tmp/test.log $SAGE_DOC
 
     %if %{use_sage_pexpect}
-	rm -f $PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py
+	rm -f %{buildroot}%{py_platsitedir}/{ANSI,FSM,pexpect,pxssh,screen}.py
     %endif
 
     %if %{use_sage_networkx}
 	# revert back to directory where it will be installed
-	mv -f $PYTHONPATH/networkx* %{buildroot}%{SAGE_PYTHONPATH}
+	mv -f %{buildroot}%{py_platsitedir}/networkx* %{buildroot}%{SAGE_PYTHONPATH}
     %endif
 %endif
 
