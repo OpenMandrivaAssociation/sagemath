@@ -26,8 +26,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.3.1
-Release:	%mkrel 5
+Version:	4.3.2
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -306,25 +306,25 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.3.1.patch
-Patch1:		sage-4.3.1-sage_scripts.patch
-Patch2:		sage-4.3.1-notebook.patch
-Patch3:		sage-4.3.1-wiki.patch
-Patch4:		sage-4.3.1-python2.6.patch
-Patch5:		sage-4.3.1-qepcad.patch
-Patch6:		sage-4.3.1-lie.patch
-Patch7:		sage-4.3.1-sagedoc.patch
-Patch8:		sage-4.3.1-list_plot.patch
-Patch9:		sage-4.3.1-sagenb.patch
-Patch10:	sage-4.3.1-givaro.patch
-Patch11:	sage-4.3.1-gmp5.patch
+Patch0:		sage-4.3.2.patch
+Patch1:		sage-4.3.2-sage_scripts.patch
+Patch2:		sage-4.3.2-notebook.patch
+Patch3:		sage-4.3.2-wiki.patch
+Patch4:		sage-4.3.2-python2.6.patch
+Patch5:		sage-4.3.2-qepcad.patch
+Patch6:		sage-4.3.2-lie.patch
+Patch7:		sage-4.3.2-sagedoc.patch
+Patch8:		sage-4.3.2-list_plot.patch
+Patch9:		sage-4.3.2-sagenb.patch
+Patch10:	sage-4.3.2-givaro.patch
+Patch11:	sage-4.3.2-gmp5.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch100:	sage-4.3.1-networkx.patch
+Patch100:	sage-4.3.2-networkx.patch
 
 #------------------------------------------------------------------------
 %description
@@ -349,7 +349,7 @@ pushd spkg
 		polytopes_db-20080430		\
 		rubiks-20070912.p10		\
 		sage-%{version}			\
-		sagenb-0.6			\
+		sagenb-0.7.4			\
 		sage_scripts-%{version}		\
     ; do
 	tar jxf standard/$pkg.spkg -C build
@@ -443,7 +443,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.6/src/sagenb
+pushd spkg/build/sagenb-0.7.4/src/sagenb
     python ./setup.py build
 popd
 
@@ -517,7 +517,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.6/src/sagenb
+pushd spkg/build/sagenb-0.7.4/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
@@ -652,7 +652,7 @@ cat > %{buildroot}%{_bindir}/sage << EOF
 export CUR=\`pwd\`
 ##export DOT_SAGE="\$HOME/.sage/"
 export DOT_SAGENB="\$DOT_SAGE"
-mkdir -p \$DOT_SAGE/{tmp,sympow}
+mkdir -p \$DOT_SAGE/{maxima,sympow,tmp}
 export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
