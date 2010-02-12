@@ -7,6 +7,9 @@
 %define		SAGE_TIMEOUT		60
 %define		SAGE_TIMEOUT_LONG	300
 
+# http://bugs.python.org/issue7689
+%define		pickle_patch		1
+
 %define		name			sagemath
 %define		SAGE_ROOT		%{_datadir}/sage
 %define		SAGE_LOCAL		%{SAGE_ROOT}/local
@@ -27,7 +30,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.3.2
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -351,6 +354,9 @@ pushd spkg
 		sage-%{version}			\
 		sagenb-0.7.4			\
 		sage_scripts-%{version}		\
+%if %{pickle_patch}
+		python-2.6.4.p5			\
+%endif
     ; do
 	tar jxf standard/$pkg.spkg -C build
     done
@@ -461,6 +467,18 @@ popd
 pushd spkg/build/rubiks-20070912.p10/src
     %make CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}"
 popd
+
+#------------------------------------------------------------------------
+%if %{pickle_patch}
+    pushd spkg/build/python-2.6.4.p5/src
+	cp ../patches/cPickle.c Modules/cPickle.c
+	%configure
+	perl -pi						\
+	    -e 's|-Wl,--no-undefined||;'			\
+	    Makefile
+	%make
+    popd
+%endif
 
 
 ########################################################################
@@ -767,6 +785,13 @@ popd
 #------------------------------------------------------------------------
 # Script was used to build documentation 
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
+
+%if %{pickle_patch}
+    pushd spkg/build/python-2.6.4.p5/src
+	cp ../patches/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
+	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
+    popd
+%endif
 
 #------------------------------------------------------------------------
 # Fixup links
