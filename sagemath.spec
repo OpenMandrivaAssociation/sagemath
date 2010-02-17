@@ -30,7 +30,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.3.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -329,6 +329,14 @@ Patch11:	sage-4.3.2-gmp5.patch
 #	They will be removed soon.  Please use numpy instead.
 Patch100:	sage-4.3.2-networkx.patch
 
+# http://trac.sagemath.org/sage_trac/attachment/ticket/8159/importfix.patch
+Patch101:	trac_sagemath_org_8159-importfix.patch
+
+# http://trac.sagemath.org/sage_trac/attachment/ticket/8159/mpmath_cython.patch
+# this patch with minor change to sage/libs/mpmath/utils.pyx as 4.3.2 was
+# slightly different in a patch "boundary", and also, remove ^Ms
+Patch102:	trac_sagemath_org_8159-mpmath_cython.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -369,6 +377,12 @@ pushd spkg
 %if %{use_sage_networkx}
     tar jxf standard/networkx-0.99.p1-fake_really-0.36.p1.spkg -C build
 %endif
+popd
+
+# mpmpath in sage 4.3.2 is still in version 0.13, but 0.14 is in distro
+pushd spkg/build/sage-%{version}
+%patch101 -p1
+%patch102 -p1
 popd
 
 %patch0 -p1
