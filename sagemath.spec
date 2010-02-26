@@ -820,10 +820,10 @@ rm -f %{buildroot}%{py_platsitedir}/site-packages
 
 # Install menu and icons
 pushd spkg/build/extcode-%{version}
-    install -m644 notebook/images/icon16x16.png %{buildroot}/%{_miconsdir}/%{name}.png
-    install -m644 notebook/images/icon32x32.png %{buildroot}/%{_iconsdir}/%{name}.png
-    install -m644 notebook/images/icon32x32.png %{buildroot}/%{_datadir}/pixmaps/%{name}.png
-    install -m644 notebook/images/icon48x48.png %{buildroot}/%{_liconsdir}/%{name}.png
+    install -m644 -D notebook/images/icon16x16.png %{buildroot}%{_miconsdir}/%{name}.png
+    install -m644 -D notebook/images/icon32x32.png %{buildroot}%{_iconsdir}/%{name}.png
+    install -m644 -D notebook/images/icon32x32.png %{buildroot}%{_datadir}/pixmaps/%{name}.png
+    install -m644 -D notebook/images/icon48x48.png %{buildroot}%{_liconsdir}/%{name}.png
 popd
 mkdir -p %{buildroot}%{_datadir}/applications
 cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
