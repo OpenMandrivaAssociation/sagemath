@@ -29,8 +29,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.3.2
-Release:	%mkrel 4
+Version:	4.3.3
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 URL:		http://www.sagemath.org
@@ -309,25 +309,25 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.3.2.patch
-Patch1:		sage-4.3.2-sage_scripts.patch
-Patch2:		sage-4.3.2-notebook.patch
-Patch3:		sage-4.3.2-wiki.patch
-Patch4:		sage-4.3.2-python2.6.patch
-Patch5:		sage-4.3.2-qepcad.patch
-Patch6:		sage-4.3.2-lie.patch
-Patch7:		sage-4.3.2-sagedoc.patch
-Patch8:		sage-4.3.2-list_plot.patch
-Patch9:		sage-4.3.2-sagenb.patch
-Patch10:	sage-4.3.2-givaro.patch
-Patch11:	sage-4.3.2-gmp5.patch
+Patch0:		sage-4.3.3.patch
+Patch1:		sage-4.3.3-sage_scripts.patch
+Patch2:		sage-4.3.3-notebook.patch
+Patch3:		sage-4.3.3-wiki.patch
+Patch4:		sage-4.3.3-python2.6.patch
+Patch5:		sage-4.3.3-qepcad.patch
+Patch6:		sage-4.3.3-lie.patch
+Patch7:		sage-4.3.3-sagedoc.patch
+Patch8:		sage-4.3.3-list_plot.patch
+Patch9:		sage-4.3.3-sagenb.patch
+Patch10:	sage-4.3.3-givaro.patch
+Patch11:	sage-4.3.3-gmp5.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch100:	sage-4.3.2-networkx.patch
+Patch100:	sage-4.3.3-networkx.patch
 
 # http://trac.sagemath.org/sage_trac/attachment/ticket/8159/importfix.patch
 Patch101:	trac_sagemath_org_8159-importfix.patch
@@ -355,12 +355,12 @@ pushd spkg
 		examples-%{version}		\
 		extcode-%{version}		\
 		flintqs-20070817.p4		\
-		genus2reduction-0.3.p5		\
+		genus2reduction-0.3.p6		\
 		graphs-20070722.p1		\
-		polytopes_db-20080430		\
+		polytopes_db-20100210		\
 		rubiks-20070912.p10		\
 		sage-%{version}			\
-		sagenb-0.7.4			\
+		sagenb-0.7.5.1			\
 		sage_scripts-%{version}		\
 %if %{pickle_patch}
 		python-2.6.4.p5			\
@@ -419,7 +419,7 @@ ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 
 #------------------------------------------------------------------------
-pushd spkg/build/genus2reduction-0.3.p5/src
+pushd spkg/build/genus2reduction-0.3.p6/src
 # based on debian patch
 cat > Makefile << EOF
 CFLAGS = -O2 -I%{_includedir}/pari
@@ -438,6 +438,13 @@ clean:
 EOF
 popd
 
+#------------------------------------------------------------------------
+pushd spkg/build/sage-%{version}
+    # ensure proper/preferred libatlas is in linker path
+    perl -pi -e 's|^(extra_link_args = ).*|$1\["-L%{_libdir}/atlas"\]|;' sage/misc/cython.py
+    # some .c files are not (re)generated
+    find . \( -name \*.pyx -o -name \*.pxd \) -exec touch {} \;
+popd
 
 ########################################################################
 %build
@@ -455,15 +462,11 @@ pushd spkg/build/sage-%{version}
     pushd c_lib
 	CXX=g++ scons
     popd
-    # ensure proper/preferred libatlas is in linker path
-    perl -pi -e 's|^(extra_link_args = ).*|$1\["-L%{_libdir}/atlas"\]|;' sage/misc/cython.py
-    # some .c files are not (re)generated
-    find . \( -name \*.pyx -o -name \*.pxd \) -exec touch {} \;
     python ./setup.py build
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.7.4/src/sagenb
+pushd spkg/build/sagenb-0.7.5.1/src/sagenb
     python ./setup.py build
 popd
 
@@ -473,7 +476,7 @@ pushd spkg/build/flintqs-20070817.p4/src
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/genus2reduction-0.3.p5/src
+pushd spkg/build/genus2reduction-0.3.p6/src
     %make
 popd
 
@@ -549,7 +552,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.7.4/src/sagenb
+pushd spkg/build/sagenb-0.7.5.1/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
@@ -600,7 +603,7 @@ pushd spkg/build/flintqs-20070817.p4/src
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/genus2reduction-0.3.p5/src
+pushd spkg/build/genus2reduction-0.3.p6/src
     %makeinstall_std
 popd
 
@@ -672,7 +675,7 @@ pushd spkg/build/graphs-20070722.p1
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/polytopes_db-20080430
+pushd spkg/build/polytopes_db-20100210
     mkdir -p $SAGE_DATA/reflexive_polytopes
     cp -fa reflexive_polytopes/* $SAGE_DATA/reflexive_polytopes
 popd
@@ -815,6 +818,25 @@ ln -sf %{py_platsitedir} $SAGE_DATA/extcode/sage
 ln -sf %{SAGE_DOC} $SAGE_ROOT/doc
 rm -f %{buildroot}%{py_platsitedir}/site-packages
 
+# Install menu and icons
+pushd spkg/build/extcode-%{version}
+    install -m644 notebook/images/icon16x16.png %{buildroot}/%{_miconsdir}/%{name}.png
+    install -m644 notebook/images/icon32x32.png %{buildroot}/%{_iconsdir}/%{name}.png
+    install -m644 notebook/images/icon32x32.png %{buildroot}/%{_datadir}/pixmaps/%{name}.png
+    install -m644 notebook/images/icon48x48.png %{buildroot}/%{_liconsdir}/%{name}.png
+popd
+mkdir -p %{buildroot}%{_datadir}/applications
+cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
+[Desktop Entry]
+Name=Sagemath
+Comment=A free open-source mathematics software system
+Exec=sage
+Icon=%{name}
+Terminal=true
+Type=Application
+Categories=Science;Math;
+EOF
+
 ########################################################################
 %clean
 # rm -rf #%#{buildroot}
@@ -838,3 +860,8 @@ rm -f %{buildroot}%{py_platsitedir}/site-packages
 %{_libdir}/*.so
 %dir %{_includedir}/csage
 %{_includedir}/csage/*
+%{_iconsdir}/%{name}.png
+%{_liconsdir}/%{name}*.png
+%{_miconsdir}/%{name}*.png
+%{_datadir}/pixmaps/%{name}.png
+%{_datadir}/applications/mandriva-%{name}.desktop
