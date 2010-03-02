@@ -525,7 +525,7 @@ ln -sf %{_datadir} $SAGE_LOCAL/share
 
 #------------------------------------------------------------------------
 # "fix" most remaining doctest failures
-cp -f %{SOURCE3} $SAGE_PYTHONPATH
+cp -f %{SOURCE2} $SAGE_PYTHONPATH
 
 #------------------------------------------------------------------------
 # install moin changes
