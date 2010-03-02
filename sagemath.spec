@@ -30,9 +30,10 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.3.3
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
+Source2:	sets.py
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -321,6 +322,7 @@ Patch8:		sage-4.3.3-list_plot.patch
 Patch9:		sage-4.3.3-sagenb.patch
 Patch10:	sage-4.3.3-givaro.patch
 Patch11:	sage-4.3.3-gmp5.patch
+Patch12:	sage-4.3.3-arpack.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
@@ -397,6 +399,7 @@ popd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -519,6 +522,10 @@ ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 ln -sf %{_datadir} $SAGE_LOCAL/share
+
+#------------------------------------------------------------------------
+# "fix" most remaining doctest failures
+cp -f %{SOURCE3} $SAGE_PYTHONPATH
 
 #------------------------------------------------------------------------
 # install moin changes
