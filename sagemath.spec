@@ -30,7 +30,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.3.3
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 Source2:	sets.py
@@ -323,6 +323,7 @@ Patch9:		sage-4.3.3-sagenb.patch
 Patch10:	sage-4.3.3-givaro.patch
 Patch11:	sage-4.3.3-gmp5.patch
 Patch12:	sage-4.3.3-arpack.patch
+Patch13:	sage-4.3.3-maxima-clisp.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
@@ -400,6 +401,7 @@ popd
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
