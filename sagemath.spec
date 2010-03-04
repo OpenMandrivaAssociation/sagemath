@@ -814,7 +814,7 @@ perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 %if %{pickle_patch}
     pushd spkg/build/python-2.6.4.p5/src
-	cp ../patches/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
+	install -m 0644 ../patches/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
 	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
     popd
 %endif
