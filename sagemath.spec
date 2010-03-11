@@ -30,7 +30,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.3.3
-Release:	%mkrel 4
+Release:	%mkrel 5
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.5.7-filesystem.tar.bz2
 Source2:	sets.py
@@ -130,7 +130,7 @@ BuildRequires:	python-cvxopt
 
 BuildRequires:	python-cython
 BuildRequires:	python-ghmm
-BuildRequires:	python-jinja
+BuildRequires:	python-jinja2
 
 BuildRequires:	python-matplotlib
 BuildRequires:	python-matplotlib-gtk
@@ -258,7 +258,7 @@ Requires:	python-cython
 Requires:	python-gd
 Requires:	python-ghmm
 Requires:	python-gnutls
-Requires:	python-jinja
+Requires:	python-jinja2
 
 %if !%{use_sage_networkx}
 Requires:	python-networkx
