@@ -191,7 +191,13 @@ BuildRequires:	symmetrica-static-devel
 BuildRequires:	tachyon
 %endif
 
-BuildRequires:	tetex-latex
+BuildRequires:	texlive-latex
+BuildRequires:	texlive-fonts
+BuildRequires:	texlive-mfwin
+BuildRequires:	texlive-texmf-afm
+BuildRequires:	texlive-texmf-fonts
+BuildRequires:	texlive-texmf-latex
+
 BuildRequires:	zn_poly-static-devel
 
 #------------------------------------------------------------------------
@@ -277,7 +283,7 @@ Requires:	python-processing
 Requires:	python-pycrypto
 Requires:	python-pygments
 
-BuildRequires:	python-rpy python-rpy2
+Requires:	python-rpy python-rpy2
 
 # scipy should also provide the weave (http://www.scipy.org/Weave) dependency
 Requires:	python-scipy
@@ -302,6 +308,12 @@ Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
+Requires:	texlive-latex
+Requires:	texlive-fonts
+Requires:	texlive-mfwin
+Requires:	texlive-texmf-afm
+Requires:	texlive-texmf-fonts
+Requires:	texlive-texmf-latex
 
 #------------------------------------------------------------------------
 Obsoletes:	sage-doc <= 3.4.2
@@ -340,6 +352,9 @@ Patch101:	trac_sagemath_org_8159-importfix.patch
 # slightly different in a patch "boundary", and also, remove ^Ms
 Patch102:	trac_sagemath_org_8159-mpmath_cython.patch
 
+# http://trac.sagemath.org/sage_trac/attachment/ticket/8316/trac_8316-remove_jinja.2.patch
+Patch103:	trac_8316-remove_jinja.2.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -365,6 +380,7 @@ pushd spkg
 		sage-%{version}			\
 		sagenb-0.7.5.1			\
 		sage_scripts-%{version}		\
+		sagetex-2.2.3			\
 %if %{pickle_patch}
 		python-2.6.4.p5			\
 %endif
@@ -386,6 +402,7 @@ popd
 pushd spkg/build/sage-%{version}
 %patch101 -p1
 %patch102 -p1
+%patch103 -p1
 popd
 
 %patch0 -p1
@@ -690,6 +707,20 @@ pushd spkg/build/polytopes_db-20100210
 popd
 
 #------------------------------------------------------------------------
+mkdir -p $SAGE_ROOT/examples
+pushd spkg/build/examples-%{version}
+    cp -far ajax calculus comm_algebra example.py example.sage finance \
+	fortran gsl latex_embed linalg modsym programming \
+	test_all tests worksheets \
+	$SAGE_ROOT/examples
+popd
+
+#------------------------------------------------------------------------
+pushd spkg/build/sagetex-2.2.3/src
+    python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
+popd
+
+#------------------------------------------------------------------------
 cat > %{buildroot}%{_bindir}/sage << EOF
 #!/bin/sh
 
@@ -717,15 +748,6 @@ $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
 chmod +x %{buildroot}%{_bindir}/sage
-
-#------------------------------------------------------------------------
-mkdir -p $SAGE_ROOT/examples
-pushd spkg/build/examples-%{version}
-    cp -far ajax calculus comm_algebra example.py example.sage finance \
-	fortran gsl latex_embed linalg modsym programming \
-	test_all tests worksheets \
-	$SAGE_ROOT/examples
-popd
 
 #------------------------------------------------------------------------
 # fixup cython interface:
@@ -858,6 +880,8 @@ EOF
 %dir %{py_platsitedir}/sagenb
 %{py_platsitedir}/sage/*
 %{py_platsitedir}/sagenb/*
+%{py_platsitedir}/*.py
+%{py_platsitedir}/*.pyc
 %{py_platsitedir}/*.egg-info
 # MoinMoin extra files
 %{py_platsitedir}/MoinMoin/macro/*
@@ -874,3 +898,5 @@ EOF
 %{_miconsdir}/%{name}*.png
 %{_datadir}/pixmaps/%{name}.png
 %{_datadir}/applications/mandriva-%{name}.desktop
+%dir %{_datadir}/texmf/tex/generic/sagetex
+%{_datadir}/texmf/tex/generic/sagetex/*
