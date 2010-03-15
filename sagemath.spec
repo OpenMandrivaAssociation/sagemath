@@ -30,9 +30,9 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.3.3
-Release:	%mkrel 5
+Release:	%mkrel 6
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
-Source1:	moin-1.5.7-filesystem.tar.bz2
+Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -550,19 +550,12 @@ cp -f %{SOURCE2} $SAGE_PYTHONPATH
 # install moin changes
 pushd %{buildroot}
     tar jxf %{SOURCE1}
-%ifarch x86_64 ppc64
-    # move files in /usr/lib/python... to /usr/lib64/python...
-    rm -fr ./%{py_platsitedir}/MoinMoin/*
-    mkdir -p ./%{py_platsitedir}/MoinMoin
-    mv ./%{py_puresitedir}/MoinMoin/* ./%{py_platsitedir}/MoinMoin
-    rm -fr ./%{py_puresitedir}/MoinMoin
-%endif
 popd
 
 # make jsMath available to moin
-mkdir -p %{buildroot}%{_datadir}/moin/htdocs
-rm -f %{buildroot}%{_datadir}/moin/htdocs/jsmath
-ln -sf %{SAGE_DATA}/extcode/notebook/javascript/jsmath %{buildroot}%{_datadir}/moin/htdocs/jsmath
+mkdir -p %{buildroot}%{_datadir}/moin/web/static/htdocs/common/js
+rm -f %{buildroot}%{_datadir}/moin/web/static/htdocs/common/js/jsmath
+ln -sf %{SAGE_DEVEL}/sage/sagenb/data/jsmath %{buildroot}%{_datadir}/moin/web/static/htdocs/common/js/jsmath
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
