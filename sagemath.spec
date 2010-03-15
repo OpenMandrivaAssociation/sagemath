@@ -876,10 +876,10 @@ EOF
 %{py_platsitedir}/*.py
 %{py_platsitedir}/*.pyc
 %{py_platsitedir}/*.egg-info
-# MoinMoin extra files
-%{py_platsitedir}/MoinMoin/macro/*
-%{py_platsitedir}/MoinMoin/parser/*
-%{_datadir}/moin/htdocs/jsmath
+%{_datadir}/moin/data/plugin/action/*
+%{_datadir}/moin/data/plugin/macro/*
+%{_datadir}/moin/data/plugin/parser/*
+%{_datadir}/moin/web/static/htdocs/common/js/jsmath
 %dir %{SAGE_ROOT}
 %{SAGE_ROOT}/*
 %{_bindir}/*
