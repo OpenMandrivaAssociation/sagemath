@@ -31,8 +31,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.3.3
-Release:	%mkrel 8
+Version:	4.3.4
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -152,8 +152,6 @@ Requires:	python-pexpect
   %endif
 BuildRequires:	python-polybori
 %endif
-
-BuildRequires:	python-processing
 
 %if %{with_check}
 BuildRequires:	python-rpy python-rpy2
@@ -281,7 +279,6 @@ Requires:	python-pexpect
 %endif
 
 Requires:	python-polybori
-Requires:	python-processing
 Requires:	python-pycrypto
 Requires:	python-pygments
 
@@ -324,38 +321,30 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.3.3.patch
-Patch1:		sage-4.3.3-sage_scripts.patch
-Patch2:		sage-4.3.3-notebook.patch
-Patch3:		sage-4.3.3-wiki.patch
-Patch4:		sage-4.3.3-python2.6.patch
-Patch5:		sage-4.3.3-qepcad.patch
-Patch6:		sage-4.3.3-lie.patch
-Patch7:		sage-4.3.3-sagedoc.patch
-Patch8:		sage-4.3.3-list_plot.patch
-Patch9:		sage-4.3.3-sagenb.patch
-Patch10:	sage-4.3.3-givaro.patch
-Patch11:	sage-4.3.3-gmp5.patch
-Patch12:	sage-4.3.3-arpack.patch
-Patch13:	sage-4.3.3-maxima.patch
+Patch0:		sage-4.3.4.patch
+Patch1:		sage-4.3.4-sage_scripts.patch
+Patch2:		sage-4.3.4-notebook.patch
+Patch3:		sage-4.3.4-wiki.patch
+Patch4:		sage-4.3.4-python2.6.patch
+Patch5:		sage-4.3.4-qepcad.patch
+Patch6:		sage-4.3.4-lie.patch
+Patch7:		sage-4.3.4-sagedoc.patch
+Patch8:		sage-4.3.4-list_plot.patch
+Patch9:		sage-4.3.4-sagenb.patch
+Patch10:	sage-4.3.4-givaro.patch
+Patch11:	sage-4.3.4-gmp5.patch
+Patch12:	sage-4.3.4-arpack.patch
+Patch13:	sage-4.3.4-maxima.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch100:	sage-4.3.3-networkx.patch
-
-# http://trac.sagemath.org/sage_trac/attachment/ticket/8159/importfix.patch
-Patch101:	trac_sagemath_org_8159-importfix.patch
-
-# http://trac.sagemath.org/sage_trac/attachment/ticket/8159/mpmath_cython.patch
-# this patch with minor change to sage/libs/mpmath/utils.pyx as 4.3.2 was
-# slightly different in a patch "boundary", and also, remove ^Ms
-Patch102:	trac_sagemath_org_8159-mpmath_cython.patch
+Patch100:	sage-4.3.4-networkx.patch
 
 # http://trac.sagemath.org/sage_trac/attachment/ticket/8316/trac_8316-remove_jinja.2.patch
-Patch103:	trac_8316-remove_jinja.2.patch
+Patch101:	trac_8316-remove_jinja.2.patch
 
 #------------------------------------------------------------------------
 %description
@@ -380,11 +369,11 @@ pushd spkg
 		polytopes_db-20100210		\
 		rubiks-20070912.p10		\
 		sage-%{version}			\
-		sagenb-0.7.5.1			\
+		sagenb-0.7.5.3			\
 		sage_scripts-%{version}		\
-		sagetex-2.2.3			\
+		sagetex-2.2.3.p0		\
 %if %{pickle_patch}
-		python-2.6.4.p5			\
+		python-2.6.4.p7			\
 %endif
     ; do
 	tar jxf standard/$pkg.spkg -C build
@@ -400,16 +389,18 @@ pushd spkg
 %endif
 popd
 
-# mpmpath in sage 4.3.2 is still in version 0.13, but 0.14 is in distro
+# jinja was removed from sage but patch to avoid requiring it at
+# build time not yet applied
 pushd spkg/build/sage-%{version}
 %patch101 -p1
-%patch102 -p1
-%patch103 -p1
 popd
 
 %patch0 -p1
 %patch1 -p1
+
+# Should not be required anymore
 %patch2 -p1
+
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -441,6 +432,7 @@ ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/
 # match system packages as sage packages
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
+ln -sf %{_datadir} $SAGE_LOCAL/share
 
 #------------------------------------------------------------------------
 pushd spkg/build/genus2reduction-0.3.p6/src
@@ -490,7 +482,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.7.5.1/src/sagenb
+pushd spkg/build/sagenb-0.7.5.3/src/sagenb
     python ./setup.py build
 popd
 
@@ -511,7 +503,7 @@ popd
 
 #------------------------------------------------------------------------
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p5/src
+    pushd spkg/build/python-2.6.4.p7/src
 	cp ../patches/cPickle.c Modules/cPickle.c
 	%configure
 	perl -pi						\
@@ -573,7 +565,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.7.5.1/src/sagenb
+pushd spkg/build/sagenb-0.7.5.3/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
@@ -711,7 +703,7 @@ pushd spkg/build/examples-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagetex-2.2.3/src
+pushd spkg/build/sagetex-2.2.3.p0/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
 popd
 
@@ -830,7 +822,7 @@ popd
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p5/src
+    pushd spkg/build/python-2.6.4.p7/src
 	install -m 0644 ../patches/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
 	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
     popd
