@@ -872,7 +872,6 @@ EOF
 %{py_platsitedir}/sage/*
 %{py_platsitedir}/sagenb/*
 %{py_platsitedir}/*.py
-%{py_platsitedir}/*.pyc
 %{py_platsitedir}/*.egg-info
 %{_datadir}/moin/data/plugin/action/*
 %{_datadir}/moin/data/plugin/macro/*
