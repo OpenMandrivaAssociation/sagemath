@@ -53,6 +53,7 @@ BuildRequires:	cddlib-devel
 %endif
 
 BuildRequires:	cliquer-devel
+BuildRequires:	dos2unix
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
 
@@ -477,6 +478,9 @@ export DESTDIR=%{buildroot}
 pushd spkg/build/sage-%{version}
     pushd c_lib
 	CXX=g++ scons
+    popd
+    pushd sage/libs/mpmath
+	dos2unix -U ext_impl.pxd ext_libmp.pyx ext_main.pxd ext_main.pyx
     popd
     python ./setup.py build
 popd
