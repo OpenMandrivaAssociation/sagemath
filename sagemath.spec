@@ -54,6 +54,7 @@ BuildRequires:	cddlib-devel
 
 BuildRequires:	cliquer-devel
 BuildRequires:	dos2unix
+BuildRequires:	ecl
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
 
