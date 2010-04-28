@@ -31,7 +31,7 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.3.5
+Version:	4.4
 Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
@@ -322,27 +322,26 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.3.5.patch
-Patch1:		sage-4.3.5-sage_scripts.patch
-Patch2:		sage-4.3.5-notebook.patch
-Patch3:		sage-4.3.5-wiki.patch
-Patch4:		sage-4.3.5-python2.6.patch
-Patch5:		sage-4.3.5-qepcad.patch
-Patch6:		sage-4.3.5-lie.patch
-Patch7:		sage-4.3.5-sagedoc.patch
-Patch8:		sage-4.3.5-list_plot.patch
-Patch9:		sage-4.3.5-sagenb.patch
-Patch10:	sage-4.3.5-givaro.patch
-Patch11:	sage-4.3.5-gmp5.patch
-Patch12:	sage-4.3.5-arpack.patch
-Patch13:	sage-4.3.5-maxima.patch
+Patch0:		sage-4.4.patch
+Patch1:		sage-4.4-sage_scripts.patch
+Patch2:		sage-4.4-wiki.patch
+Patch3:		sage-4.4-python2.6.patch
+Patch4:		sage-4.4-qepcad.patch
+Patch5:		sage-4.4-lie.patch
+Patch6:		sage-4.4-sagedoc.patch
+Patch7:		sage-4.4-list_plot.patch
+Patch8:		sage-4.4-givaro.patch
+Patch9:		sage-4.4-sagenb.patch
+Patch10:	sage-4.4-gmp5.patch
+Patch11:	sage-4.4-arpack.patch
+Patch12:	sage-4.4-maxima.patch
 
 # adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
 # basically the spkg patch rediffed
 # this removes most of the remaining noise in the doctects:
 #	matplotlib.numerix and all its subpackages are deprecated.
 #	They will be removed soon.  Please use numpy instead.
-Patch100:	sage-4.3.5-networkx.patch
+Patch100:	sage-4.4-networkx.patch
 
 # http://trac.sagemath.org/sage_trac/attachment/ticket/8316/trac_8316-remove_jinja.2.patch
 Patch101:	trac_8316-remove_jinja.2.patch
@@ -372,7 +371,7 @@ pushd spkg
 		sage-%{version}			\
 		sagenb-0.7.5.3			\
 		sage_scripts-%{version}		\
-		sagetex-2.2.3.p0		\
+		sagetex-2.2.5			\
 %if %{pickle_patch}
 		python-2.6.4.p7			\
 %endif
@@ -398,10 +397,7 @@ popd
 
 %patch0 -p1
 %patch1 -p1
-
-# Should not be required anymore
 %patch2 -p1
-
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -412,7 +408,6 @@ popd
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -707,7 +702,7 @@ pushd spkg/build/examples-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagetex-2.2.3.p0/src
+pushd spkg/build/sagetex-2.2.5/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
 popd
 
