@@ -22,7 +22,7 @@
 # Need this because as of sage 4.0.1, it only works "correctly" with python-pexpect 2.0
 %define		use_sage_pexpect	1
 
-# Need this because as of sage 4.1, it only works "correctly" with python-networkx 0.36
+# python-networkx currently broken at least in x86_64 (and needs a patch for sage)
 %define		use_sage_networkx	1
 
 %define		SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
@@ -31,7 +31,7 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.4
+Version:	4.4.4
 Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
@@ -46,7 +46,7 @@ BuildRequires:	axiom
 
 BuildRequires:	boost-devel
 
-BuildRequires:	cbc-devel
+BuildRequires:	coin-or-devel
 
 %if %{with_check}
 BuildRequires:	cddlib-devel
@@ -323,29 +323,22 @@ Obsoletes:	sage-examples <= 3.4.2
 Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.4.patch
-Patch1:		sage-4.4-sage_scripts.patch
-Patch2:		sage-4.4-wiki.patch
-Patch3:		sage-4.4-python2.6.patch
-Patch4:		sage-4.4-qepcad.patch
-Patch5:		sage-4.4-lie.patch
-Patch6:		sage-4.4-sagedoc.patch
-Patch7:		sage-4.4-list_plot.patch
-Patch8:		sage-4.4-givaro.patch
-Patch9:		sage-4.4-sagenb.patch
-Patch10:	sage-4.4-gmp5.patch
-Patch11:	sage-4.4-arpack.patch
-Patch12:	sage-4.4-maxima.patch
-
-# adpated from http://trac.sagemath.org/sage_trac/ticket/5448#comment:37
-# basically the spkg patch rediffed
-# this removes most of the remaining noise in the doctects:
-#	matplotlib.numerix and all its subpackages are deprecated.
-#	They will be removed soon.  Please use numpy instead.
-Patch100:	sage-4.4-networkx.patch
+Patch0:		sage-4.4.4.patch
+Patch1:		sage-4.4.4-sage_scripts.patch
+Patch2:		sage-4.4.4-wiki.patch
+Patch3:		sage-4.4.4-qepcad.patch
+Patch4:		sage-4.4.4-lie.patch
+Patch5:		sage-4.4.4-sagedoc.patch
+Patch6:		sage-4.4.4-list_plot.patch
+Patch7:		sage-4.4.4-givaro.patch
+Patch8:		sage-4.4.4-sagenb.patch
+Patch9:		sage-4.4.4-gmp5.patch
+Patch10:	sage-4.4.4-arpack.patch
+Patch11:	sage-4.4.4-maxima.patch
+Patch12:	sage-4.4.4-networkx.patch
 
 # http://trac.sagemath.org/sage_trac/attachment/ticket/8316/trac_8316-remove_jinja.2.patch
-Patch101:	trac_8316-remove_jinja.2.patch
+Patch100:	trac_8316-remove_jinja.2.patch
 
 #------------------------------------------------------------------------
 %description
@@ -370,11 +363,11 @@ pushd spkg
 		polytopes_db-20100210		\
 		rubiks-20070912.p10		\
 		sage-%{version}			\
-		sagenb-0.7.5.3			\
+		sagenb-0.8.p2			\
 		sage_scripts-%{version}		\
 		sagetex-2.2.5			\
 %if %{pickle_patch}
-		python-2.6.4.p7			\
+		python-2.6.4.p8			\
 %endif
     ; do
 	tar jxf standard/$pkg.spkg -C build
@@ -386,14 +379,14 @@ pushd spkg
 %endif
 
 %if %{use_sage_networkx}
-    tar jxf standard/networkx-0.99.p1-fake_really-0.36.p1.spkg -C build
+    tar jxf standard/networkx-1.0.1.spkg -C build
 %endif
 popd
 
 # jinja was removed from sage but patch to avoid requiring it at
 # build time not yet applied
 pushd spkg/build/sage-%{version}
-%patch101 -p1
+%patch100 -p1
 popd
 
 %patch0 -p1
@@ -408,14 +401,12 @@ popd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%if %{use_sage_networkx}
 %patch12 -p1
+%endif
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
-
-%if %{use_sage_networkx}
-%patch100 -p1
-%endif
 
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
@@ -473,7 +464,7 @@ export DESTDIR=%{buildroot}
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     pushd c_lib
-	CXX=g++ scons
+	CXX=g++ UNAME=Linux scons
     popd
     pushd sage/libs/mpmath
 	dos2unix -U ext_impl.pxd ext_libmp.pyx ext_main.pxd ext_main.pyx
@@ -482,7 +473,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.7.5.3/src/sagenb
+pushd spkg/build/sagenb-0.8.p2/src/sagenb
     python ./setup.py build
 popd
 
@@ -503,7 +494,7 @@ popd
 
 #------------------------------------------------------------------------
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p7/src
+    pushd spkg/build/python-2.6.4.p8/src
 	cp ../patches/cPickle.c Modules/cPickle.c
 	%configure
 	perl -pi						\
@@ -565,7 +556,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.7.5.3/src/sagenb
+pushd spkg/build/sagenb-0.8.p2/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
@@ -586,7 +577,7 @@ popd
 
 #------------------------------------------------------------------------
 %if %{use_sage_networkx}
-pushd spkg/build/networkx-0.99.p1-fake_really-0.36.p1/src
+pushd spkg/build/networkx-1.0.1/src
     rm -fr $SAGE_PYTHONPATH/networkx*
     rm -fr %{buildroot}%{py_platsitedir}/networkx*
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
@@ -822,7 +813,7 @@ popd
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p7/src
+    pushd spkg/build/python-2.6.4.p8/src
 	install -m 0644 ../patches/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
 	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
     popd
