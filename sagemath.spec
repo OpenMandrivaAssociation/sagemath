@@ -78,7 +78,6 @@ BuildRequires:	gd-devel
 BuildRequires:	gfan
 %endif
 
-BuildRequires:	ghmm-devel
 BuildRequires:	givaro-devel
 BuildRequires:	glpk-devel
 
@@ -133,7 +132,6 @@ BuildRequires:	python-cvxopt
 %endif
 
 BuildRequires:	python-cython
-BuildRequires:	python-ghmm
 BuildRequires:	python-jinja2
 
 BuildRequires:	python-matplotlib
@@ -264,7 +262,6 @@ Requires:	python
 Requires:	python-cvxopt
 Requires:	python-cython
 Requires:	python-gd
-Requires:	python-ghmm
 Requires:	python-gnutls
 Requires:	python-jinja2
 
