@@ -2,9 +2,6 @@
 #%#define		_enable_debug_packages	%{nil}
 #%#define		debug_package		%{nil}
 
-%define _source_payload			%{nil}
-%define _binary_payload			%{nil}
-
 %define _requires_exceptions		perl(jQuery)
 
 # Run "sage -testall" after building documentation?
