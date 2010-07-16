@@ -9,6 +9,10 @@
 %define		SAGE_TIMEOUT		60
 %define		SAGE_TIMEOUT_LONG	300
 
+# duplicated mpmath from sympy causes serious problems now
+# and python-mpmath should not be installed
+%define		mpmath_from_sympy	1
+
 # http://bugs.python.org/issue7689
 %define		pickle_patch		1
 
@@ -32,7 +36,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.4.4
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -136,7 +140,9 @@ BuildRequires:	python-jinja2
 
 BuildRequires:	python-matplotlib
 BuildRequires:	python-matplotlib-gtk
+%if !%{mpmath_from_sympy}
 BuildRequires:	python-mpmath
+%endif
 
 %if %{with_check}
   %if !%{use_sage_networkx}
@@ -270,7 +276,13 @@ Requires:	python-networkx
 %endif
 
 Requires:	python-matplotlib
+
+%if %{mpmath_from_sympy}
+Conflicts:	python-mpmath
+%else
 Requires:	python-mpmath
+%endif
+
 Requires:	python-numpy
 
 %if !%{use_sage_pexpect}
@@ -312,12 +324,6 @@ Requires:	texlive-mfwin
 Requires:	texlive-texmf-afm
 Requires:	texlive-texmf-fonts
 Requires:	texlive-texmf-latex
-
-#------------------------------------------------------------------------
-Obsoletes:	sage-doc <= 3.4.2
-Conflicts:	sage-doc <= 3.4.2
-Obsoletes:	sage-examples <= 3.4.2
-Conflicts:	sage-examples <= 3.4.2
 
 #------------------------------------------------------------------------
 Patch0:		sage-4.4.4.patch
