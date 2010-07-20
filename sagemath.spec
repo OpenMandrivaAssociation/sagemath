@@ -353,6 +353,7 @@ packages into a common Python-based interface.
 
 ########################################################################
 %prep
+export LC_ALL=C
 %setup -q -n sage-%{version}
 
 pushd spkg
