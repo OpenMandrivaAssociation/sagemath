@@ -37,7 +37,8 @@ License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.4.4
 Release:	%mkrel 3
-Source0:	http://www.sagemath.org/src/sage-%{version}.tar
+#Source0:	http://www.sagemath.org/src/sage-%{version}.tar
+Source0:	sage-%{version}.tar.bz2
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 URL:		http://www.sagemath.org
@@ -353,7 +354,6 @@ packages into a common Python-based interface.
 
 ########################################################################
 %prep
-export LC_ALL=C
 %setup -q -n sage-%{version}
 
 pushd spkg
