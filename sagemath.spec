@@ -471,7 +471,7 @@ export DESTDIR=%{buildroot}
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     pushd c_lib
-	CXX=g++ UNAME=Linux scons
+	CXX=g++ UNAME=Linux SAGE64=auto scons
     popd
     pushd sage/libs/mpmath
 	dos2unix -U ext_impl.pxd ext_libmp.pyx ext_main.pxd ext_main.pyx
