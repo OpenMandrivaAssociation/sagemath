@@ -35,10 +35,9 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.4.4
-Release:	%mkrel 3
-#Source0:	http://www.sagemath.org/src/sage-%{version}.tar
-Source0:	sage-%{version}.tar.bz2
+Version:	4.5.1
+Release:	%mkrel 1
+Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 URL:		http://www.sagemath.org
@@ -327,20 +326,20 @@ Requires:	texlive-texmf-fonts
 Requires:	texlive-texmf-latex
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.4.4.patch
-Patch1:		sage-4.4.4-sage_scripts.patch
-Patch2:		sage-4.4.4-wiki.patch
-Patch3:		sage-4.4.4-qepcad.patch
-Patch4:		sage-4.4.4-lie.patch
-Patch5:		sage-4.4.4-sagedoc.patch
-Patch6:		sage-4.4.4-list_plot.patch
-Patch7:		sage-4.4.4-givaro.patch
-Patch8:		sage-4.4.4-sagenb.patch
-Patch9:		sage-4.4.4-gmp5.patch
-Patch10:	sage-4.4.4-arpack.patch
-Patch11:	sage-4.4.4-maxima.patch
-Patch12:	sage-4.4.4-networkx.patch
-Patch13:	sage-4.4.4-sympy_mpmath.patch
+Patch0:		sage-4.5.1.patch
+Patch1:		sage-4.5.1-sage_scripts.patch
+Patch2:		sage-4.5.1-wiki.patch
+Patch3:		sage-4.5.1-qepcad.patch
+Patch4:		sage-4.5.1-lie.patch
+Patch5:		sage-4.5.1-sagedoc.patch
+Patch6:		sage-4.5.1-list_plot.patch
+Patch7:		sage-4.5.1-givaro.patch
+Patch8:		sage-4.5.1-sagenb.patch
+Patch9:		sage-4.5.1-gmp5.patch
+Patch10:	sage-4.5.1-arpack.patch
+Patch11:	sage-4.5.1-maxima.patch
+Patch12:	sage-4.5.1-networkx.patch
+Patch13:	sage-4.5.1-sympy_mpmath.patch
 
 # http://trac.sagemath.org/sage_trac/attachment/ticket/8316/trac_8316-remove_jinja.2.patch
 Patch100:	trac_8316-remove_jinja.2.patch
@@ -362,17 +361,17 @@ pushd spkg
 		elliptic_curves-0.1		\
 		examples-%{version}		\
 		extcode-%{version}		\
-		flintqs-20070817.p4		\
+		flintqs-20070817.p5		\
 		genus2reduction-0.3.p6		\
 		graphs-20070722.p1		\
 		polytopes_db-20100210		\
-		rubiks-20070912.p10		\
+		rubiks-20070912.p12		\
 		sage-%{version}			\
-		sagenb-0.8.p2			\
+		sagenb-0.8.1			\
 		sage_scripts-%{version}		\
 		sagetex-2.2.5			\
 %if %{pickle_patch}
-		python-2.6.4.p8			\
+		python-2.6.4.p9			\
 %endif
     ; do
 	tar jxf standard/$pkg.spkg -C build
@@ -481,12 +480,12 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.8.p2/src/sagenb
+pushd spkg/build/sagenb-0.8.1/src/sagenb
     python ./setup.py build
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/flintqs-20070817.p4/src
+pushd spkg/build/flintqs-20070817.p5/src
     %make CPP="g++ %{optflags} -fPIC"
 popd
 
@@ -496,13 +495,13 @@ pushd spkg/build/genus2reduction-0.3.p6/src
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/rubiks-20070912.p10/src
+pushd spkg/build/rubiks-20070912.p12/src
     %make CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}"
 popd
 
 #------------------------------------------------------------------------
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p8/src
+    pushd spkg/build/python-2.6.4.p9/src
 	cp ../patches/cPickle.c Modules/cPickle.c
 	%configure
 	perl -pi						\
@@ -564,7 +563,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.8.p2/src/sagenb
+pushd spkg/build/sagenb-0.8.1/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
@@ -610,7 +609,7 @@ pushd spkg/build/sage_scripts-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/flintqs-20070817.p4/src
+pushd spkg/build/flintqs-20070817.p5/src
     cp -fa QuadraticSieve $SAGE_LOCAL/bin
 popd
 
@@ -620,7 +619,7 @@ pushd spkg/build/genus2reduction-0.3.p6/src
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/rubiks-20070912.p10/src
+pushd spkg/build/rubiks-20070912.p12/src
     make DESTDIR=%{buildroot} PREFIX=%{SAGE_LOCAL} INSTALL=cp install
 popd
 
@@ -821,7 +820,7 @@ popd
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p8/src
+    pushd spkg/build/python-2.6.4.p9/src
 	install -m 0644 ../patches/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
 	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
     popd
