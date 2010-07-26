@@ -36,10 +36,11 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.5.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
+Source3:	makecmds.sty
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -197,12 +198,7 @@ BuildRequires:	symmetrica-static-devel
 BuildRequires:	tachyon
 %endif
 
-BuildRequires:	texlive-latex
-BuildRequires:	texlive-fonts
-BuildRequires:	texlive-mfwin
-BuildRequires:	texlive-texmf-afm
-BuildRequires:	texlive-texmf-fonts
-BuildRequires:	texlive-texmf-latex
+BuildRequires:	tetex-latex
 
 BuildRequires:	zn_poly-static-devel
 
@@ -318,12 +314,7 @@ Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
-Requires:	texlive-latex
-Requires:	texlive-fonts
-Requires:	texlive-mfwin
-Requires:	texlive-texmf-afm
-Requires:	texlive-texmf-fonts
-Requires:	texlive-texmf-latex
+Requires:	tetex-latex
 
 #------------------------------------------------------------------------
 Patch0:		sage-4.5.1.patch
@@ -703,6 +694,9 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/sagetex-2.2.5/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
+    mkdir -p %{_datadir}/texmf/tex/generic/sagetex
+    install -m0644 -D %{SOURCE3} \
+	%{buildroot}%{_datadir}/texmf/tex/generic/sagetex/`basename %{SOURCE3}`
 popd
 
 #------------------------------------------------------------------------
@@ -857,6 +851,13 @@ EOF
 %clean
 # rm -rf #%#{buildroot}
 
+########################################################################
+# Update for sagetex and makecmds.sty added to it, so that can use tetex
+%post
+%{_bindir}/mktexlsr
+
+%postun
+%{_bindir}/mktexlsr
 
 ########################################################################
 %files
