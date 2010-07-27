@@ -694,8 +694,7 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/sagetex-2.2.5/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
-    mkdir -p %{_datadir}/texmf/tex/generic/sagetex
-    install -m0644 -D %{SOURCE3} \
+    install -m 0644 -D %{SOURCE3} \
 	%{buildroot}%{_datadir}/texmf/tex/generic/sagetex/`basename %{SOURCE3}`
 popd
 
