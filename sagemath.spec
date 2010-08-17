@@ -94,10 +94,7 @@ BuildRequires:	gsl-devel
 BuildRequires:	iml
 BuildRequires:	ipython
 
-%if %{with_check}
-BuildRequires:	lcalc
-%endif
-
+BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libblas-devel
 BuildRequires:	libgmpxx-devel
