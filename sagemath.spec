@@ -35,8 +35,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.5.1
-Release:	%mkrel 3
+Version:	4.5.2
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -317,23 +317,24 @@ Requires:	tachyon
 Requires:	tetex-latex
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.5.1.patch
-Patch1:		sage-4.5.1-sage_scripts.patch
-Patch2:		sage-4.5.1-wiki.patch
-Patch3:		sage-4.5.1-qepcad.patch
-Patch4:		sage-4.5.1-lie.patch
-Patch5:		sage-4.5.1-sagedoc.patch
-Patch6:		sage-4.5.1-list_plot.patch
-Patch7:		sage-4.5.1-givaro.patch
-Patch8:		sage-4.5.1-sagenb.patch
-Patch9:		sage-4.5.1-gmp5.patch
-Patch10:	sage-4.5.1-arpack.patch
-Patch11:	sage-4.5.1-maxima.patch
-Patch12:	sage-4.5.1-networkx.patch
-Patch13:	sage-4.5.1-sympy_mpmath.patch
+Patch0:		sage-4.5.2.patch
+Patch1:		sage-4.5.2-sage_scripts.patch
+Patch2:		sage-4.5.2-wiki.patch
+Patch3:		sage-4.5.2-qepcad.patch
+Patch4:		sage-4.5.2-lie.patch
+Patch5:		sage-4.5.2-sagedoc.patch
+Patch6:		sage-4.5.2-list_plot.patch
+Patch7:		sage-4.5.2-givaro.patch
+Patch8:		sage-4.5.2-sagenb.patch
+Patch9:		sage-4.5.2-gmp5.patch
+Patch10:	sage-4.5.2-arpack.patch
+Patch11:	sage-4.5.2-maxima.patch
+Patch12:	sage-4.5.2-networkx.patch
+Patch13:	sage-4.5.2-sympy_mpmath.patch
 
+# Rediff of
 # http://trac.sagemath.org/sage_trac/attachment/ticket/8316/trac_8316-remove_jinja.2.patch
-Patch100:	trac_8316-remove_jinja.2.patch
+Patch100:	sage-4.5.2-trac_8316-remove_jinja.2.patch
 
 #------------------------------------------------------------------------
 %description
@@ -358,7 +359,7 @@ pushd spkg
 		polytopes_db-20100210		\
 		rubiks-20070912.p12		\
 		sage-%{version}			\
-		sagenb-0.8.1			\
+		sagenb-0.8.2			\
 		sage_scripts-%{version}		\
 		sagetex-2.2.5			\
 %if %{pickle_patch}
@@ -380,10 +381,7 @@ popd
 
 # jinja was removed from sage but patch to avoid requiring it at
 # build time not yet applied
-pushd spkg/build/sage-%{version}
 %patch100 -p1
-popd
-
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -471,7 +469,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.8.1/src/sagenb
+pushd spkg/build/sagenb-0.8.2/src/sagenb
     python ./setup.py build
 popd
 
@@ -554,7 +552,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.8.1/src/sagenb
+pushd spkg/build/sagenb-0.8.2/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
