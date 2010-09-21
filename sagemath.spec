@@ -563,7 +563,7 @@ popd
 
 #------------------------------------------------------------------------
 %if %{use_sage_networkx}
-pushd spkg/build/networkx-1.0.1/src
+pushd spkg/build/networkx-1.2.p1/src
     rm -fr $SAGE_PYTHONPATH/networkx*
     rm -fr %{buildroot}%{py_platsitedir}/networkx*
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
