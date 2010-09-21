@@ -35,7 +35,7 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.5.2
+Version:	4.5.3
 Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
@@ -314,24 +314,20 @@ Requires:	tachyon
 Requires:	tetex-latex
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.5.2.patch
-Patch1:		sage-4.5.2-sage_scripts.patch
-Patch2:		sage-4.5.2-wiki.patch
-Patch3:		sage-4.5.2-qepcad.patch
-Patch4:		sage-4.5.2-lie.patch
-Patch5:		sage-4.5.2-sagedoc.patch
-Patch6:		sage-4.5.2-list_plot.patch
-Patch7:		sage-4.5.2-givaro.patch
-Patch8:		sage-4.5.2-sagenb.patch
-Patch9:		sage-4.5.2-gmp5.patch
-Patch10:	sage-4.5.2-arpack.patch
-Patch11:	sage-4.5.2-maxima.patch
-Patch12:	sage-4.5.2-networkx.patch
-Patch13:	sage-4.5.2-sympy_mpmath.patch
-
-# Rediff of
-# http://trac.sagemath.org/sage_trac/attachment/ticket/8316/trac_8316-remove_jinja.2.patch
-Patch100:	sage-4.5.2-trac_8316-remove_jinja.2.patch
+Patch0:		sage-4.5.3.patch
+Patch1:		sage-4.5.3-sage_scripts.patch
+Patch2:		sage-4.5.3-wiki.patch
+Patch3:		sage-4.5.3-qepcad.patch
+Patch4:		sage-4.5.3-lie.patch
+Patch5:		sage-4.5.3-sagedoc.patch
+Patch6:		sage-4.5.3-list_plot.patch
+Patch7:		sage-4.5.3-givaro.patch
+Patch8:		sage-4.5.3-sagenb.patch
+Patch9:		sage-4.5.3-gmp5.patch
+Patch10:	sage-4.5.3-arpack.patch
+Patch11:	sage-4.5.3-maxima.patch
+Patch12:	sage-4.5.3-networkx.patch
+Patch13:	sage-4.5.3-sympy_mpmath.patch
 
 #------------------------------------------------------------------------
 %description
@@ -372,13 +368,10 @@ pushd spkg
 %endif
 
 %if %{use_sage_networkx}
-    tar jxf standard/networkx-1.0.1.spkg -C build
+    tar jxf standard/networkx-1.2.p1.spkg -C build
 %endif
 popd
 
-# jinja was removed from sage but patch to avoid requiring it at
-# build time not yet applied
-%patch100 -p1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
