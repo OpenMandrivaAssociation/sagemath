@@ -329,6 +329,17 @@ Patch11:	sage-4.5.3-maxima.patch
 Patch12:	sage-4.5.3-networkx.patch
 Patch13:	sage-4.5.3-sympy_mpmath.patch
 
+# Cython 0.13
+# http://trac.sagemath.org/sage_trac/attachment/ticket/9828/<patch_name>
+Patch100:	0_fix_setup.patch
+Patch101:	1_str_to_bytes.patch
+Patch102:	2_no_autodict.patch
+Patch103:	3_broken_imports.patch
+Patch104:	4_typing_issue.patch
+Patch105:	5_random_typing.patch
+Patch106:	6_type_inferance.patch
+Patch107:	7_bool_bint.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -370,6 +381,18 @@ pushd spkg
 %if %{use_sage_networkx}
     tar jxf standard/networkx-1.2.p1.spkg -C build
 %endif
+popd
+
+# Cython 0.13
+pushd spkg/build/sage-%{version}
+%patch100 -p1
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+%patch105 -p1
+%patch106 -p1
+%patch107 -p1
 popd
 
 %patch0 -p1
