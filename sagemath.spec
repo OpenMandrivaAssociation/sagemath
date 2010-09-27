@@ -36,7 +36,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.5.3
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -326,7 +326,13 @@ Patch8:		sage-4.5.3-sagenb.patch
 Patch9:		sage-4.5.3-gmp5.patch
 Patch10:	sage-4.5.3-arpack.patch
 Patch11:	sage-4.5.3-maxima.patch
+
+# Patch rebuilt for python-numpy (1.4.1 - need mirros to update,
+# but hopefully also works with 1.5.0) base on:
+# http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
+# http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
 Patch12:	sage-4.5.3-networkx.patch
+
 Patch13:	sage-4.5.3-sympy_mpmath.patch
 
 # Cython 0.13
