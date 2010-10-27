@@ -357,8 +357,8 @@ packages into a common Python-based interface.
 %prep
 %setup -q -n sage-%{version}
 
-pushd spkg
-    mkdir -p build
+mkdir -p spkg/build
+pushd spkg/build
     for pkg in	conway_polynomials-0.2		\
 		elliptic_curves-0.1		\
 		examples-%{version}		\
@@ -376,16 +376,16 @@ pushd spkg
 		python-2.6.4.p9			\
 %endif
     ; do
-	tar jxf standard/$pkg.spkg -C build || :
+	tar jxf ../standard/$pkg.spkg
     done
     rm -f build/sage_scripts-%{version}/*.orig
 
 %if %{use_sage_pexpect}
-    tar jxf standard/pexpect-2.0.p4.spkg -C build
+    tar jxf ../standard/pexpect-2.0.p4.spkg
 %endif
 
 %if %{use_sage_networkx}
-    tar jxf standard/networkx-1.2.p1.spkg -C build
+    tar jxf ../standard/networkx-1.2.p1.spkg
 %endif
 popd
 
