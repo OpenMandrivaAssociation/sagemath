@@ -41,6 +41,7 @@ Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 Source3:	makecmds.sty
+Source4:	python-2.7.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -372,9 +373,6 @@ pushd spkg/build
 		sagenb-0.8.2			\
 		sage_scripts-%{version}		\
 		sagetex-2.2.5			\
-%if %{pickle_patch}
-		python-2.6.4.p9			\
-%endif
     ; do
 	tar jxf ../standard/$pkg.spkg
     done
@@ -386,6 +384,10 @@ pushd spkg/build
 
 %if %{use_sage_networkx}
     tar jxf ../standard/networkx-1.2.p1.spkg
+%endif
+
+%if %{pickle_patch}
+    tar xf %{SOURCE4}
 %endif
 popd
 
@@ -509,13 +511,28 @@ popd
 
 #------------------------------------------------------------------------
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p9/src
-	cp ../patches/cPickle.c Modules/cPickle.c
-	%configure
-	perl -pi						\
-	    -e 's|-Wl,--no-undefined||;'			\
-	    Makefile
-	%make
+    pushd spkg/build/python-2.7
+	tar jxf Python-2.7.tar.bz2
+	pushd Python-2.7
+	    patch -p0 < ../python-2.7-module-linkage.patch
+	    patch -p0 < ../Python-2.3-no-local-incpath.patch
+	    patch -p0 < ../python-lib64.patch
+	    patch -p0 < ../Python-2.2.2-biarch-headers.patch
+	    patch -p0 < ../python-2.5.1-detect-mandriva.patch
+	    patch -p1 < ../python-2.5.2-fix_UTF-8_name.patch
+	    patch -p1 < ../python-2.5.1-plural-fix.patch
+	    patch -p0 < ../python-2.7-fix_configure_creation.patch
+	    patch -p0 < ../Python-2.7-CVE-2010-3493.diff
+	    patch -p1 < ../Python-2.7-CVE-2010-3492.diff
+	    # the root of all evil
+	    patch -p0 < ../dynamic_class_copyreg.patch
+
+	    %configure2_5x  --with-threads \
+		    --enable-unicode=ucs4 \
+		    --enable-ipv6 \
+		    --enable-shared
+	    %make
+	popd
     popd
 %endif
 
@@ -831,8 +848,8 @@ popd
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 %if %{pickle_patch}
-    pushd spkg/build/python-2.6.4.p9/src
-	install -m 0644 ../patches/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
+    pushd spkg/build/python-2.7/Python-2.7
+	install -m 0644 Lib/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
 	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
     popd
 %endif
