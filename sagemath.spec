@@ -757,6 +757,9 @@ export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
 export SYMPOW_DIR="\$DOT_SAGE/sympow"
 export LC_MESSAGES=C
+[ -f \$HOME/.matplotlib/fontList.cache ] &&
+	grep -q python2.6 \$HOME/.matplotlib/fontList.cache &&
+	rm -f \$HOME/.matplotlib/fontList.cache
 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
