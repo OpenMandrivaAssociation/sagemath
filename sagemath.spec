@@ -789,6 +789,10 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
+%if %{use_sage_pexpect}
+    cp -f $SAGE_PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{py_platsitedir}
+%endif
+
 # Build documentation, using %{buildroot} environment, as it needs
 # to run and load sage python modules
 pushd spkg/build/sage-%{version}/doc
@@ -815,10 +819,6 @@ pushd spkg/build/sage-%{version}/doc
 
     #--------------------------------------------------------------------
 %if %{with_check}
-    %if %{use_sage_pexpect}
-	cp -f $SAGE_PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{py_platsitedir}
-    %endif
-
     %if %{use_sage_networkx}
 	# move in buildroot because PYTHONPATH is already overriden
 	mv -f %{buildroot}%{SAGE_PYTHONPATH}/networkx* %{buildroot}%{py_platsitedir}
@@ -831,10 +831,6 @@ pushd spkg/build/sage-%{version}/doc
     SAGE_TIMEOUT=%{SAGE_TIMEOUT} SAGE_TIMEOUT_LONG=%{SAGE_TIMEOUT_LONG} sage -testall || :
     cp -f $DOT_SAGE/tmp/test.log $SAGE_DOC
 
-    %if %{use_sage_pexpect}
-	rm -f %{buildroot}%{py_platsitedir}/{ANSI,FSM,pexpect,pxssh,screen}.py
-    %endif
-
     %if %{use_sage_networkx}
 	# revert back to directory where it will be installed
 	mv -f %{buildroot}%{py_platsitedir}/networkx* %{buildroot}%{SAGE_PYTHONPATH}
@@ -845,6 +841,10 @@ pushd spkg/build/sage-%{version}/doc
     # some "user setup" files will be installed there...
     rm -fr $DOT_SAGE
 popd
+
+%if %{use_sage_pexpect}
+    rm -f %{buildroot}%{py_platsitedir}/{ANSI,FSM,pexpect,pxssh,screen}.py
+%endif
 
 #------------------------------------------------------------------------
 # Script was used to build documentation 
