@@ -16,6 +16,18 @@
 # http://bugs.python.org/issue7689
 %define		pickle_patch		1
 
+%define conway_polynomials_and_version	conway_polynomials-0.2
+%define elliptic_curves_and_version	elliptic_curves-0.1
+%define flintqs_and_version		flintqs-20070817.p5
+%define genus2reduction_and_version	genus2reduction-0.3.p8
+%define graphs_and_version		graphs-20070722.p1
+%define networkx_and_version		networkx-1.2.p1
+%define pexpect_and_version		pexpect-2.0.p4
+%define polytopes_db_and_version	polytopes_db-20100210
+%define rubiks_and_version		rubiks-20070912.p12
+%define	sagenb_and_version		sagenb-0.8.7
+%define sagetex_and_version		sagetex-2.2.5
+
 %define		name			sagemath
 %define		SAGE_ROOT		%{_datadir}/sage
 %define		SAGE_LOCAL		%{SAGE_ROOT}/local
@@ -35,8 +47,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.5.3
-Release:	%mkrel 4
+Version:	4.6
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -315,37 +327,26 @@ Requires:	tachyon
 Requires:	tetex-latex
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.5.3.patch
-Patch1:		sage-4.5.3-sage_scripts.patch
-Patch2:		sage-4.5.3-wiki.patch
-Patch3:		sage-4.5.3-qepcad.patch
-Patch4:		sage-4.5.3-lie.patch
-Patch5:		sage-4.5.3-sagedoc.patch
-Patch6:		sage-4.5.3-list_plot.patch
-Patch7:		sage-4.5.3-givaro.patch
-Patch8:		sage-4.5.3-sagenb.patch
-Patch9:		sage-4.5.3-gmp5.patch
-Patch10:	sage-4.5.3-arpack.patch
-Patch11:	sage-4.5.3-maxima.patch
+Patch0:		sage-4.6.patch
+Patch1:		sage-4.6-sage_scripts.patch
+Patch2:		sage-4.6-wiki.patch
+Patch3:		sage-4.6-qepcad.patch
+Patch4:		sage-4.6-lie.patch
+Patch5:		sage-4.6-sagedoc.patch
+Patch6:		sage-4.6-list_plot.patch
+Patch7:		sage-4.6-givaro.patch
+Patch8:		sage-4.6-sagenb.patch
+Patch9:		sage-4.6-gmp5.patch
+Patch10:	sage-4.6-arpack.patch
+Patch11:	sage-4.6-maxima.patch
 
 # Patch rebuilt for python-numpy (1.4.1 - need mirros to update,
 # but hopefully also works with 1.5.0) base on:
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
-Patch12:	sage-4.5.3-networkx.patch
+Patch12:	sage-4.6-networkx.patch
 
-Patch13:	sage-4.5.3-sympy_mpmath.patch
-
-# Cython 0.13
-# http://trac.sagemath.org/sage_trac/attachment/ticket/9828/<patch_name>
-Patch100:	0_fix_setup.patch
-Patch101:	1_str_to_bytes.patch
-Patch102:	2_no_autodict.patch
-Patch103:	3_broken_imports.patch
-Patch104:	4_typing_issue.patch
-Patch105:	5_random_typing.patch
-Patch106:	6_type_inferance.patch
-Patch107:	7_bool_bint.patch
+Patch13:	sage-4.6-sympy_mpmath.patch
 
 #------------------------------------------------------------------------
 %description
@@ -360,47 +361,35 @@ packages into a common Python-based interface.
 
 mkdir -p spkg/build
 pushd spkg/build
-    for pkg in	conway_polynomials-0.2		\
-		elliptic_curves-0.1		\
+    for pkg in	%{conway_polynomials_and_version}	\
+		%{elliptic_curves_and_version}	\
 		examples-%{version}		\
 		extcode-%{version}		\
-		flintqs-20070817.p5		\
-		genus2reduction-0.3.p6		\
-		graphs-20070722.p1		\
-		polytopes_db-20100210		\
-		rubiks-20070912.p12		\
+		%{flintqs_and_version}		\
+		%{genus2reduction_and_version}	\
+		%{graphs_and_version}		\
+		%{polytopes_db_and_version}	\
+		%{rubiks_and_version}		\
 		sage-%{version}			\
-		sagenb-0.8.2			\
+		%{sagenb_and_version}		\
 		sage_scripts-%{version}		\
-		sagetex-2.2.5			\
+		%{sagetex_and_version}		\
     ; do
 	tar jxf ../standard/$pkg.spkg
     done
     rm -f build/sage_scripts-%{version}/*.orig
 
 %if %{use_sage_pexpect}
-    tar jxf ../standard/pexpect-2.0.p4.spkg
+    tar jxf ../standard/%{pexpect_and_version}.spkg
 %endif
 
 %if %{use_sage_networkx}
-    tar jxf ../standard/networkx-1.2.p1.spkg
+    tar jxf ../standard/%{networkx_and_version}.spkg
 %endif
 
 %if %{pickle_patch}
     tar xf %{SOURCE4}
 %endif
-popd
-
-# Cython 0.13
-pushd spkg/build/sage-%{version}
-%patch100 -p1
-%patch101 -p1
-%patch102 -p1
-%patch103 -p1
-%patch104 -p1
-%patch105 -p1
-%patch106 -p1
-%patch107 -p1
 popd
 
 %patch0 -p1
@@ -440,7 +429,7 @@ ln -sf %{_includedir} $SAGE_LOCAL/include
 ln -sf %{_datadir} $SAGE_LOCAL/share
 
 #------------------------------------------------------------------------
-pushd spkg/build/genus2reduction-0.3.p6/src
+pushd spkg/build/%{genus2reduction_and_version}/src
 # based on debian patch
 cat > Makefile << EOF
 CFLAGS = -O2 -I%{_includedir}/pari
@@ -490,22 +479,22 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.8.2/src/sagenb
+pushd spkg/build/%{sagenb_and_version}/src/sagenb
     python ./setup.py build
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/flintqs-20070817.p5/src
+pushd spkg/build/%{flintqs_and_version}/src
     %make CPP="g++ %{optflags} -fPIC"
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/genus2reduction-0.3.p6/src
+pushd spkg/build/%{genus2reduction_and_version}/src
     %make
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/rubiks-20070912.p12/src
+pushd spkg/build/%{rubiks_and_version}/src
     %make CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}"
 popd
 
@@ -588,7 +577,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagenb-0.8.2/src/sagenb
+pushd spkg/build/%{sagenb_and_version}/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
@@ -602,14 +591,14 @@ popd
 
 #------------------------------------------------------------------------
 %if %{use_sage_pexpect}
-pushd spkg/build/pexpect-2.0.p4/src
+pushd spkg/build/%{pexpect_and_version}/src
     cp -f {ANSI,FSM,pexpect,pxssh,screen}.py $SAGE_PYTHONPATH
 popd
 %endif
 
 #------------------------------------------------------------------------
 %if %{use_sage_networkx}
-pushd spkg/build/networkx-1.2.p1/src
+pushd spkg/build/%{networkx_and_version}/src
     rm -fr $SAGE_PYTHONPATH/networkx*
     rm -fr %{buildroot}%{py_platsitedir}/networkx*
     python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
@@ -634,17 +623,17 @@ pushd spkg/build/sage_scripts-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/flintqs-20070817.p5/src
+pushd spkg/build/%{flintqs_and_version}/src
     cp -fa QuadraticSieve $SAGE_LOCAL/bin
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/genus2reduction-0.3.p6/src
+pushd spkg/build/%{genus2reduction_and_version}/src
     %makeinstall_std
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/rubiks-20070912.p12/src
+pushd spkg/build/%{rubiks_and_version}/src
     make DESTDIR=%{buildroot} PREFIX=%{SAGE_LOCAL} INSTALL=cp install
 popd
 
@@ -663,13 +652,13 @@ pushd $SAGE_LOCAL/bin/
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/conway_polynomials-0.2
+pushd spkg/build/%{conway_polynomials_and_version}
     mkdir -p $SAGE_DATA/conway_polynomials
     cp -fa src/conway_polynomials/* $SAGE_DATA/conway_polynomials
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/elliptic_curves-0.1
+pushd spkg/build/%{elliptic_curves_and_version}
     cp -fa cremona_mini/src/cremona_mini $SAGE_DATA
     mkdir -p $SAGE_DATA/ellcurves
     cp -fa ellcurves/rank* $SAGE_DATA/ellcurves
@@ -705,13 +694,13 @@ pushd spkg/build/extcode-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/graphs-20070722.p1
+pushd spkg/build/%{graphs_and_version}
     mkdir -p $SAGE_DATA/graphs
     cp -fa graphs/* $SAGE_DATA/graphs
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/polytopes_db-20100210
+pushd spkg/build/%{polytopes_db_and_version}
     mkdir -p $SAGE_DATA/reflexive_polytopes
     cp -fa reflexive_polytopes/* $SAGE_DATA/reflexive_polytopes
 popd
@@ -726,7 +715,7 @@ pushd spkg/build/examples-%{version}
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/sagetex-2.2.5/src
+pushd spkg/build/%{sagetex_and_version}/src
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     install -m 0644 -D %{SOURCE3} \
 	%{buildroot}%{_datadir}/texmf/tex/generic/sagetex/`basename %{SOURCE3}`
