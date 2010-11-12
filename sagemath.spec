@@ -113,6 +113,7 @@ BuildRequires:	libblas-devel
 BuildRequires:	libgmpxx-devel
 BuildRequires:	libm4ri-devel
 BuildConflicts:	libm4ri-static-devel
+BuildRequires:	libmpc-devel
 BuildRequires:	libpari-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	linalg-linbox-devel
