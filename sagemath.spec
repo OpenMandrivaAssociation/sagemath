@@ -48,7 +48,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.6
-Release:	%mkrel 3
+Release:	%mkrel 4
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -747,6 +747,7 @@ export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
 export SYMPOW_DIR="\$DOT_SAGE/sympow"
 export LC_MESSAGES=C
+export LC_NUMERIC=C
 [ -f \$HOME/.matplotlib/fontList.cache ] &&
 	grep -q python2.6 \$HOME/.matplotlib/fontList.cache &&
 	rm -f \$HOME/.matplotlib/fontList.cache
