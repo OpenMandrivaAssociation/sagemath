@@ -580,6 +580,7 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/%{sagenb_and_version}/src/sagenb
     rm -f %{buildroot}%{py_platsitedir}/sagenb/data/jmol
+    rm -f %{buildroot}%{py_platsitedir}/sagenb/data/sage3d/sage3d
     python setup.py install --root=%{buildroot} --install-purelib=%{py_platsitedir}
     # FIXME needs more then just path adjusting
     rm -f %{buildroot}%{_bindir}/sage3d
@@ -588,6 +589,7 @@ pushd spkg/build/%{sagenb_and_version}/src/sagenb
     rm -fr %{buildroot}%{py_platsitedir}/sagenb/data/jmol
     # and use system one
     ln -sf %{_datadir}/jmol %{buildroot}%{py_platsitedir}/sagenb/data/jmol
+    ln -sf %{SAGE_LOCAL}/bin/sage3d %{buildroot}%{py_platsitedir}/sagenb/data/sage3d/sage3d
 popd
 
 #------------------------------------------------------------------------
@@ -755,6 +757,14 @@ $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
 chmod +x %{buildroot}%{_bindir}/sage
+
+#------------------------------------------------------------------------
+cat > %{buildroot}%{_datadir}/sage/local/bin/sage3d << EOF
+#!/bin/sh
+
+java -classpath %{SAGE_DEVEL}/sage/sagenb/data/sage3d/lib/sage3d.jar:%{_javadir}/j3dcore.jar:%{_javadir}/vecmath.jar:%{_javadir}/j3dutils.jar -Djava.library.path=%{_javadir} org.sagemath.sage3d.ObjectViewerApp "\$1"
+EOF
+chmod +x %{buildroot}%{_datadir}/sage/local/bin/sage3d
 
 #------------------------------------------------------------------------
 # fixup cython interface:
