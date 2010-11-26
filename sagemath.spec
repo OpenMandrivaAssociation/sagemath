@@ -48,7 +48,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.6
-Release:	%mkrel 4
+Release:	%mkrel 5
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -231,6 +231,9 @@ Requires:	gp2c pari pari-data libpari-devel
 Requires:	ipython
 Requires:	jmol
 
+# packages in non-free
+Suggests:	java3d
+Suggests:	jsmath-fonts
 %ifarch %{ix86}
 Suggests:	kant-kash
 %endif
@@ -762,7 +765,7 @@ chmod +x %{buildroot}%{_bindir}/sage
 cat > %{buildroot}%{_datadir}/sage/local/bin/sage3d << EOF
 #!/bin/sh
 
-java -classpath %{SAGE_DEVEL}/sage/sagenb/data/sage3d/lib/sage3d.jar:%{_javadir}/j3dcore.jar:%{_javadir}/vecmath.jar:%{_javadir}/j3dutils.jar -Djava.library.path=%{_javadir} org.sagemath.sage3d.ObjectViewerApp "\$1"
+java -classpath %{SAGE_DEVEL}/sage/sagenb/data/sage3d/lib/sage3d.jar:%{_javadir}/j3dcore.jar:%{_javadir}/vecmath.jar:%{_javadir}/j3dutils.jar org.sagemath.sage3d.ObjectViewerApp "\$1"
 EOF
 chmod +x %{buildroot}%{_datadir}/sage/local/bin/sage3d
 
