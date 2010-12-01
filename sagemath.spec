@@ -353,6 +353,9 @@ Patch12:	sage-4.6-networkx.patch
 
 Patch13:	sage-4.6-sympy_mpmath.patch
 
+# Test patch to build system issue
+Patch14:	sage-4.6-build.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -415,6 +418,7 @@ popd
 %if %{mpmath_from_sympy}
 %patch13 -p1
 %endif
+%patch14 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
