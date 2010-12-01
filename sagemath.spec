@@ -228,6 +228,7 @@ Requires:	gcc-gfortran
 Requires:	gd-utils
 Requires:	gfan
 Requires:	gp2c pari pari-data libpari-devel
+Requires:	imagemagick
 Requires:	ipython
 Requires:	jmol
 
