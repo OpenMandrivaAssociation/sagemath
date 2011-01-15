@@ -25,7 +25,7 @@
 %define pexpect_and_version		pexpect-2.0.p4
 %define polytopes_db_and_version	polytopes_db-20100210
 %define rubiks_and_version		rubiks-20070912.p12
-%define	sagenb_and_version		sagenb-0.8.7
+%define	sagenb_and_version		sagenb-0.8.10
 %define sagetex_and_version		sagetex-2.2.5
 
 %define		name			sagemath
@@ -47,8 +47,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.6
-Release:	%mkrel 6
+Version:	4.6.1
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -332,29 +332,29 @@ Requires:	tachyon
 Requires:	tetex-latex
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.6.patch
-Patch1:		sage-4.6-sage_scripts.patch
-Patch2:		sage-4.6-wiki.patch
-Patch3:		sage-4.6-qepcad.patch
-Patch4:		sage-4.6-lie.patch
-Patch5:		sage-4.6-sagedoc.patch
-Patch6:		sage-4.6-list_plot.patch
-Patch7:		sage-4.6-givaro.patch
-Patch8:		sage-4.6-sagenb.patch
-Patch9:		sage-4.6-gmp5.patch
-Patch10:	sage-4.6-arpack.patch
-Patch11:	sage-4.6-maxima.patch
+Patch0:		sage-4.6.1.patch
+Patch1:		sage-4.6.1-sage_scripts.patch
+Patch2:		sage-4.6.1-wiki.patch
+Patch3:		sage-4.6.1-qepcad.patch
+Patch4:		sage-4.6.1-lie.patch
+Patch5:		sage-4.6.1-sagedoc.patch
+Patch6:		sage-4.6.1-list_plot.patch
+Patch7:		sage-4.6.1-givaro.patch
+Patch8:		sage-4.6.1-sagenb.patch
+Patch9:		sage-4.6.1-gmp5.patch
+Patch10:	sage-4.6.1-arpack.patch
+Patch11:	sage-4.6.1-maxima.patch
 
 # Patch rebuilt for python-numpy (1.4.1 - need mirros to update,
 # but hopefully also works with 1.5.0) base on:
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
-Patch12:	sage-4.6-networkx.patch
+Patch12:	sage-4.6.1-networkx.patch
 
-Patch13:	sage-4.6-sympy_mpmath.patch
+Patch13:	sage-4.6.1-sympy_mpmath.patch
 
 # Test patch to build system issue
-Patch14:	sage-4.6-build.patch
+Patch14:	sage-4.6.1-build.patch
 
 #------------------------------------------------------------------------
 %description
