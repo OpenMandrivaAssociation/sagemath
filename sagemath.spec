@@ -16,6 +16,12 @@
 # http://bugs.python.org/issue7689
 %define		pickle_patch		1
 
+# Need this because as of sage 4.0.1, it only works "correctly" with python-pexpect 2.0
+%define		use_sage_pexpect	1
+
+# python-networkx currently broken at least in x86_64 (and needs a patch for sage)
+%define		use_sage_networkx	1
+
 %define conway_polynomials_and_version	conway_polynomials-0.2
 %define elliptic_curves_and_version	elliptic_curves-0.1
 %define flintqs_and_version		flintqs-20070817.p5
@@ -34,12 +40,6 @@
 %define		SAGE_DEVEL		%{SAGE_ROOT}/devel
 %define		SAGE_DOC		%{SAGE_DEVEL}/doc
 %define		SAGE_DATA		%{SAGE_ROOT}/data
-
-# Need this because as of sage 4.0.1, it only works "correctly" with python-pexpect 2.0
-%define		use_sage_pexpect	1
-
-# python-networkx currently broken at least in x86_64 (and needs a patch for sage)
-%define		use_sage_networkx	1
 
 %define		SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
 
