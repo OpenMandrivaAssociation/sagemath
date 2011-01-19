@@ -53,7 +53,7 @@ Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 Source3:	makecmds.sty
-Source4:	python-2.7.tar
+Source4:	python-2.7.1.tar
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -509,9 +509,9 @@ popd
 
 #------------------------------------------------------------------------
 %if %{pickle_patch}
-    pushd spkg/build/python-2.7
-	tar jxf Python-2.7.tar.bz2
-	pushd Python-2.7
+    pushd spkg/build/python-2.7.1
+	tar jxf Python-2.7.1.tar.bz2
+	pushd Python-2.7.1
 	    patch -p0 < ../python-2.7-module-linkage.patch
 	    patch -p0 < ../Python-2.3-no-local-incpath.patch
 	    patch -p0 < ../python-lib64.patch
@@ -519,9 +519,7 @@ popd
 	    patch -p0 < ../python-2.5.1-detect-mandriva.patch
 	    patch -p1 < ../python-2.5.2-fix_UTF-8_name.patch
 	    patch -p1 < ../python-2.5.1-plural-fix.patch
-	    patch -p0 < ../python-2.7-fix_configure_creation.patch
-	    patch -p0 < ../Python-2.7-CVE-2010-3493.diff
-	    patch -p1 < ../Python-2.7-CVE-2010-3492.diff
+	    patch -p0 < ../python-2.7.1-fix_configure_creation.patch
 	    # the root of all evil
 	    patch -p0 < ../dynamic_class_copyreg.patch
 
@@ -860,7 +858,7 @@ popd
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 %if %{pickle_patch}
-    pushd spkg/build/python-2.7/Python-2.7
+    pushd spkg/build/python-2.7.1/Python-2.7.1
 	install -m 0644 Lib/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
 	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
     popd
