@@ -2,7 +2,7 @@
 #%#define		_enable_debug_packages	%{nil}
 #%#define		debug_package		%{nil}
 
-%define _requires_exceptions		perl(jQuery)
+%define _requires_exceptions		perl(jQuery)\\|pythonegg(twisted)
 
 # Run "sage -testall" after building documentation?
 %define		with_check		0
@@ -21,6 +21,9 @@
 
 # python-networkx currently broken at least in x86_64 (and needs a patch for sage)
 %define		use_sage_networkx	1
+
+# sagemath 4.6.2 should be updated to use cython-0.14
+%define		use_sage_cython		1
 
 %define conway_polynomials_and_version	conway_polynomials-0.2
 %define elliptic_curves_and_version	elliptic_curves-0.1
@@ -54,6 +57,7 @@ Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 Source3:	makecmds.sty
 Source4:	python-2.7.1.tar
+Source5:	Cython-0.13.tar.gz
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -398,6 +402,10 @@ pushd spkg/build
 %if %{pickle_patch}
     tar xf %{SOURCE4}
 %endif
+
+%if %{use_sage_cython}
+    tar xf %{SOURCE5}
+%endif
 popd
 
 %patch0 -p1
@@ -470,11 +478,17 @@ popd
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
-
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
-
 export DESTDIR=%{buildroot}
+
+%if %{use_sage_cython}
+    export PATH=%{buildroot}%{_bindir}:$PATH
+    export PYTHONPATH=%{buildroot}%{py_platsitedir}:$PYTHONPATH
+    pushd spkg/build/Cython-0.13
+	%__python setup.py install --root=%{buildroot}
+    popd
+%endif
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
@@ -541,8 +555,12 @@ export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
 export SAGE_DATA=%{buildroot}%{SAGE_DATA}
 export SAGE_DOC=%{buildroot}%{SAGE_DOC}
 export SAGE_PYTHONPATH=%{buildroot}%{SAGE_PYTHONPATH}
-
 export DESTDIR=%{buildroot}
+
+%if %{use_sage_cython}
+    export PATH=%{buildroot}%{_bindir}:$PATH
+    export PYTHONPATH=%{buildroot}%{py_platsitedir}:$PYTHONPATH
+%endif
 
 #------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_bindir}
@@ -851,6 +869,15 @@ popd
 
 %if %{use_sage_pexpect}
     rm -f %{buildroot}%{py_platsitedir}/{ANSI,FSM,pexpect,pxssh,screen}.py
+%endif
+
+%if %{use_sage_cython}
+    [ -f %{buildroot}%{_bindir} ] &&
+	mv -f %{buildroot}%{_bindir}/cython $SAGE_LOCAL/bin
+    [ -d %{buildroot}%{py_platsitedir}/Cython ] &&
+	mv -f	%{buildroot}%{py_platsitedir}/[Cc]ython*	\
+		%{buildroot}%{py_platsitedir}/pyximport		\
+		%{buildroot}%{SAGE_PYTHONPATH}
 %endif
 
 #------------------------------------------------------------------------
