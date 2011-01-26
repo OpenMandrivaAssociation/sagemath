@@ -58,6 +58,7 @@ Source2:	sets.py
 Source3:	makecmds.sty
 Source4:	python-2.7.1.tar
 Source5:	Cython-0.13.tar.gz
+Source6:	gprc.expect
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -360,6 +361,8 @@ Patch13:	sage-4.6.1-sympy_mpmath.patch
 # Test patch to build system issue
 Patch14:	sage-4.6.1-build.patch
 
+Patch15:	sage-4.6.1-pari.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -427,6 +430,7 @@ popd
 %patch13 -p1
 %endif
 %patch14 -p1
+%patch15 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -718,6 +722,7 @@ pushd spkg/build/extcode-%{version}
 	singular		\
 	sobj			\
 	$SAGE_DATA/extcode
+    cp -f %{SOURCE6} $SAGE_DATA/extcode/pari
 popd
 
 #------------------------------------------------------------------------
