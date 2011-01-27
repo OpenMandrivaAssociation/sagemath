@@ -25,6 +25,9 @@
 # sagemath 4.6.2 should be updated to use cython-0.14
 %define		use_sage_cython		1
 
+# minor tweaks to work with python 2.7?
+%define		sage_python_26		1
+
 %define conway_polynomials_and_version	conway_polynomials-0.2
 %define elliptic_curves_and_version	elliptic_curves-0.1
 %define flintqs_and_version		flintqs-20070817.p5
@@ -59,6 +62,7 @@ Source3:	makecmds.sty
 Source4:	python-2.7.1.tar
 Source5:	Cython-0.13.tar.gz
 Source6:	gprc.expect
+Source7:	unittest.py
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -362,6 +366,7 @@ Patch13:	sage-4.6.1-sympy_mpmath.patch
 Patch14:	sage-4.6.1-build.patch
 
 Patch15:	sage-4.6.1-pari.patch
+Patch16:	sage-4.6.1-python2.7.patch
 
 #------------------------------------------------------------------------
 %description
@@ -431,6 +436,7 @@ popd
 %endif
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -883,6 +889,10 @@ popd
 	mv -f	%{buildroot}%{py_platsitedir}/[Cc]ython*	\
 		%{buildroot}%{py_platsitedir}/pyximport		\
 		%{buildroot}%{SAGE_PYTHONPATH}
+%endif
+
+%if %{sage_python_26}
+    cp -f %{SOURCE6} $SAGE_PYTHONPATH
 %endif
 
 #------------------------------------------------------------------------
