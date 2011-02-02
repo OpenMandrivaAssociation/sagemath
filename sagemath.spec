@@ -156,7 +156,11 @@ BuildRequires:	pynac-devel
 BuildRequires:	python-cvxopt
 %endif
 
+%if %{use_sage_cython}
+BuildConflicts:	python-cython
+%else
 BuildRequires:	python-cython
+%endif
 BuildRequires:	python-jinja2
 
 BuildRequires:	python-matplotlib
