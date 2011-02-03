@@ -848,7 +848,7 @@ pushd spkg/build/sage-%{version}/doc
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
     export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
-    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:`cat /etc/ld.so.conf.d/atlas.conf`:$LD_LIBRARY_PATH
     export PYTHONPATH=%{buildroot}%{py_platsitedir}
 
     # there we go
