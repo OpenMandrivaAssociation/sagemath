@@ -896,7 +896,7 @@ popd
 %endif
 
 %if %{sage_python_26}
-    cp -f %{SOURCE6} $SAGE_PYTHONPATH
+    cp -f %{SOURCE7} $SAGE_PYTHONPATH
 %endif
 
 #------------------------------------------------------------------------
