@@ -54,7 +54,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.6.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -222,7 +222,7 @@ BuildRequires:	symmetrica-static-devel
 BuildRequires:	tachyon
 %endif
 
-BuildRequires:	tetex-latex
+BuildRequires:	texlive
 
 BuildRequires:	zn_poly-static-devel
 
@@ -309,6 +309,8 @@ Requires:	python-mpmath
 
 Requires:	python-numpy
 
+Requires:	python-parsing
+
 %if !%{use_sage_pexpect}
 Requires:	python-pexpect
 %endif
@@ -342,7 +344,7 @@ Requires:	singular
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
-Requires:	tetex-latex
+Requires:	texlive
 
 #------------------------------------------------------------------------
 Patch0:		sage-4.6.1.patch
@@ -942,7 +944,6 @@ EOF
 # rm -rf #%#{buildroot}
 
 ########################################################################
-# Update for sagetex and makecmds.sty added to it, so that can use tetex
 %post
 %{_bindir}/mktexlsr
 
