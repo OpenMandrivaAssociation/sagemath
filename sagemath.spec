@@ -37,7 +37,7 @@
 %define pexpect_and_version		pexpect-2.0.p4
 %define polytopes_db_and_version	polytopes_db-20100210
 %define rubiks_and_version		rubiks-20070912.p12
-%define	sagenb_and_version		sagenb-0.8.10
+%define	sagenb_and_version		sagenb-0.8.11
 %define sagetex_and_version		sagetex-2.2.5
 
 %define		name			sagemath
@@ -53,8 +53,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.6.1
-Release:	%mkrel 3
+Version:	4.6.2
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -347,32 +347,32 @@ Requires:	tachyon
 Requires:	texlive
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.6.1.patch
-Patch1:		sage-4.6.1-sage_scripts.patch
-Patch2:		sage-4.6.1-wiki.patch
-Patch3:		sage-4.6.1-qepcad.patch
-Patch4:		sage-4.6.1-lie.patch
-Patch5:		sage-4.6.1-sagedoc.patch
-Patch6:		sage-4.6.1-list_plot.patch
-Patch7:		sage-4.6.1-givaro.patch
-Patch8:		sage-4.6.1-sagenb.patch
-Patch9:		sage-4.6.1-gmp5.patch
-Patch10:	sage-4.6.1-arpack.patch
-Patch11:	sage-4.6.1-maxima.patch
+Patch0:		sage-4.6.2.patch
+Patch1:		sage-4.6.2-sage_scripts.patch
+Patch2:		sage-4.6.2-wiki.patch
+Patch3:		sage-4.6.2-qepcad.patch
+Patch4:		sage-4.6.2-lie.patch
+Patch5:		sage-4.6.2-sagedoc.patch
+Patch6:		sage-4.6.2-list_plot.patch
+Patch7:		sage-4.6.2-givaro.patch
+Patch8:		sage-4.6.2-sagenb.patch
+Patch9:		sage-4.6.2-gmp5.patch
+Patch10:	sage-4.6.2-arpack.patch
+Patch11:	sage-4.6.2-maxima.patch
 
 # Patch rebuilt for python-numpy (1.4.1 - need mirros to update,
 # but hopefully also works with 1.5.0) base on:
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
-Patch12:	sage-4.6.1-networkx.patch
+Patch12:	sage-4.6.2-networkx.patch
 
-Patch13:	sage-4.6.1-sympy_mpmath.patch
+Patch13:	sage-4.6.2-sympy_mpmath.patch
 
 # Test patch to build system issue
-Patch14:	sage-4.6.1-build.patch
+Patch14:	sage-4.6.2-build.patch
 
-Patch15:	sage-4.6.1-pari.patch
-Patch16:	sage-4.6.1-python2.7.patch
+Patch15:	sage-4.6.2-pari.patch
+Patch16:	sage-4.6.2-python2.7.patch
 
 #------------------------------------------------------------------------
 %description
@@ -497,6 +497,8 @@ export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 export DESTDIR=%{buildroot}
+export DOT_SAGE=/tmp/sage$$
+mkdir -p $DOT_SAGE/tmp
 
 %if %{use_sage_cython}
     export PATH=%{buildroot}%{_bindir}:$PATH
@@ -562,6 +564,7 @@ popd
     popd
 %endif
 
+rm -fr $DOT_SAGE
 
 ########################################################################
 %install
@@ -838,13 +841,7 @@ popd
 # Build documentation, using %{buildroot} environment, as it needs
 # to run and load sage python modules
 pushd spkg/build/sage-%{version}/doc
-    # Big hack (tm)
-    # when passing the full buildroot path, the pexpect interface fails
-    # to communicate with gap, due to too long workspace pathname
-    # (that is longer then 80 characters)
-    # export DOT_SAGE=%{buildroot}/.sage
     export DOT_SAGE=/tmp/sage$$
-
     mkdir -p $DOT_SAGE/tmp
     export SAGE_DOC=`pwd`
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:$PATH
