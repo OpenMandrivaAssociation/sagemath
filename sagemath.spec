@@ -575,6 +575,8 @@ export SAGE_DATA=%{buildroot}%{SAGE_DATA}
 export SAGE_DOC=%{buildroot}%{SAGE_DOC}
 export SAGE_PYTHONPATH=%{buildroot}%{SAGE_PYTHONPATH}
 export DESTDIR=%{buildroot}
+export DOT_SAGE=/tmp/sage$$
+mkdir -p $DOT_SAGE/tmp
 
 %if %{use_sage_cython}
     export PATH=%{buildroot}%{_bindir}:$PATH
@@ -841,8 +843,6 @@ popd
 # Build documentation, using %{buildroot} environment, as it needs
 # to run and load sage python modules
 pushd spkg/build/sage-%{version}/doc
-    export DOT_SAGE=/tmp/sage$$
-    mkdir -p $DOT_SAGE/tmp
     export SAGE_DOC=`pwd`
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:$PATH
     export SINGULARPATH=%{_datadir}/singular/LIB
@@ -875,10 +875,6 @@ pushd spkg/build/sage-%{version}/doc
 	mv -f %{buildroot}%{py_platsitedir}/networkx* %{buildroot}%{SAGE_PYTHONPATH}
     %endif
 %endif
-
-    #--------------------------------------------------------------------
-    # some "user setup" files will be installed there...
-    rm -fr $DOT_SAGE
 popd
 
 %if %{use_sage_pexpect}
@@ -935,6 +931,9 @@ Terminal=true
 Type=Application
 Categories=Science;Math;
 EOF
+
+#--------------------------------------------------------------------
+rm -fr $DOT_SAGE
 
 ########################################################################
 %clean
