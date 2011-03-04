@@ -290,7 +290,9 @@ Requires:	povray
 Requires:	pynac-devel
 Requires:	python
 Requires:	python-cvxopt
+%if !%{use_sage_cython}
 Requires:	python-cython
+%endif
 Requires:	python-gd
 Requires:	python-gnutls
 Requires:	python-jinja2
