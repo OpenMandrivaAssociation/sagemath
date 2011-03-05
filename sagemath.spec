@@ -243,6 +243,7 @@ Requires:	gfan
 Requires:	gp2c pari pari-data libpari-devel
 Requires:	imagemagick
 Requires:	ipython
+Requires:	java-plugin
 Requires:	jmol
 
 # packages in non-free
