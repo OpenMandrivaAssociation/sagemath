@@ -54,7 +54,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.6.2
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -376,6 +376,7 @@ Patch14:	sage-4.6.2-build.patch
 
 Patch15:	sage-4.6.2-pari.patch
 Patch16:	sage-4.6.2-python2.7.patch
+Patch17:	sage-4.6.2-gap.patch
 
 #------------------------------------------------------------------------
 %description
@@ -446,6 +447,7 @@ popd
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -828,7 +830,7 @@ pushd spkg/build/sage-%{version}
     # make csage headers available
     mkdir -p %{buildroot}/%{_includedir}/csage
     cp -fa c_lib/include/* %{buildroot}/%{_includedir}/csage
-    for f in `find sage \( -name \*.pxi -o -name \*.pxd \)`; do
+    for f in `find sage \( -name \*.pxi -o -name \*.pxd -o -name \*.pyx \)`; do
 	install -D -m 0644 $f %{buildroot}/%{py_platsitedir}/$f
     done
     # need this or will not "find" the files in the directory, and
@@ -885,7 +887,7 @@ popd
 %endif
 
 %if %{use_sage_cython}
-    [ -f %{buildroot}%{_bindir} ] &&
+    [ -f %{buildroot}%{_bindir}/cython ] &&
 	mv -f %{buildroot}%{_bindir}/cython $SAGE_LOCAL/bin
     [ -d %{buildroot}%{py_platsitedir}/Cython ] &&
 	mv -f	%{buildroot}%{py_platsitedir}/[Cc]ython*	\
