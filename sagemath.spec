@@ -804,7 +804,7 @@ export LC_NUMERIC=C
 [ -f \$HOME/.matplotlib/fontList.cache ] &&
 	grep -q python2.6 \$HOME/.matplotlib/fontList.cache &&
 	rm -f \$HOME/.matplotlib/fontList.cache
-$SAGE_LOCAL/bin/sage-sage "\$@"
+MALLOC_CHECK_=1 $SAGE_LOCAL/bin/sage-sage "\$@"
 EOF
 #------------------------------------------------------------------------
 chmod +x %{buildroot}%{_bindir}/sage
