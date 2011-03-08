@@ -113,7 +113,7 @@ BuildRequires:	gp2c pari pari-data
 %endif
 
 BuildRequires:	gsl-devel
-BuildRequires:	iml
+BuildRequires:	iml-devel
 BuildRequires:	ipython
 
 BuildRequires:	lcalc-devel
@@ -224,7 +224,7 @@ BuildRequires:	tachyon
 
 BuildRequires:	texlive
 
-BuildRequires:	zn_poly-static-devel
+BuildRequires:	zn_poly-devel
 
 #------------------------------------------------------------------------
 Requires:	axiom
