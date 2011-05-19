@@ -2,7 +2,7 @@
 #%#define		_enable_debug_packages	%{nil}
 #%#define		debug_package		%{nil}
 
-%define _requires_exceptions		perl(jQuery)\\|pythonegg(twisted)\\|opencdk
+%define _requires_exceptions		perl(jQuery)\\|pythonegg(twisted)
 
 # Run "sage -testall" after building documentation?
 %define		with_check		0
@@ -265,7 +265,6 @@ Requires:	libm4ri
 Requires:	libeclib-devel
 
 Requires:	libmpfi
-Requires:	libopencdk
 
 # currently in non-free due to lack of license information
 Suggests:	lie
