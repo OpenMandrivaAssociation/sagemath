@@ -2,7 +2,7 @@
 #%#define		_enable_debug_packages	%{nil}
 #%#define		debug_package		%{nil}
 
-%define _requires_exceptions		perl(jQuery)\\|pythonegg(twisted)
+%define _requires_exceptions		perl(jQuery)\\|pythonegg(twisted)\\|opencdk
 
 # Run "sage -testall" after building documentation?
 %define		with_check		0
@@ -54,7 +54,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.6.2
-Release:	%mkrel 5
+Release:	%mkrel 6
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
