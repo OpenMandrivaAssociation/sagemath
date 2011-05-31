@@ -150,6 +150,10 @@ BuildConflicts:	polybori-static-devel
 BuildRequires:	polymake
 %endif
 
+BuildRequires:  ppl-devel >= 0.11
+BuildRequires:  ppl_c-devel >= 0.11
+BuildRequires:  cloog-ppl-devel >= 0.16.1
+
 BuildRequires:	pynac-devel
 
 %if %{with_check}
