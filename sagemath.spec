@@ -22,8 +22,8 @@
 # python-networkx currently broken at least in x86_64 (and needs a patch for sage)
 %define		use_sage_networkx	1
 
-# sagemath 4.6.2 should be updated to use cython-0.14
-%define		use_sage_cython		1
+# may be required if not matching system version
+%define		use_sage_cython		0
 
 # minor tweaks to work with python 2.7?
 %define		sage_python_26		1
@@ -36,8 +36,8 @@
 %define networkx_and_version		networkx-1.2.p1
 %define pexpect_and_version		pexpect-2.0.p4
 %define polytopes_db_and_version	polytopes_db-20100210
-%define rubiks_and_version		rubiks-20070912.p12
-%define	sagenb_and_version		sagenb-0.8.11
+%define rubiks_and_version		rubiks-20070912.p16
+%define	sagenb_and_version		sagenb-0.8.14
 %define sagetex_and_version		sagetex-2.2.5
 
 %define		name			sagemath
@@ -53,8 +53,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.6.2
-Release:	%mkrel 7
+Version:	4.7
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -353,33 +353,30 @@ Requires:	tachyon
 Requires:	texlive
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.6.2.patch
-Patch1:		sage-4.6.2-sage_scripts.patch
-Patch2:		sage-4.6.2-wiki.patch
-Patch3:		sage-4.6.2-qepcad.patch
-Patch4:		sage-4.6.2-lie.patch
-Patch5:		sage-4.6.2-sagedoc.patch
-Patch6:		sage-4.6.2-list_plot.patch
-Patch7:		sage-4.6.2-givaro.patch
-Patch8:		sage-4.6.2-sagenb.patch
-Patch9:		sage-4.6.2-gmp5.patch
-Patch10:	sage-4.6.2-arpack.patch
-Patch11:	sage-4.6.2-maxima.patch
+Patch0:		sage-4.7.patch
+Patch1:		sage-4.7-sage_scripts.patch
+Patch2:		sage-4.7-wiki.patch
+Patch3:		sage-4.7-qepcad.patch
+Patch4:		sage-4.7-lie.patch
+Patch5:		sage-4.7-sagedoc.patch
+Patch6:		sage-4.7-givaro.patch
+Patch7:		sage-4.7-sagenb.patch
+Patch8:		sage-4.7-gmp5.patch
+Patch9:		sage-4.7-maxima.patch
 
-# Patch rebuilt for python-numpy (1.4.1 - need mirros to update,
-# but hopefully also works with 1.5.0) base on:
+# base on:
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
-Patch12:	sage-4.6.2-networkx.patch
+Patch10:	sage-4.7-networkx.patch
 
-Patch13:	sage-4.6.2-sympy_mpmath.patch
+Patch11:	sage-4.7-sympy_mpmath.patch
 
 # Test patch to build system issue
-Patch14:	sage-4.6.2-build.patch
+Patch12:	sage-4.7-build.patch
 
-Patch15:	sage-4.6.2-pari.patch
-Patch16:	sage-4.6.2-python2.7.patch
-Patch17:	sage-4.6.2-gap.patch
+Patch13:	sage-4.7-pari.patch
+Patch14:	sage-4.7-python2.7.patch
+Patch15:	sage-4.7-gap.patch
 
 #------------------------------------------------------------------------
 %description
@@ -394,7 +391,7 @@ packages into a common Python-based interface.
 
 mkdir -p spkg/build
 pushd spkg/build
-    for pkg in	%{conway_polynomials_and_version}	\
+    for pkg in %{conway_polynomials_and_version}	\
 		%{elliptic_curves_and_version}	\
 		examples-%{version}		\
 		extcode-%{version}		\
@@ -439,18 +436,16 @@ popd
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
-%patch11 -p1
 %if %{use_sage_networkx}
-%patch12 -p1
+%patch10 -p1
 %endif
 %if %{mpmath_from_sympy}
-%patch13 -p1
+%patch11 -p1
 %endif
+%patch12 -p1
+%patch13 -p1
 %patch14 -p1
 %patch15 -p1
-%patch16 -p1
-%patch17 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -665,11 +660,11 @@ popd
 %endif
 
 #------------------------------------------------------------------------
+cp -fa COPYING.txt $SAGE_ROOT
+cp -far ipython $SAGE_ROOT
 pushd spkg/build/sage_scripts-%{version}
     mkdir -p $SAGE_LOCAL/bin
     cp -fa sage-* *doctest.py ipy_profile_sage.py $SAGE_LOCAL/bin
-    cp -far ipython $SAGE_ROOT
-    cp -fa COPYING.txt $SAGE_ROOT
     pushd $SAGE_LOCAL/bin
 	ln -sf %{_bindir}/python sage.bin
 	ln -sf %{_bindir}/Singular sage_singular
@@ -795,9 +790,7 @@ export SAGE_DEVEL="$SAGE_DEVEL"
 export PATH=$SAGE_LOCAL/bin:%{_datadir}/cdd/bin:\$PATH
 export SINGULARPATH=%{_datadir}/singular/LIB
 export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
-%if %{use_sage_pexpect}
 ##export PYTHONPATH="$SAGE_PYTHONPATH"
-%endif
 export SAGE_CBLAS=cblas
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
