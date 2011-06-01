@@ -54,7 +54,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.7
-Release:	%mkrel 2
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -381,7 +381,6 @@ Patch12:	sage-4.7-build.patch
 Patch13:	sage-4.7-pari.patch
 Patch14:	sage-4.7-python2.7.patch
 Patch15:	sage-4.7-gap.patch
-Patch16:	sage-4.7-disable_gc.patch
 
 #------------------------------------------------------------------------
 %description
@@ -451,7 +450,6 @@ popd
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
-%patch16 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
