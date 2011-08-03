@@ -25,6 +25,10 @@
 # may be required if not matching system version
 %define		use_sage_cython		0
 
+# should be a temporary workaround until all dependencies (including sage)
+# are update to ipython-0.11
+%define		use_sage_ipython	1
+
 # minor tweaks to work with python 2.7?
 %define		sage_python_26		1
 
@@ -54,7 +58,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.7
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -63,6 +67,7 @@ Source4:	python-2.7.1.tar
 Source5:	Cython-0.13.tar.gz
 Source6:	gprc.expect
 Source7:	unittest.py
+Source8:	ipython-0.10.2.tar.gz
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -428,6 +433,10 @@ pushd spkg/build
 %if %{use_sage_cython}
     tar xf %{SOURCE5}
 %endif
+
+%if %{use_sage_ipython}
+    tar xf %{SOURCE8}
+%endif
 popd
 
 %patch0 -p1
@@ -507,10 +516,17 @@ export DESTDIR=%{buildroot}
 export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
+export PATH=%{buildroot}%{_bindir}:$PATH
+export PYTHONPATH=%{buildroot}%{py_platsitedir}:$PYTHONPATH
+
 %if %{use_sage_cython}
-    export PATH=%{buildroot}%{_bindir}:$PATH
-    export PYTHONPATH=%{buildroot}%{py_platsitedir}:$PYTHONPATH
     pushd spkg/build/Cython-0.13
+	%__python setup.py install --root=%{buildroot}
+    popd
+%endif
+
+%if %{use_sage_ipython}
+    pushd spkg/build/ipython-0.10.2
 	%__python setup.py install --root=%{buildroot}
     popd
 %endif
@@ -585,10 +601,8 @@ export DESTDIR=%{buildroot}
 export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
-%if %{use_sage_cython}
-    export PATH=%{buildroot}%{_bindir}:$PATH
-    export PYTHONPATH=%{buildroot}%{py_platsitedir}:$PYTHONPATH
-%endif
+export PATH=%{buildroot}%{_bindir}:$PATH
+export PYTHONPATH=%{buildroot}%{py_platsitedir}:$PYTHONPATH
 
 #------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_bindir}
@@ -604,6 +618,38 @@ ln -sf %{_datadir} $SAGE_LOCAL/share
 #------------------------------------------------------------------------
 # "fix" most remaining doctest failures
 cp -f %{SOURCE2} $SAGE_PYTHONPATH
+
+#------------------------------------------------------------------------
+# install again due to implicit clean
+%if %{use_sage_cython}
+    pushd spkg/build/Cython-0.13
+	%__python setup.py install --root=%{buildroot}
+    popd
+    [ -f %{buildroot}%{_bindir}/cython ] &&
+	mv -f %{buildroot}%{_bindir}/cython $SAGE_LOCAL/bin
+    [ -d %{buildroot}%{py_platsitedir}/Cython ] &&
+	mv -f	%{buildroot}%{py_platsitedir}/[Cc]ython*	\
+		%{buildroot}%{py_platsitedir}/pyximport		\
+		%{buildroot}%{SAGE_PYTHONPATH}
+%endif
+%if %{use_sage_ipython}
+    pushd spkg/build/ipython-0.10.2
+	%__python setup.py install --root=%{buildroot}
+    popd
+    [ -f %{buildroot}%{_bindir}/%{ipython} &&
+	mv -f %{buildroot}%{_bindir}/ipython $SAGE_LOCAL/bin
+    rm -f	%{buildroot}%{_bindir}/ip*			\
+		%{buildroot}%{_bindir}/irunner			\
+		%{buildroot}%{_bindir}/pycolor
+    [ -d %{buildroot}%{py_puresitedir}/IPython ] &&
+	mv -f	%{buildroot}%{py_puresitedir}/IPython		\
+		%{buildroot}%{py_puresitedir}/ipython-*		\
+		%{buildroot}%{SAGE_PYTHONPATH}
+    rm -fr %{buildroot}%{_docdir}/ipython
+    rm -f	%{buildroot}%{_mandir}/man1/ip*			\
+		%{buildroot}%{_mandir}/man1/irunner*		\
+		%{buildroot}%{_mandir}/man1/pycolor*
+%endif
 
 #------------------------------------------------------------------------
 # install moin changes
@@ -853,7 +899,7 @@ pushd spkg/build/sage-%{version}/doc
     export SINGULARPATH=%{_datadir}/singular/LIB
     export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
     export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:`cat /etc/ld.so.conf.d/atlas.conf`:$LD_LIBRARY_PATH
-    export PYTHONPATH=%{buildroot}%{py_platsitedir}
+    export PYTHONPATH=%{buildroot}%{py_platsitedir}:$SAGE_PYTHONPATH
 
     # there we go
     python common/builder.py all html
@@ -884,15 +930,6 @@ popd
 
 %if %{use_sage_pexpect}
     rm -f %{buildroot}%{py_platsitedir}/{ANSI,FSM,pexpect,pxssh,screen}.py
-%endif
-
-%if %{use_sage_cython}
-    [ -f %{buildroot}%{_bindir}/cython ] &&
-	mv -f %{buildroot}%{_bindir}/cython $SAGE_LOCAL/bin
-    [ -d %{buildroot}%{py_platsitedir}/Cython ] &&
-	mv -f	%{buildroot}%{py_platsitedir}/[Cc]ython*	\
-		%{buildroot}%{py_platsitedir}/pyximport		\
-		%{buildroot}%{SAGE_PYTHONPATH}
 %endif
 
 %if %{sage_python_26}
