@@ -23,7 +23,7 @@
 %define		use_sage_networkx	1
 
 # may be required if not matching system version
-%define		use_sage_cython		1
+%define		use_sage_cython		0
 
 # should be a temporary workaround until all dependencies (including sage)
 # are update to ipython-0.11
@@ -165,7 +165,9 @@ BuildRequires:	pynac-devel
 BuildRequires:	python-cvxopt
 %endif
 
-%if !%{use_sage_cython}
+%if %{use_sage_cython}
+BuildConflicts:	python-cython
+%else
 BuildRequires:	python-cython
 %endif
 BuildRequires:	python-jinja2
