@@ -23,7 +23,7 @@
 %define		use_sage_networkx	1
 
 # may be required if not matching system version
-%define		use_sage_cython		0
+%define		use_sage_cython		1
 
 # should be a temporary workaround until all dependencies (including sage)
 # are update to ipython-0.11
@@ -43,6 +43,7 @@
 %define rubiks_and_version		rubiks-20070912.p17
 %define	sagenb_and_version		sagenb-0.8.19
 %define sagetex_and_version		sagetex-2.2.5
+%define cython_and_version		cython-0.14.1.p3
 
 %define		name			sagemath
 %define		SAGE_ROOT		%{_datadir}/sage
@@ -64,10 +65,9 @@ Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 Source3:	makecmds.sty
 Source4:	python-2.7.1.tar
-Source5:	Cython-0.13.tar.gz
-Source6:	gprc.expect
-Source7:	unittest.py
-Source8:	ipython-0.10.2.tar.gz
+Source5:	gprc.expect
+Source6:	unittest.py
+Source7:	ipython-0.10.2.tar.gz
 URL:		http://www.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -165,9 +165,7 @@ BuildRequires:	pynac-devel
 BuildRequires:	python-cvxopt
 %endif
 
-%if %{use_sage_cython}
-BuildConflicts:	python-cython
-%else
+%if !%{use_sage_cython}
 BuildRequires:	python-cython
 %endif
 BuildRequires:	python-jinja2
@@ -432,11 +430,11 @@ pushd spkg/build
 %endif
 
 %if %{use_sage_cython}
-    tar xf %{SOURCE5}
+    tar jxf ../standard/%{cython_and_version}.spkg
 %endif
 
 %if %{use_sage_ipython}
-    tar xf %{SOURCE8}
+    tar xf %{SOURCE7}
 %endif
 popd
 
@@ -522,7 +520,7 @@ export PATH=%{buildroot}%{_bindir}:$PATH
 export PYTHONPATH=%{buildroot}%{py_platsitedir}:$PYTHONPATH
 
 %if %{use_sage_cython}
-    pushd spkg/build/Cython-0.13
+    pushd spkg/build/%{cython_and_version}/src
 	%__python setup.py install --root=%{buildroot}
     popd
 %endif
@@ -624,7 +622,7 @@ cp -f %{SOURCE2} $SAGE_PYTHONPATH
 #------------------------------------------------------------------------
 # install again due to implicit clean
 %if %{use_sage_cython}
-    pushd spkg/build/Cython-0.13
+    pushd spkg/build/%{cython_and_version}/src
 	%__python setup.py install --root=%{buildroot}
     popd
     [ -f %{buildroot}%{_bindir}/cython ] &&
@@ -674,7 +672,7 @@ pushd spkg/build/sage-%{version}
     popd
     # install documentation sources
     rm -fr $SAGE_DOC/{common,en,fr}
-    cp -far doc/{common,en,fr} $SAGE_DOC
+    cp -far doc/{common,de,en,fr,ru} $SAGE_DOC
 popd
 
 #------------------------------------------------------------------------
@@ -794,7 +792,7 @@ pushd spkg/build/extcode-%{version}
 	singular		\
 	sobj			\
 	$SAGE_DATA/extcode
-    cp -f %{SOURCE6} $SAGE_DATA/extcode/pari
+    cp -f %{SOURCE5} $SAGE_DATA/extcode/pari
 popd
 
 #------------------------------------------------------------------------
@@ -904,7 +902,7 @@ pushd spkg/build/sage-%{version}/doc
     export PYTHONPATH=%{buildroot}%{py_platsitedir}:$SAGE_PYTHONPATH
 
     # there we go
-    python common/builder.py all
+    python common/builder.py all html
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
     cp -far output $SAGE_DOC
 
@@ -935,7 +933,7 @@ popd
 %endif
 
 %if %{sage_python_26}
-    cp -f %{SOURCE7} $SAGE_PYTHONPATH
+    cp -f %{SOURCE6} $SAGE_PYTHONPATH
 %endif
 
 #------------------------------------------------------------------------
