@@ -40,8 +40,8 @@
 %define networkx_and_version		networkx-1.2.p1
 %define pexpect_and_version		pexpect-2.0.p4
 %define polytopes_db_and_version	polytopes_db-20100210
-%define rubiks_and_version		rubiks-20070912.p16
-%define	sagenb_and_version		sagenb-0.8.14
+%define rubiks_and_version		rubiks-20070912.p17
+%define	sagenb_and_version		sagenb-0.8.19
 %define sagetex_and_version		sagetex-2.2.5
 
 %define		name			sagemath
@@ -57,8 +57,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.7
-Release:	%mkrel 2
+Version:	4.7.1
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -362,30 +362,31 @@ Requires:	tachyon
 Requires:	texlive
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.7.patch
-Patch1:		sage-4.7-sage_scripts.patch
-Patch2:		sage-4.7-wiki.patch
-Patch3:		sage-4.7-qepcad.patch
-Patch4:		sage-4.7-lie.patch
-Patch5:		sage-4.7-sagedoc.patch
-Patch6:		sage-4.7-givaro.patch
-Patch7:		sage-4.7-sagenb.patch
-Patch8:		sage-4.7-gmp5.patch
-Patch9:		sage-4.7-maxima.patch
+Patch0:		sage-4.7.1.patch
+Patch1:		sage-4.7.1-sage_scripts.patch
+Patch2:		sage-4.7.1-wiki.patch
+Patch3:		sage-4.7.1-qepcad.patch
+Patch4:		sage-4.7.1-lie.patch
+Patch5:		sage-4.7.1-sagedoc.patch
+Patch6:		sage-4.7.1-givaro.patch
+Patch7:		sage-4.7.1-sagenb.patch
+Patch8:		sage-4.7.1-gmp5.patch
+Patch9:		sage-4.7.1-maxima.patch
 
 # base on:
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
-Patch10:	sage-4.7-networkx.patch
+Patch10:	sage-4.7.1-networkx.patch
 
-Patch11:	sage-4.7-sympy_mpmath.patch
+Patch11:	sage-4.7.1-sympy_mpmath.patch
 
 # Test patch to build system issue
-Patch12:	sage-4.7-build.patch
+Patch12:	sage-4.7.1-build.patch
 
-Patch13:	sage-4.7-pari.patch
-Patch14:	sage-4.7-python2.7.patch
-Patch15:	sage-4.7-gap.patch
+Patch13:	sage-4.7.1-pari.patch
+Patch14:	sage-4.7.1-python2.7.patch
+Patch15:	sage-4.7.1-gap.patch
+Patch16:	sage-4.7.1-cython0.15.patch
 
 #------------------------------------------------------------------------
 %description
@@ -459,6 +460,7 @@ popd
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -902,7 +904,7 @@ pushd spkg/build/sage-%{version}/doc
     export PYTHONPATH=%{buildroot}%{py_platsitedir}:$SAGE_PYTHONPATH
 
     # there we go
-    python common/builder.py all html
+    python common/builder.py all
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
     cp -far output $SAGE_DOC
 
