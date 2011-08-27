@@ -59,7 +59,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.7.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -284,6 +284,7 @@ Requires:	macaulay2
 
 Requires:	maxima
 Requires:	xmaxima
+Requires:	maxima-runtime-ecl
 
 # Requires:	mercurial
 
@@ -387,6 +388,7 @@ Patch13:	sage-4.7.1-pari.patch
 Patch14:	sage-4.7.1-python2.7.patch
 Patch15:	sage-4.7.1-gap.patch
 Patch16:	sage-4.7.1-cython0.15.patch
+Patch17:	sage-4.7.1-ecl_module.patch
 
 #------------------------------------------------------------------------
 %description
@@ -461,6 +463,7 @@ popd
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
