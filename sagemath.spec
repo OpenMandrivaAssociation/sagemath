@@ -23,7 +23,7 @@
 %define		use_sage_networkx	1
 
 # may be required if not matching system version
-%define		use_sage_cython		0
+%define		use_sage_cython		1
 
 # should be a temporary workaround until all dependencies (including sage)
 # are update to ipython-0.11
@@ -166,7 +166,7 @@ BuildRequires:	python-cvxopt
 %endif
 
 %if %{use_sage_cython}
-BuildConflicts:	python-cython
+#BuildConflicts:	python-cython
 %else
 BuildRequires:	python-cython
 %endif
@@ -435,6 +435,9 @@ pushd spkg/build
 
 %if %{use_sage_cython}
     tar jxf ../standard/%{cython_and_version}.spkg
+    pushd %{cython_and_version}
+	patch -p1 < patches/ExprNodes.py.diff
+    popd
 %endif
 
 %if %{use_sage_ipython}
@@ -614,7 +617,7 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p $SAGE_PYTHONPATH
 rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share,notebook}
-mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_LOCAL $SAGE_DEVEL/sage
+mkdir -p $SAGE_DATA $SAGE_DOC $SAGE_LOCAL/bin $SAGE_DEVEL/sage
 ln -sf %{_builddir}/sage-%{version}/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
