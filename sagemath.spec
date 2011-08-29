@@ -465,7 +465,9 @@ popd
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%if !%{use_sage_cython}
 %patch16 -p1
+%endif
 %patch17 -p1
 
 # if executing prep, clean buildroot
