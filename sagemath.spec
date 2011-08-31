@@ -59,7 +59,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.7.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -390,6 +390,9 @@ Patch15:	sage-4.7.1-gap.patch
 Patch16:	sage-4.7.1-cython0.15.patch
 Patch17:	sage-4.7.1-ecl_module.patch
 
+# https://raw.github.com/cschwan/sage-on-gentoo/master/sci-mathematics/sage/files/trac_11339_refcount_singular_rings.patch
+Patch18:	trac_11339_refcount_singular_rings.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -469,6 +472,9 @@ popd
 %patch16 -p1
 %endif
 %patch17 -p1
+pushd spkg/build/sage-%{version}
+%patch18 -p1
+popd
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
