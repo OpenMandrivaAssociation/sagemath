@@ -34,15 +34,15 @@
 
 %define conway_polynomials_and_version	conway_polynomials-0.2
 %define elliptic_curves_and_version	elliptic_curves-0.1
-%define flintqs_and_version		flintqs-20070817.p5
+%define flintqs_and_version		flintqs-20070817.p6
 %define genus2reduction_and_version	genus2reduction-0.3.p8
 %define graphs_and_version		graphs-20070722.p1
 %define networkx_and_version		networkx-1.2.p1
 %define pexpect_and_version		pexpect-2.0.p4
 %define polytopes_db_and_version	polytopes_db-20100210
 %define rubiks_and_version		rubiks-20070912.p17
-%define	sagenb_and_version		sagenb-0.8.19
-%define sagetex_and_version		sagetex-2.2.5
+%define	sagenb_and_version		sagenb-0.8.23
+%define sagetex_and_version		sagetex-2.3.1
 %define cython_and_version		cython-0.14.1.p3
 
 %define		name			sagemath
@@ -58,13 +58,13 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.7.1
-Release:	%mkrel 3
+Version:	4.7.2
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
 Source3:	makecmds.sty
-Source4:	python-2.7.1.tar
+Source4:	python-2.7.2.tar
 Source5:	gprc.expect
 Source6:	unittest.py
 Source7:	ipython-0.10.2.tar.gz
@@ -363,35 +363,31 @@ Requires:	tachyon
 Requires:	texlive
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.7.1.patch
-Patch1:		sage-4.7.1-sage_scripts.patch
-Patch2:		sage-4.7.1-wiki.patch
-Patch3:		sage-4.7.1-qepcad.patch
-Patch4:		sage-4.7.1-lie.patch
-Patch5:		sage-4.7.1-sagedoc.patch
-Patch6:		sage-4.7.1-givaro.patch
-Patch7:		sage-4.7.1-sagenb.patch
-Patch8:		sage-4.7.1-gmp5.patch
-Patch9:		sage-4.7.1-maxima.patch
+Patch0:		sage-4.7.2.patch
+Patch1:		sage-4.7.2-sage_scripts.patch
+Patch2:		sage-4.7.2-wiki.patch
+Patch3:		sage-4.7.2-qepcad.patch
+Patch4:		sage-4.7.2-lie.patch
+Patch5:		sage-4.7.2-sagedoc.patch
+Patch6:		sage-4.7.2-givaro.patch
+Patch7:		sage-4.7.2-sagenb.patch
+Patch8:		sage-4.7.2-gmp5.patch
+Patch9:		sage-4.7.2-maxima.patch
 
 # base on:
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
-Patch10:	sage-4.7.1-networkx.patch
+Patch10:	sage-4.7.2-networkx.patch
 
-Patch11:	sage-4.7.1-sympy_mpmath.patch
+Patch11:	sage-4.7.2-sympy_mpmath.patch
 
 # Test patch to build system issue
-Patch12:	sage-4.7.1-build.patch
+Patch12:	sage-4.7.2-build.patch
 
-Patch13:	sage-4.7.1-pari.patch
-Patch14:	sage-4.7.1-python2.7.patch
-Patch15:	sage-4.7.1-gap.patch
-Patch16:	sage-4.7.1-cython0.15.patch
-Patch17:	sage-4.7.1-ecl_module.patch
-
-# https://raw.github.com/cschwan/sage-on-gentoo/master/sci-mathematics/sage/files/trac_11339_refcount_singular_rings.patch
-Patch18:	trac_11339_refcount_singular_rings.patch
+Patch13:	sage-4.7.2-pari.patch
+Patch14:	sage-4.7.2-python2.7.patch
+Patch15:	sage-4.7.2-gap.patch
+Patch16:	sage-4.7.2-cython0.15.patch
 
 #------------------------------------------------------------------------
 %description
@@ -408,7 +404,6 @@ mkdir -p spkg/build
 pushd spkg/build
     for pkg in %{conway_polynomials_and_version}	\
 		%{elliptic_curves_and_version}	\
-		examples-%{version}		\
 		extcode-%{version}		\
 		%{flintqs_and_version}		\
 		%{genus2reduction_and_version}	\
@@ -471,10 +466,6 @@ popd
 %if !%{use_sage_cython}
 %patch16 -p1
 %endif
-%patch17 -p1
-pushd spkg/build/sage-%{version}
-%patch18 -p1
-popd
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -580,17 +571,18 @@ popd
 
 #------------------------------------------------------------------------
 %if %{pickle_patch}
-    pushd spkg/build/python-2.7.1
-	tar jxf Python-2.7.1.tar.bz2
-	pushd Python-2.7.1
+    pushd spkg/build/python-2.7.2
+	tar Jxf Python-2.7.2.tar.xz
+	pushd Python-2.7.2
 	    patch -p0 < ../python-2.7-module-linkage.patch
-	    patch -p0 < ../Python-2.3-no-local-incpath.patch
+	    patch -p0 < ../Python-2.7.2-no-local-incpath.patch
 	    patch -p0 < ../python-lib64.patch
 	    patch -p0 < ../Python-2.2.2-biarch-headers.patch
 	    patch -p0 < ../python-2.5.1-detect-mandriva.patch
-	    patch -p1 < ../python-2.5.2-fix_UTF-8_name.patch
 	    patch -p1 < ../python-2.5.1-plural-fix.patch
-	    patch -p0 < ../python-2.7.1-fix_configure_creation.patch
+	    patch -p1 < ../Python-2.7.1-berkeley-db-5.1.patch
+	    patch -p1 < ../python_arch.patch
+	    patch -p1 < ../python-2.7.2-sys-platform-always-linux2.patch
 	    # the root of all evil
 	    patch -p0 < ../dynamic_class_copyreg.patch
 
@@ -821,15 +813,6 @@ popd
 pushd spkg/build/%{polytopes_db_and_version}
     mkdir -p $SAGE_DATA/reflexive_polytopes
     cp -fa reflexive_polytopes/* $SAGE_DATA/reflexive_polytopes
-popd
-
-#------------------------------------------------------------------------
-mkdir -p $SAGE_ROOT/examples
-pushd spkg/build/examples-%{version}
-    cp -far ajax calculus comm_algebra example.py example.sage finance \
-	fortran gsl latex_embed linalg modsym programming \
-	test_all tests worksheets \
-	$SAGE_ROOT/examples
 popd
 
 #------------------------------------------------------------------------
