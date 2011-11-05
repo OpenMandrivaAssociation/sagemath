@@ -940,7 +940,7 @@ popd
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 %if %{pickle_patch}
-    pushd spkg/build/python-2.7.1/Python-2.7.1
+    pushd spkg/build/python-2.7.2/Python-2.7.2
 	install -m 0644 Lib/pickle.py %{buildroot}%{SAGE_PYTHONPATH}
 	cp `find . -name cPickle.so` %{buildroot}%{SAGE_PYTHONPATH}
     popd
