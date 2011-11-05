@@ -1013,3 +1013,4 @@ rm -fr $DOT_SAGE
 %{_datadir}/applications/mandriva-%{name}.desktop
 %dir %{_datadir}/texmf/tex/generic/sagetex
 %{_datadir}/texmf/tex/generic/sagetex/*
+%{_docdir}/sagetex
