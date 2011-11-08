@@ -10,8 +10,8 @@
 %define		SAGE_TIMEOUT_LONG	300
 
 # duplicated mpmath from sympy causes serious problems now
-# and python-mpmath should not be installed
-%define		mpmath_from_sympy	1
+# and python-mpmath should not be installed?
+%define		mpmath_from_sympy	0
 
 # http://bugs.python.org/issue7689
 %define		pickle_patch		1
@@ -59,7 +59,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.7.2
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -389,6 +389,25 @@ Patch14:	sage-4.7.2-python2.7.patch
 Patch15:	sage-4.7.2-gap.patch
 Patch16:	sage-4.7.2-cython0.15.patch
 
+# http://trac.sagemath.org/sage_trac/ticket/9958 (Upgrade python to 2.7.x)
+Patch17:	trac_9958-32_64bit_messages.patch
+Patch18:	trac_9958_enumerate64bit.patch
+Patch19:	trac_9958-e_one_star.patch
+Patch20:	trac_9958-finite_crystals.patch
+Patch21:	trac_9958-fixing_colorspy.patch
+Patch22:	trac_9958-fixing_numericalnoise-part1_p1.patch
+Patch23:	trac_9958-fixing_numericalnoise-part2.patch
+Patch24:	trac_9958-fixing_numericalnoise-part3.patch
+Patch25:	trac_9958-fixing_numericalnoise-part4.patch
+Patch26:	trac_9958-fix-list_index.patch
+Patch27:	trac_9958-fix-pureAssertError.patch
+Patch28:	trac_9958-fix-real_mpfr.patch
+Patch29:	trac_9958-fix_transcendental.patch
+Patch30:	trac_9958_junk_valueerror.patch
+Patch31:	trac_9958-mixedfix_p1.patch
+Patch32:	trac_9958-sage_unittest.patch
+Patch33:	trac_9958-symbolic_callable.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -466,6 +485,26 @@ popd
 %if !%{use_sage_cython}
 %patch16 -p1
 %endif
+
+pushd spkg/build/sage-%{version}
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+popd
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
