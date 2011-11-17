@@ -59,7 +59,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
 Version:	4.7.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -412,6 +412,9 @@ Patch31:	trac_9958-mixedfix_p1.patch
 Patch32:	trac_9958-sage_unittest.patch
 Patch33:	trac_9958-symbolic_callable.patch
 
+# http://trac.sagemath.org/sage_trac/ticket/12038 (Complex numbers can segfault if given bad input to the __init__ method)
+Patch34:	12038.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -508,6 +511,8 @@ pushd spkg/build/sage-%{version}
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+
+%patch34 -p1
 popd
 
 # if executing prep, clean buildroot
