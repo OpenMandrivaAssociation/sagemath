@@ -592,7 +592,7 @@ pushd spkg/build/sage-%{version}
 	CXX=g++ UNAME=Linux SAGE64=auto scons
     popd
     pushd sage/libs/mpmath
-	dos2unix -U ext_impl.pxd ext_libmp.pyx ext_main.pxd ext_main.pyx
+	dos2unix ext_impl.pxd ext_libmp.pyx ext_main.pxd ext_main.pyx
     popd
     python ./setup.py build
 popd
