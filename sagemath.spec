@@ -155,9 +155,9 @@ BuildConflicts:	polybori-static-devel
 BuildRequires:	polymake
 %endif
 
-BuildRequires:  ppl-devel >= 0.11
-BuildRequires:  ppl_c-devel >= 0.11
-BuildRequires:  cloog-ppl-devel >= 0.16.1
+BuildRequires:	ppl-devel >= 0.11
+BuildRequires:	ppl_c-devel >= 0.11
+BuildRequires:	cloog-ppl-devel >= 0.16.1
 
 BuildRequires:	pynac-devel
 
@@ -306,7 +306,7 @@ Requires:	python-cython
 Requires:	python-gd
 
 # http://code.google.com/p/gmpy/issues/detail?id=49
-Conflicts:	python-gmpy
+Conflicts:	python-gmpy < 1.15
 
 Requires:	python-gnutls
 Requires:	python-jinja2
@@ -415,6 +415,9 @@ Patch33:	trac_9958-symbolic_callable.patch
 # http://trac.sagemath.org/sage_trac/ticket/12038 (Complex numbers can segfault if given bad input to the __init__ method)
 Patch34:	12038.patch
 
+# http://trac.sagemath.org/sage_trac/ticket/11986 (inconsistent integer hashing on 64bit systems with python 2.7)
+Patch35:	11986_integer_hash.patch
+
 #------------------------------------------------------------------------
 %description
 Sage is a free open-source mathematics software system licensed
@@ -513,6 +516,8 @@ pushd spkg/build/sage-%{version}
 %patch33 -p1
 
 %patch34 -p1
+
+%patch35 -p1
 popd
 
 # if executing prep, clean buildroot
@@ -946,7 +951,7 @@ pushd spkg/build/sage-%{version}/doc
     export SINGULARPATH=%{_datadir}/singular/LIB
     export SINGULAR_BIN_DIR=%{_datadir}/singular/%{_arch}
     export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:`cat /etc/ld.so.conf.d/atlas.conf`:$LD_LIBRARY_PATH
-    export PYTHONPATH=%{buildroot}%{py_platsitedir}:$SAGE_PYTHONPATH
+    export PYTHONPATH=%{buildroot}%{py_platsitedir}:$SAGE_PYTHONPATH:$SAGE_DOC
 
     # there we go
     python common/builder.py all html
