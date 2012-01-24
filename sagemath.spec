@@ -9,10 +9,6 @@
 %define		SAGE_TIMEOUT		60
 %define		SAGE_TIMEOUT_LONG	300
 
-# duplicated mpmath from sympy causes serious problems now
-# and python-mpmath should not be installed?
-%define		mpmath_from_sympy	0
-
 # http://bugs.python.org/issue7689
 %define		pickle_patch		1
 
@@ -33,17 +29,17 @@
 %define		sage_python_26		1
 
 %define conway_polynomials_and_version	conway_polynomials-0.2
-%define elliptic_curves_and_version	elliptic_curves-0.1
+%define elliptic_curves_and_version	elliptic_curves-0.3
 %define flintqs_and_version		flintqs-20070817.p6
 %define genus2reduction_and_version	genus2reduction-0.3.p8
 %define graphs_and_version		graphs-20070722.p1
-%define networkx_and_version		networkx-1.2.p1
+%define networkx_and_version		networkx-1.2.p2
 %define pexpect_and_version		pexpect-2.0.p4
 %define polytopes_db_and_version	polytopes_db-20100210
 %define rubiks_and_version		rubiks-20070912.p17
-%define	sagenb_and_version		sagenb-0.8.23
-%define sagetex_and_version		sagetex-2.3.1
-%define cython_and_version		cython-0.14.1.p3
+%define	sagenb_and_version		sagenb-0.8.26
+%define sagetex_and_version		sagetex-2.3.1.p1
+%define cython_and_version		cython-0.15.1
 
 %define		name			sagemath
 %define		SAGE_ROOT		%{_datadir}/sage
@@ -58,8 +54,8 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	A free open-source mathematics software system
-Version:	4.7.2
-Release:	%mkrel 4
+Version:	4.8
+Release:	%mkrel 1
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
 Source1:	moin-1.9.1-filesystem.tar.bz2
 Source2:	sets.py
@@ -127,6 +123,7 @@ BuildRequires:	libblas-devel
 BuildRequires:	libgmpxx-devel
 BuildRequires:	libm4ri-devel
 BuildConflicts:	libm4ri-static-devel
+BuildRequires:	libm4rie-devel
 BuildRequires:	libmpc-devel
 BuildRequires:	libpari-devel
 BuildRequires:	libxml2-devel
@@ -174,9 +171,7 @@ BuildRequires:	python-jinja2
 
 BuildRequires:	python-matplotlib
 BuildRequires:	python-matplotlib-gtk
-%if !%{mpmath_from_sympy}
 BuildRequires:	python-mpmath
-%endif
 
 %if %{with_check}
   %if !%{use_sage_networkx}
@@ -316,15 +311,8 @@ Requires:	python-networkx
 %endif
 
 Requires:	python-matplotlib
-
-%if %{mpmath_from_sympy}
-Conflicts:	python-mpmath
-%else
 Requires:	python-mpmath
-%endif
-
 Requires:	python-numpy
-
 Requires:	python-parsing
 
 %if !%{use_sage_pexpect}
@@ -361,62 +349,62 @@ Requires:	R-base
 Suggests:	scilab
 
 Requires:	singular
+Requires:	sqlite3-tools
 Requires:	symmetrica
 Requires:	sympow
 Requires:	tachyon
 Requires:	texlive
 
 #------------------------------------------------------------------------
-Patch0:		sage-4.7.2.patch
-Patch1:		sage-4.7.2-sage_scripts.patch
-Patch2:		sage-4.7.2-wiki.patch
-Patch3:		sage-4.7.2-qepcad.patch
-Patch4:		sage-4.7.2-lie.patch
-Patch5:		sage-4.7.2-sagedoc.patch
-Patch6:		sage-4.7.2-givaro.patch
-Patch7:		sage-4.7.2-sagenb.patch
-Patch8:		sage-4.7.2-gmp5.patch
-Patch9:		sage-4.7.2-maxima.patch
+Patch0:		sage-4.8.patch
+Patch1:		sage-4.8-sage_scripts.patch
+Patch2:		sage-4.8-wiki.patch
+Patch3:		sage-4.8-qepcad.patch
+Patch4:		sage-4.8-lie.patch
+Patch5:		sage-4.8-sagedoc.patch
+Patch6:		sage-4.8-givaro.patch
+Patch7:		sage-4.8-sagenb.patch
+Patch8:		sage-4.8-gmp5.patch
+Patch9:		sage-4.8-maxima.patch
 
 # base on:
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/convert.py.diff
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9808/trac_9808_numpy_doctest_change.patch
-Patch10:	sage-4.7.2-networkx.patch
+Patch10:	sage-4.8-networkx.patch
 
-Patch11:	sage-4.7.2-sympy_mpmath.patch
-
-# Test patch to build system issue
-Patch12:	sage-4.7.2-build.patch
-
-Patch13:	sage-4.7.2-pari.patch
-Patch14:	sage-4.7.2-python2.7.patch
-Patch15:	sage-4.7.2-gap.patch
-Patch16:	sage-4.7.2-cython0.15.patch
+Patch11:	sage-4.8-pari.patch
+Patch12:	sage-4.8-gap.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/9958 (Upgrade python to 2.7.x)
-Patch17:	trac_9958-32_64bit_messages.patch
-Patch18:	trac_9958_enumerate64bit.patch
-Patch19:	trac_9958-e_one_star.patch
-Patch20:	trac_9958-finite_crystals.patch
-Patch21:	trac_9958-fixing_colorspy.patch
-Patch22:	trac_9958-fixing_numericalnoise-part1_p1.patch
-Patch23:	trac_9958-fixing_numericalnoise-part2.patch
-Patch24:	trac_9958-fixing_numericalnoise-part3.patch
-Patch25:	trac_9958-fixing_numericalnoise-part4.patch
-Patch26:	trac_9958-fix-list_index.patch
-Patch27:	trac_9958-fix-pureAssertError.patch
-Patch28:	trac_9958-fix-real_mpfr.patch
-Patch29:	trac_9958-fix_transcendental.patch
-Patch30:	trac_9958_junk_valueerror.patch
-Patch31:	trac_9958-mixedfix_p1.patch
-Patch32:	trac_9958-sage_unittest.patch
-Patch33:	trac_9958-symbolic_callable.patch
-
-# http://trac.sagemath.org/sage_trac/ticket/12038 (Complex numbers can segfault if given bad input to the __init__ method)
-Patch34:	12038.patch
+Patch13:	trac_9958-32_64bit_messages.patch
+Patch14:	trac_9958_enumerate64bit.patch
+Patch15:	trac_9958-e_one_star.patch
+Patch16:	trac_9958-finite_crystals.patch
+Patch17:	trac_9958-fixing_colorspy.patch
+# (sage-4.8) rediffed
+Patch18:	trac_9958-fixing_numericalnoise-part1_p1.patch
+Patch19:	trac_9958-fixing_numericalnoise-part2.patch
+Patch20:	trac_9958-fixing_numericalnoise-part3.patch
+Patch21:	trac_9958-fixing_numericalnoise-part4.patch
+Patch22:	trac_9958-fix-list_index.patch
+# (sage-4.8) not rediffed
+Patch23:	trac_9958-fix-pureAssertError.patch
+# (sage-4.8) rediffed
+Patch24:	trac_9958-fix-real_mpfr.patch
+Patch25:	trac_9958-fix_transcendental.patch
+# (sage-4.8) not rediffed
+Patch26:	trac_9958_junk_valueerror.patch
+# (sage-4.8) rediffed
+Patch27:	trac_9958-mixedfix_p1.patch
+# (sage-4.8) not rediffed
+Patch28:	trac_9958-sage_unittest.patch
+Patch29:	trac_9958-symbolic_callable.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/11986 (inconsistent integer hashing on 64bit systems with python 2.7)
-Patch35:	11986_integer_hash.patch
+# (sage-4.8) rediffed
+Patch30:	11986_integer_hash.patch
+
+Patch31:	sage-4.8-build.patch
 
 #------------------------------------------------------------------------
 %description
@@ -462,9 +450,6 @@ pushd spkg/build
 
 %if %{use_sage_cython}
     tar jxf ../standard/%{cython_and_version}.spkg
-    pushd %{cython_and_version}
-	patch -p1 < patches/ExprNodes.py.diff
-    popd
 %endif
 
 %if %{use_sage_ipython}
@@ -482,21 +467,19 @@ popd
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+
 %if %{use_sage_networkx}
 %patch10 -p1
 %endif
-%if %{mpmath_from_sympy}
+
 %patch11 -p1
-%endif
 %patch12 -p1
+
+pushd spkg/build/sage-%{version}
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
-%if !%{use_sage_cython}
 %patch16 -p1
-%endif
-
-pushd spkg/build/sage-%{version}
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
@@ -511,14 +494,9 @@ pushd spkg/build/sage-%{version}
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-
-%patch34 -p1
-
-%patch35 -p1
 popd
+
+%patch31 -p1
 
 # if executing prep, clean buildroot
 rm -rf %{buildroot}
@@ -821,9 +799,12 @@ popd
 
 #------------------------------------------------------------------------
 pushd spkg/build/%{elliptic_curves_and_version}
-    cp -fa cremona_mini/src/cremona_mini $SAGE_DATA
-    mkdir -p $SAGE_DATA/ellcurves
-    cp -fa ellcurves/rank* $SAGE_DATA/ellcurves
+    pushd cremona_mini
+	python ./spkg-install
+    popd
+    pushd ellcurves
+	sh ./spkg-install
+    popd
 popd
 
 #------------------------------------------------------------------------
