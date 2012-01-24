@@ -415,6 +415,9 @@ packages into a common Python-based interface.
 
 ########################################################################
 %prep
+# not all buildsystem nodes fail to mount /dev/pts, or, not always
+[ `ls /dev/pts | wc -l` -gt 0 ] || exit 1
+
 %setup -q -n sage-%{version}
 
 mkdir -p spkg/build
