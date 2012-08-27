@@ -100,7 +100,10 @@ Patch17:	sage-5.2-networkx.patch
 Patch18:	sage-5.2-lie.patch
 Patch19:	sage-5.2-gap.patch
 
+BuildRequires:	boost-devel
 BuildRequires:	cliquer-devel
+BuildRequires:	dos2unix
+BuildRequires:	factory-devel
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
 BuildRequires:	ecl
@@ -109,17 +112,21 @@ BuildRequires:	ecm-devel
 BuildRequires:	gap-system
 BuildRequires:	gap-system-packages
 BuildRequires:	gc-devel
+BuildRequires:	gd-devel
 BuildRequires:	glpk-devel
 BuildRequires:	gnutls-devel
+BuildRequires:	gsl-devel
 BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libmpc-devel
 BuildRequires:	libpari-devel
+BuildRequires:	linalg-linbox-devel
 BuildRequires:	m4ri-devel
 BuildRequires:	m4rie-devel
 BuildRequires:	maxima-runtime-ecl
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
+BuildRequires:	polybori
 BuildRequires:	ppl-devel
 BuildRequires:	pynac-devel
 BuildRequires:	python-devel
@@ -127,7 +134,10 @@ BuildRequires:	python-flask-autoindex
 BuildRequires:	python-flask-babel
 BuildRequires:	python-flask-openid
 BuildRequires:	python-flask-silk
+BuildRequires:	python-numpy-devel
 BuildRequires:	polybori-devel
+BuildRequires:	ratpoints
+BuildRequires:	readline-devel
 BuildRequires:	scons
 BuildRequires:	singular-devel
 BuildRequires:	symmetrica-devel
@@ -139,6 +149,7 @@ Requires:	gap-system
 Requires:	gap-system-packages
 Requires:	gfan
 Requires:	gp2c
+Requires:	iml-devel
 Requires:	jmol
 Requires:	jsmath-fonts
 Requires:	libpari-devel
