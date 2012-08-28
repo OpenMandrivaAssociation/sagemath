@@ -116,6 +116,7 @@ BuildRequires:	gd-devel
 BuildRequires:	glpk-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	gsl-devel
+BuildRequires:	iml-devel
 BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libmpc-devel
@@ -135,6 +136,7 @@ BuildRequires:	python-flask-babel
 BuildRequires:	python-flask-openid
 BuildRequires:	python-flask-silk
 BuildRequires:	python-numpy-devel
+BuildRequires:	python-twisted
 BuildRequires:	polybori-devel
 BuildRequires:	ratpoints
 BuildRequires:	readline-devel
@@ -367,7 +369,7 @@ rm -fr $DOT_SAGE
 %install
 # avoid long processing to get a simple failure...
 pushd spkg/build
-    tar jxf ../standard/%{elliptic_curves_pkg}.pkg
+    tar jxf ../standard/%{elliptic_curves_pkg}.spkg
 popd
 
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
@@ -649,7 +651,6 @@ pushd spkg/build/sage-%{version}/doc
 
     # should not be required and encodes buildroot
     rm -fr $SAGE_DOC/output/doctrees
-    sed -e 's|%{buildroot}||g' -i $SAGE_DOC/output/html/en/reference/sage/misc/hg.html
 popd
 
 %if %{with_sage_pexpect}
