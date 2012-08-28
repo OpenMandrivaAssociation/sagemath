@@ -35,7 +35,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	5.2
-Release:	1
+Release:	2
 License:	GPL
 URL:		http://www.sagemath.org
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
