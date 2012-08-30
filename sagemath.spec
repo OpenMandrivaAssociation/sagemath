@@ -35,7 +35,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	5.2
-Release:	2
+Release:	3
 License:	GPL
 URL:		http://www.sagemath.org
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
@@ -160,7 +160,7 @@ Requires:	maxima-runtime-ecl
 Requires:	palp
 Requires:	pari
 Requires:	pari-data
-Requires:	python-crypto
+Requires:	python-pycrypto
 Requires:	python-cvxopt
 Requires:	python-flask-autoindex
 Requires:	python-flask-babel
