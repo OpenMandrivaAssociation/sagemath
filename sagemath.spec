@@ -21,7 +21,7 @@
 %global pexpect_pkg		pexpect-2.0.p5
 %global polytopes_db_pkg	polytopes_db-20100210.p1
 %global rubiks_pkg		rubiks-20070912.p18
-%global	sagenb_pkg		sagenb-0.9.1
+%global	sagenb_pkg		sagenb-0.9.2
 %global sagetex_pkg		sagetex-2.3.3.p2
 
 %global SAGE_ROOT		%{_datadir}/sagemath
@@ -34,8 +34,8 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.2
-Release:	3
+Version:	5.3
+Release:	1
 License:	GPL
 URL:		http://www.sagemath.org
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
@@ -43,14 +43,14 @@ Source1:	gprc.expect
 Source2:	makecmds.sty
 Source3:	%{name}.rpmlintrc
 
-Patch0:		sage-5.2-gmp.patch
-Patch1:		sage-5.2-scripts.patch
+Patch0:		sage-gmp.patch
+Patch1:		sage-scripts.patch
 
 # remove call to not implemented sagemath "is_package_installed" interfaces
 # mpc is available in all modern linux distros
 # need to package coin-or solver in fedora
 # remove check for non free solvers
-Patch3:		sage-5.2-extensions.patch
+Patch3:		sage-extensions.patch
 
 # helper to:
 #	o respect a DESTDIR environment variable
@@ -58,47 +58,44 @@ Patch3:		sage-5.2-extensions.patch
 #	o minor change to help in incremental builds by avoiding rebuilding
 #	  files
 #	o do not assume there is an installed sagemath
-Patch4:		sage-5.2-rpmbuild.patch
+Patch4:		sage-rpmbuild.patch
 
 # Rediffed from
 # http://trac.sagemath.org/sage_trac/attachment/ticket/12883/matrix_modn_dense_no_linbox.patch
 # http://trac.sagemath.org/sage_trac/attachment/ticket/12883/sage-linbox.patch
-Patch5:		sage-5.2-linbox.patch
+Patch5:		sage-linbox.patch
 
 # Rediffed from
 # http://trac.sagemath.org/sage_trac/attachment/ticket/9511/trac_9511_givaro_3_7_x.patch (edited)
-Patch6:		sage-5.2-givaro.patch
-
-# update to use newer m4ri and m4rie
-Patch7:		sage-5.2-m4ri.patch
+Patch6:		sage-givaro.patch
 
 # build documentation in buildroot environment
-Patch8:		sage-5.2-sagedoc.patch
+Patch7:		sage-sagedoc.patch
 
 # sage notebook rpm and system environment adjustments
-Patch9:		sage-5.2-sagenb.patch
+Patch8:		sage-sagenb.patch
 
 # do not attempt to create state files in system directories
-Patch10:	sage-5.2-readonly.patch
+Patch9:		sage-readonly.patch
 
 # force coercion of ecl t_string to ecl t_base_string
 # this is hackish and only required if ecl is built with unicode support
-Patch11:	sage-5.2-ecl-unicode.patch
+Patch10:	sage-ecl-unicode.patch
 
 # work with all maxima-runtime lisp backend packages
-Patch12:	sage-5.2-maxima.patch
+Patch11:	sage-maxima.patch
 
 # execute 4ti2 programs in $PATH not in $SAGE_ROOT/local/bin
-Patch13:	sage-5.2-4ti2.patch
+Patch12:	sage-4ti2.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/13237
-Patch14:	sage-5.2-singular.patch
+Patch13:	sage-singular.patch
 
-Patch15:	sage-5.2-qepcad.patch
-Patch16:	sage-5.2-pari.patch
-Patch17:	sage-5.2-networkx.patch
-Patch18:	sage-5.2-lie.patch
-Patch19:	sage-5.2-gap.patch
+Patch14:	sage-qepcad.patch
+Patch15:	sage-pari.patch
+Patch16:	sage-networkx.patch
+Patch17:	sage-lie.patch
+Patch18:	sage-gap.patch
 
 BuildRequires:	boost-devel
 BuildRequires:	cliquer-devel
@@ -136,6 +133,7 @@ BuildRequires:	python-flask-babel
 BuildRequires:	python-flask-openid
 BuildRequires:	python-flask-silk
 BuildRequires:	python-numpy-devel
+BuildRequires:	python-scipy
 BuildRequires:	python-twisted
 BuildRequires:	polybori-devel
 BuildRequires:	ratpoints
@@ -261,7 +259,6 @@ popd
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
-%patch19 -p1
 
 # make sure buildroot is clean
 rm -rf %{buildroot}
