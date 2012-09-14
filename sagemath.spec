@@ -109,6 +109,7 @@ BuildRequires:	ecm-devel
 BuildRequires:	gap-system
 BuildRequires:	gap-system-packages
 BuildRequires:	gc-devel
+BuildRequires:	gcc-gfortran
 BuildRequires:	gd-devel
 BuildRequires:	glpk-devel
 BuildRequires:	gnutls-devel
@@ -121,6 +122,8 @@ BuildRequires:	libpari-devel
 BuildRequires:	linalg-linbox-devel
 BuildRequires:	m4ri-devel
 BuildRequires:	m4rie-devel
+# try to ensure a sane /dev will exist when building documentation
+BuildRequires:	makedev
 BuildRequires:	maxima-runtime-ecl
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
