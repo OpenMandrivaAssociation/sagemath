@@ -1,3 +1,5 @@
+%global with_sphinx_hack	1
+
 # may be required if not matching system version or to be updates proof
 %global with_sage_cython	1
 
@@ -14,14 +16,13 @@
 %global cython_pkg		cython-0.17pre
 %global	elliptic_curves_pkg	elliptic_curves-0.6
 %global	flintqs_pkg		flintqs-20070817.p8
-%global genus2reduction_pkg	genus2reduction-0.3.p8
 %global graphs_pkg		graphs-20120404.p3
 %global ipython_pkg		ipython-0.10.2.p1
 %global networkx_pkg		networkx-1.6
 %global pexpect_pkg		pexpect-2.0.p5
 %global polytopes_db_pkg	polytopes_db-20100210.p1
 %global rubiks_pkg		rubiks-20070912.p18
-%global	sagenb_pkg		sagenb-0.9.2
+%global	sagenb_pkg		sagenb-0.10.2
 %global sagetex_pkg		sagetex-2.3.3.p2
 
 %global SAGE_ROOT		%{_datadir}/sagemath
@@ -34,8 +35,8 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.3
-Release:	2
+Version:	5.4.beta1
+Release:	1
 License:	GPL
 URL:		http://www.sagemath.org
 Source0:	http://www.sagemath.org/src/sage-%{version}.tar
@@ -60,42 +61,40 @@ Patch3:		sage-extensions.patch
 #	o do not assume there is an installed sagemath
 Patch4:		sage-rpmbuild.patch
 
-# Rediffed from
-# http://trac.sagemath.org/sage_trac/attachment/ticket/12883/matrix_modn_dense_no_linbox.patch
-# http://trac.sagemath.org/sage_trac/attachment/ticket/12883/sage-linbox.patch
-Patch5:		sage-linbox.patch
-
-# Rediffed from
-# http://trac.sagemath.org/sage_trac/attachment/ticket/9511/trac_9511_givaro_3_7_x.patch (edited)
-Patch6:		sage-givaro.patch
-
 # build documentation in buildroot environment
-Patch7:		sage-sagedoc.patch
+Patch5:		sage-sagedoc.patch
 
 # sage notebook rpm and system environment adjustments
-Patch8:		sage-sagenb.patch
+Patch6:		sage-sagenb.patch
 
 # do not attempt to create state files in system directories
-Patch9:		sage-readonly.patch
+Patch7:		sage-readonly.patch
 
 # force coercion of ecl t_string to ecl t_base_string
 # this is hackish and only required if ecl is built with unicode support
-Patch10:	sage-ecl-unicode.patch
+Patch8:		sage-ecl-unicode.patch
+
+# do not link explicitly to png12
+Patch9:		sage-png.patch
 
 # work with all maxima-runtime lisp backend packages
-Patch11:	sage-maxima.patch
+Patch10:	sage-maxima.patch
 
 # execute 4ti2 programs in $PATH not in $SAGE_ROOT/local/bin
-Patch12:	sage-4ti2.patch
+Patch11:	sage-4ti2.patch
 
-# http://trac.sagemath.org/sage_trac/ticket/13237
-Patch13:	sage-singular.patch
+Patch12:	sage-fplll.patch
 
-Patch14:	sage-qepcad.patch
-Patch15:	sage-pari.patch
-Patch16:	sage-networkx.patch
-Patch17:	sage-lie.patch
-Patch18:	sage-gap.patch
+Patch13:	sage-qepcad.patch
+Patch14:	sage-pari.patch
+Patch15:	sage-networkx.patch
+Patch16:	sage-lie.patch
+Patch17:	sage-gap.patch
+
+# Portuguese translations: http://trac.sagemath.org/sage_trac/ticket/12822
+Patch18:	trac_12502_pt_translation_of_a_tour_of_sage_rebase1.patch
+Patch19:	trac_12822_pt_translation_of_tutorial.patch
+Patch20:	trac_12822_pt_translation_of_tutorial_rev1.patch
 
 BuildRequires:	boost-devel
 BuildRequires:	cliquer-devel
@@ -150,6 +149,7 @@ Requires:       cddlib-devel
 Requires:	ecl
 Requires:	gap-system
 Requires:	gap-system-packages
+Requires:	genus2reduction
 Requires:	gfan
 Requires:	gp2c
 Requires:	iml-devel
@@ -194,7 +194,6 @@ pushd spkg/build
 	%{elliptic_curves_pkg}			\
 	extcode-%{version}			\
 	%{flintqs_pkg}				\
-	%{genus2reduction_pkg}			\
 	%{graphs_pkg}				\
 %if %{with_sage_ipython}
 	%{ipython_pkg}				\
@@ -221,6 +220,10 @@ pushd %{flintqs_pkg}/src
     for diff in `ls ../patches/*.patch`; do
 	patch -p1 < $diff
     done
+popd
+pushd %{sagenb_pkg}/src
+    tar zxf %{sagenb_pkg}.tar.gz
+    mv  %{sagenb_pkg} sagenb
 popd
 %if %{with_sage_ipython}
     pushd %{ipython_pkg}/src
@@ -261,7 +264,14 @@ popd
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+
+pushd spkg/build/sage-%{version}
+mkdir -p doc/pt/a_tour_of_sage/
+cp -fa doc/en/a_tour_of_sage/*.png doc/pt/a_tour_of_sage/
 %patch18 -p1
+%patch19 -p1
+%patch20 -p1
+popd
 
 # make sure buildroot is clean
 rm -rf %{buildroot}
@@ -275,26 +285,6 @@ ln -sf $PWD/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 ln -sf %{_datadir} $SAGE_LOCAL/share
-
-#------------------------------------------------------------------------
-# based on debian patch
-pushd spkg/build/%{genus2reduction_pkg}/src
-cat > Makefile << EOF
-CFLAGS = -O2 -I%{_includedir}/pari
-LDFLAGS = -lpari
-CC = gcc
-
-genus2reduction:
-	\${CC} \${CFLAGS} \${LDFLAGS} -o genus2reduction genus2reduction.c
-
-install: genus2reduction
-	mkdir -p \${DESTDIR}/%{SAGE_LOCAL}/bin
-	install -p \$< \${DESTDIR}/%{SAGE_LOCAL}/bin
-
-clean:
-	rm -f genus2reduction
-EOF
-popd
 
 #------------------------------------------------------------------------
 # ensure proper/preferred libatlas is in linker path
@@ -353,11 +343,6 @@ pushd spkg/build/%{flintqs_pkg}/src
 popd
 
 #------------------------------------------------------------------------
-pushd spkg/build/%{genus2reduction_pkg}/src
-    make %{?_smp_mflags}
-popd
-
-#------------------------------------------------------------------------
 pushd spkg/build/%{rubiks_pkg}/src
     make %{?_smp_mflags} CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}"
 popd
@@ -367,11 +352,6 @@ rm -fr $DOT_SAGE
 
 ########################################################################
 %install
-# avoid long processing to get a simple failure...
-pushd spkg/build
-    tar jxf ../standard/%{elliptic_curves_pkg}.spkg
-popd
-
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
@@ -440,7 +420,7 @@ pushd spkg/build/sage-%{version}
     popd
     # install documentation sources
     rm -fr $SAGE_DOC/{common,en,fr}
-    cp -far doc/{common,de,en,fr,ru} $SAGE_DOC
+    cp -far doc/{common,de,en,fr,pt,ru,tr} $SAGE_DOC
 popd
 
 #------------------------------------------------------------------------
@@ -497,6 +477,19 @@ install -m755 spkg/bin/sage $SAGE_LOCAL/bin
 #------------------------------------------------------------------------
 pushd spkg/build/%{flintqs_pkg}/src
     cp -fa QuadraticSieve $SAGE_LOCAL/bin
+popd
+
+#------------------------------------------------------------------------
+# FIXME create proper package(s) for cube solvers
+pushd spkg/build/%{rubiks_pkg}/src
+    cp -fa \
+	reid/optimal \
+	dietz/solver/cubex \
+	dietz/mcube/mcube \
+	dietz/cu2/cu2 \
+	dik/dikcube \
+	dik/size222 \
+	$SAGE_LOCAL/bin
 popd
 
 #------------------------------------------------------------------------
@@ -644,6 +637,12 @@ pushd spkg/build/sage-%{version}/doc
     export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{_libdir}/atlas:$LD_LIBRARY_PATH
     export PYTHONPATH=%{buildroot}%{python_sitearch}:$SAGE_PYTHONPATH:$SAGE_DOC
 
+%if %{with_sphinx_hack}
+    cp -far %{python_sitelib}/sphinx %{buildroot}%{python_sitearch}
+    sed -i "s|\(source.startswith('>>>')\)|\1 or source.startswith('sage: ')|" \
+	%{buildroot}%{python_sitearch}/sphinx/highlighting.py
+%endif
+
     # there we go
     python common/builder.py all html
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
@@ -655,6 +654,10 @@ popd
 
 %if %{with_sage_pexpect}
     rm -f %{buildroot}%{python_sitearch}/{ANSI,FSM,pexpect,pxssh,screen}.py
+%endif
+
+%if %{with_sphinx_hack}
+    rm -fr %{buildroot}%{python_sitearch}/sphinx
 %endif
 
 # Script was used to build documentation 
@@ -719,6 +722,15 @@ rm -fr $DOT_SAGE
 %{_docdir}/sagetex
 
 %changelog
+* Tue Nov  6 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4.beta1-1
+- Update to sagemath 5.4.beta1
+- Add Portuguese translations of Tutorial and A Tour of Sage
+- Removed already applied upstream linbox upgrade patch
+- Removed already applied upstream givaro upgrade patch
+- Removed already applied upstream singular upgrade patch
+- Install rubiks spkg binaries
+- Use system genus2reduction
+
 * Sat Aug 4 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.2-1
 - Update to sagemath 5.2.
 
