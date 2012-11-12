@@ -1,0 +1,17 @@
+diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/all.py.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/all.py
+--- sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/all.py.orig	2012-08-04 13:15:18.755560007 -0400
++++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/all.py	2012-08-04 13:15:28.131560373 -0400
+@@ -333,11 +333,11 @@ def _write_started_file():
+ 
+     Check that the file exists when Sage is running::
+ 
+-        sage: started_file = os.path.join(SAGE_ROOT, 'local', 'lib', 'sage-started.txt')
++        sage: started_file = os.path.join(DOT_SAGE, 'sage-started.txt')
+         sage: os.path.isfile(started_file)
+         True
+     """
+-    started_file = os.path.join(SAGE_ROOT, 'local', 'lib', 'sage-started.txt')
++    started_file = os.path.join(DOT_SAGE, 'sage-started.txt')
+     # Do nothing if the file already exists
+     if os.path.isfile(started_file):
+         return

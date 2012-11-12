@@ -1,0 +1,100 @@
+diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pxd.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pxd
+--- sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pxd.orig	2012-07-10 13:52:08.348883750 -0400
++++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pxd	2012-07-10 13:52:28.810884452 -0400
+@@ -133,6 +133,7 @@ cdef extern from "ecl/ecl.h":
+     cl_object ecl_read_from_cstring_safe(char *s, cl_object err)
+     cl_object cl_write_to_string(cl_narg narg, cl_object o) 
+     cl_object ecl_cstring_to_base_string_or_nil(char *s)
++    cl_object si_coerce_to_base_string(cl_object x)
+     
+     # S-expr evaluation and function calls
+     
+diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pyx.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pyx
+--- sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pyx.orig	2012-07-10 13:52:37.365884807 -0400
++++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/ecl.pyx	2012-07-10 13:57:57.867897111 -0400
+@@ -249,17 +249,19 @@ cdef cl_object ecl_safe_eval(cl_object f
+         ...
+         RuntimeError: ECL says: Console interrupt
+     """
++    cdef cl_object s
+     ecl_sig_on()
+     cl_funcall(2,safe_eval_clobj,form)
+     ecl_sig_off()
+ 
+     if ecl_nvalues > 1:
+-        raise RuntimeError, "ECL says: "+ecl_base_string_pointer_safe(ecl_values(1))
++        s = si_coerce_to_base_string(ecl_values(1))
++        raise RuntimeError, "ECL says: "+ecl_base_string_pointer_safe(s)
+     else:
+         return ecl_values(0)
+ 
+ cdef cl_object ecl_safe_funcall(cl_object func, cl_object arg) except NULL:
+-    cdef cl_object l
++    cdef cl_object l, s
+     l = cl_cons(func,cl_cons(arg,Cnil));
+ 
+     ecl_sig_on()
+@@ -267,17 +269,20 @@ cdef cl_object ecl_safe_funcall(cl_objec
+     ecl_sig_off()
+ 
+     if ecl_nvalues > 1:
+-        raise RuntimeError, "ECL says: "+ecl_base_string_pointer_safe(ecl_values(1))
++        s = si_coerce_to_base_string(ecl_values(1))
++        raise RuntimeError, "ECL says: "+ecl_base_string_pointer_safe(s)
+     else:
+         return ecl_values(0)
+ 
+ cdef cl_object ecl_safe_apply(cl_object func, cl_object args) except NULL:
++    cdef cl_object s
+     ecl_sig_on()
+     cl_funcall(3,safe_apply_clobj,func,args)
+     ecl_sig_off()
+ 
+     if ecl_nvalues > 1:
+-        raise RuntimeError, "ECL says: "+ecl_base_string_pointer_safe(ecl_values(1))
++        s = si_coerce_to_base_string(ecl_values(1))
++        raise RuntimeError, "ECL says: "+ecl_base_string_pointer_safe(s)
+     else:
+         return ecl_values(0)
+ 
+@@ -327,10 +332,11 @@ def print_objects():
+         HELLO
+     """
+     
+-    cdef cl_object c
++    cdef cl_object c, s
+     c = list_of_objects
+     while True:
+-        print ecl_base_string_pointer_safe(cl_write_to_string(1,cl_car(c)))
++        s = si_coerce_to_base_string(cl_write_to_string(1,cl_car(c)))
++        print ecl_base_string_pointer_safe(s)
+         c=cl_cadr(c)
+         if c == Cnil:
+             break
+@@ -405,6 +411,7 @@ cdef cl_object python_to_ecl(pyobj) exce
+         raise TypeError,"Unimplemented type for python_to_ecl"
+ 
+ cdef ecl_to_python(cl_object o):
++    cdef cl_object s
+     cdef Integer N
+     # conversions from an ecl object to a python object.
+ 
+@@ -439,7 +446,8 @@ cdef ecl_to_python(cl_object o):
+                 return tuple(L)
+         return L
+     else:
+-        return ecl_base_string_pointer_safe(cl_write_to_string(1,o))
++        s = si_coerce_to_base_string(cl_write_to_string(1,o))
++        return ecl_base_string_pointer_safe(s)
+ 
+ #Maxima's BFLOAT multiprecision float type can be read with:
+ #def bfloat_to_python(e):
+@@ -655,7 +663,7 @@ cdef class EclObject:
+ 
+         """
+         cdef cl_object s
+-        s = cl_write_to_string(1,self.obj)
++        s = si_coerce_to_base_string(cl_write_to_string(1,self.obj))
+         return ecl_base_string_pointer_safe(s)
+ 
+     def __hash__(self):

@@ -1,0 +1,30 @@
+diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py
+--- sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py.orig	2012-10-20 11:02:08.389087630 -0300
++++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py	2012-10-20 11:02:18.933088034 -0300
+@@ -971,7 +971,7 @@ ext_modules = [
+ 
+     Extension('sage.matrix.matrix_mod2_dense',
+               sources = ['sage/matrix/matrix_mod2_dense.pyx'],
+-              libraries = ['gmp','m4ri', 'gd', 'png12', 'z'],
++              libraries = ['gmp','m4ri', 'gd', 'png', 'z'],
+               extra_compile_args = ['-std=c99'] + m4ri_extra_compile_args,
+               depends = [SAGE_INC + "png.h", SAGE_INC + "m4ri/m4ri.h"]),
+ 
+@@ -1224,7 +1224,7 @@ ext_modules = [
+ 
+     Extension('sage.modules.vector_mod2_dense',
+               sources = ['sage/modules/vector_mod2_dense.pyx'],
+-              libraries = ['gmp','m4ri', 'png12', 'gd'],
++              libraries = ['gmp','m4ri', 'png', 'gd'],
+               extra_compile_args = ['-std=c99'] + m4ri_extra_compile_args,
+               depends = [SAGE_INC + "png.h", SAGE_INC + "m4ri/m4ri.h"]),
+     
+@@ -1684,7 +1684,7 @@ ext_modules = [
+ 
+     Extension('sage.rings.polynomial.pbori',
+               sources = ['sage/rings/polynomial/pbori.pyx'],
+-              libraries=['polybori', 'polybori_groebner', 'cudd', 'gd', 'png12', 'm4ri'],
++              libraries=['polybori', 'polybori_groebner', 'cudd', 'gd', 'png', 'm4ri'],
+               include_dirs = [SAGE_INC, "sage/libs/polybori"],
+               depends = [SAGE_INC + "polybori/" + hd + ".h" for hd in ["polybori", "config"] ] + \
+                         [SAGE_INC + 'm4ri/m4ri.h'],
