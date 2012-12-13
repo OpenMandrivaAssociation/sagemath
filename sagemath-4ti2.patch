@@ -1,6 +1,6 @@
-diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/sandpiles/sandpile.py.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/sandpiles/sandpile.py
---- sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/sandpiles/sandpile.py.orig	2012-07-11 14:39:38.474386100 -0400
-+++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/sandpiles/sandpile.py	2012-07-11 14:40:33.870388225 -0400
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/sandpiles/sandpile.py.orig sage-5.4.1/spkg/build/sage-5.4.1/sage/sandpiles/sandpile.py
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/sandpiles/sandpile.py.orig	2012-07-11 14:39:38.474386100 -0400
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/sandpiles/sandpile.py	2012-07-11 14:40:33.870388225 -0400
 @@ -22,9 +22,6 @@ http://sagemath.org/download-packages.ht
  packages.  An alternative is to install 4ti2 separately, then point the
  following variable to the correct path.

@@ -1,6 +1,6 @@
-diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
---- sage-5.4.beta1/spkg/bin/sage.orig	2012-10-20 10:36:29.625028705 -0300
-+++ sage-5.4.beta1/spkg/bin/sage	2012-10-20 10:44:02.051046030 -0300
+diff -up sage-5.4.1/spkg/bin/sage.orig sage-5.4.1/spkg/bin/sage
+--- sage-5.4.1/spkg/bin/sage.orig	2012-11-12 20:55:02.293833071 -0200
++++ sage-5.4.1/spkg/bin/sage	2012-11-12 21:04:54.375855744 -0200
 @@ -11,17 +11,14 @@ usage() {
      echo "  file.<sage|py|spyx> -- run given .sage, .py or .spyx files"
      echo "  -advanced           -- list all command line options"
@@ -57,35 +57,10 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
      echo "  -sh [...]           -- run \$SHELL ($SHELL) with Sage environment variables"
      echo "  -singular [...]     -- run Sage's singular with given arguments"
      echo "  -sqlite3 [...]      -- run Sage's sqlite3 with given arguments"
-@@ -113,66 +104,6 @@ usage_advanced() {
+@@ -138,47 +129,10 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
--    echo "Installing packages and upgrading:"
--    echo "  -experimental       -- list all experimental packages that can be installed"
--    echo "  -f [opts] [packages]-- shortcut for -i -f: force build of the given Sage"
--    echo "                         packages"
--    echo "  -i [opts] [packages]-- install the given Sage packages (unless they are"
--    echo "                         already installed); if no packages are given, print"
--    echo "                         a list of all installed packages.  Options:"
--    echo "                           -c -- run the packages' test suites"
--    echo "                           -f -- force build: install the packages even"
--    echo "                                 if they are already installed"
--    echo "                           -s -- do not delete the spkg/build directories"
--    echo "                                 after a successful build"
--    echo "  -info [packages]    -- print the SPKG.txt of the given packages"
--    echo "  -optional           -- list all optional packages that can be installed"
--    echo "  -standard           -- list all standard packages that can be installed"
--   #echo "  -update             -- download latest non-optional Sage packages (do not build them)"
--   #echo "  -update-build       -- build and install all downloaded non-optional Sage packages"
--    echo "  -upgrade [url]      -- download, build and install standard packages from"
--    echo "                         given url.  If url not given, automatically selects a"
--    echo "                         suitable mirror.  If url='ask', it lets you select"
--    echo "                         the mirror (uses SAGE_SERVER as default)."
--
--    echo
--    ####  1.......................26..................................................78
--    ####  |.....................--.|...................................................|
 -    echo "Building and testing the Sage library:"
 -    echo "  -b [branch]         -- build Sage library.  If branch is given, switch to"
 -    echo "                         branch in devel/sage-branch and build that branch"
@@ -100,8 +75,9 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -    echo "                         current branch"
 -    echo "  -fixdoctests <file.py> -- create <file.py>.out that would pass the doctests"
 -    echo "                            and output a patch"
--    echo "  -startuptime        -- display how long each component of Sage takes to"
--    echo "                         start up"
+-    echo "  -startuptime [module]  -- display how long each component of Sage takes to"
+-    echo "                            start up; optionally specify a module to get more"
+-    echo "                            details about that particular module"
 -    echo "  -t [options] <files|dir>"
 -    echo "                      -- test examples in .py, .pyx, .sage or .tex files"
 -    echo "                         options:"
@@ -124,7 +100,12 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
      echo "Documentation:"
      echo "  -coverage <files>   -- give info about doctest coverage of files"
      echo "  -coverageall        -- give summary info about doctest coverage of all"
-@@ -195,23 +126,6 @@ usage_advanced() {
+     echo "                         files in the Sage library"
+-    echo "  -docbuild [lang/]<document> <html|pdf|...> -- Build the Sage documentation"
+     echo "  -search_src <string> -- search through all the Sage library code for string"
+     echo "  -search_doc <string> -- search through the Sage documentation for string"
+     echo "  -grep <string>      -- same as -search_src"
+@@ -196,23 +150,6 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
@@ -148,7 +129,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
      echo "Valgrind memory debugging:"
      echo "  -cachegrind         -- run Sage using Valgrind's cachegrind tool.  The log"
      echo "                         files are named sage-cachegrind.PID can be found in"
-@@ -225,9 +139,6 @@ usage_advanced() {
+@@ -226,9 +163,6 @@ usage_advanced() {
      echo "  -memcheck           -- run Sage using Valgrind's memcheck tool.  The log"
      echo "                         files are named sage-memcheck.PID can be found in"
      echo "                         $DOT_SAGE"
@@ -158,13 +139,13 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
      echo "  -valgrind           -- this is an alias for -memcheck"
      echo
      echo "You can also use -- before a long option, e.g., 'sage --optional'."
-@@ -254,15 +165,6 @@ if [ "$1" = '--nodotsage' ]; then
+@@ -248,15 +182,6 @@ if [ "$1" = '--nodotsage' ]; then
      exit $status
  fi
  
 -# Do NOT redirect stderr and stdout to /dev/null,
 -# since sage-env might print important error messages:
--. spkg/bin/sage-env
+-. "$SAGE_ROOT/spkg/bin/sage-env"
 -if [ $? -ne 0 ]; then
 -   echo >&2 "Error setting environment variables by sourcing '$SAGE_ROOT/spkg/bin/sage-env';"
 -   echo >&2 "possibly contact sage-devel (see http://groups.google.com/group/sage-devel)."
@@ -174,7 +155,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  # Sage startup script passes some funny options, which are
  # best ignored.
  if [ $# -eq 3 ]; then
-@@ -283,7 +185,7 @@ if [ $# -gt 0 ]; then
+@@ -277,7 +202,7 @@ if [ $# -gt 0 ]; then
  fi
  
  
@@ -183,45 +164,41 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  LOGOPT=""
  
  sage_setup() {
-@@ -292,13 +194,6 @@ sage_setup() {
+@@ -286,10 +211,6 @@ sage_setup() {
          cat "$SAGE_LOCAL/bin/sage-banner"
      fi
  
 -    # Check to see if the whole Sage install tree has moved.
 -    # If so, change various hardcoded paths.
--    "$SAGE_ROOT/local/bin/"sage-location
--    if [ $? -ne 0 ]; then
--        exit 1
--    fi
+-    sage-location || exit $?
 -
-     cd "$SAGE_ROOT/local/bin"
-     IPYTHONDIR="$DOT_SAGE/ipython" && export IPYTHONDIR
-     IPYTHONRC="ipythonrc" && export IPYTHONRC
-@@ -370,11 +265,6 @@ if [ "$1" = '-root'  -o "$1" = '--root'
+     export IPYTHONDIR="$DOT_SAGE/ipython"
+     export IPYTHONRC="ipythonrc"
+     if [ ! -d "$IPYTHONDIR" ]; then
+@@ -344,12 +265,6 @@ if [ "$1" = '-root'  -o "$1" = '--root'
      exit 0
  fi
  
 -if [ "$1" = '-branch'  -o "$1" = '--branch' ]; then
--    cd "$SAGE_ROOT/devel/sage" && pwd -P | sed 's|.*/||; s|^sage-||'
+-    cd "$SAGE_ROOT/devel/sage"
+-    pwd -P | sed 's|.*/||; s|^sage-||'
 -    exit $?
 -fi
 -
  #####################################################################
  # Run Sage's versions of the standard Algebra/Geometry etc. software
  #####################################################################
-@@ -386,38 +276,31 @@ if [ "$1" = '-axiom' -o "$1" = '--axiom'
+@@ -360,33 +275,27 @@ if [ "$1" = '-axiom' -o "$1" = '--axiom'
      exit $?
  fi
  
 -if [ "$1" = '-combinat' -o "$1" = '--combinat' ]; then
--    cd "$CUR"
 -    shift
 -    sage-combinat "$@"
 -    exit $?
 -fi
 -
  if [ "$1" = '-gap' -o "$1" = '--gap' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/gap" "$@"
 +    gap "$@"
@@ -229,7 +206,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  fi
  
  if [ "$1" = '-gp'  -o "$1" = '--gp' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/gp" "$@"
 +    gp "$@"
@@ -237,7 +213,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  fi
  
  if [ "$1" = '-singular'  -o "$1" = '--singular' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/singular" "$@"
 +    singular "$@"
@@ -245,16 +220,22 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  fi
  
  if [ "$1" = '-sqlite3'  -o "$1" = '--sqlite3' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/sqlite3" "$@"
 +    sqlite3 "$@"
      exit $?
  fi
  
-@@ -438,49 +321,35 @@ fi
+@@ -398,49 +307,37 @@ fi
+ 
+ if [ "$1" = '-ecl'  -o "$1" = '--ecl' ]; then
+     shift
+-    "$SAGE_LOCAL/bin/ecl" "$@"
++    ecl "$@"
+     exit $?
+ fi
+ 
  if [ "$1" = '-lisp'  -o "$1" = '--lisp' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/ecl" "$@"
 +    ecl "$@"
@@ -262,14 +243,12 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  fi
  
  if [ "$1" = '-kash'  -o "$1" = '--kash' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/kash" "$@"
 -    exit $?
 -fi
 -
 -if [ "$1" = '-fixdoctests' -o "$1" = '--fixdoctests' ]; then
--    cd "$CUR"
 -    shift
 -    sage-fixdoctests "$@"
 +    kash "$@"
@@ -277,7 +256,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  fi
  
  if [ "$1" = '-maxima'  -o "$1" = '--maxima' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/maxima" "$@"
 +    maxima "$@"
@@ -285,7 +263,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  fi
  
  if [ "$1" = '-mwrank'  -o "$1" = '--mwrank' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/mwrank" "$@"
 +    mwrank "$@"
@@ -293,43 +270,32 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  fi
  
  if [ "$1" = '-M2'  -o "$1" = '--M2' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/M2" "$@"
 -    exit $?
 -fi
 -
 -if [ "$1" = '-scons'  -o "$1" = '--scons' ]; then
--    cd "$CUR"
 -    shift
 -    "$SAGE_LOCAL/bin/scons" "$@"
 +    M2 "$@"
      exit $?
  fi
  
-@@ -494,14 +363,14 @@ fi
+@@ -452,7 +349,7 @@ fi
+ 
  if [ "$1" = '-R'  -o "$1" = '--R' ]; then
-     cd "$CUR"
      shift
 -    "$SAGE_LOCAL/bin/R" "$@"
 +    R "$@"
      exit $?
  fi
  
- if [ "$1" = '-ipython'  -o "$1" = '--ipython' ]; then
-     cd "$CUR"
-     shift
--    "$SAGE_LOCAL/bin/ipython" "$@"
-+    ipython "$@"
-     exit $?
- fi
- 
-@@ -631,23 +500,6 @@ if [ "$1" = '-gdb-ipython'  -o "$1" = '-
+@@ -586,21 +483,6 @@ if [ "$1" = '-gdb-ipython'  -o "$1" = '-
      exit $?
  fi
  
 -if [ "$1" = '-hg'  -o "$1" = '--hg' ]; then
--    cd "$CUR"
 -    shift
 -    # Disable HGPLAIN, so we use all user defaults
 -    # (both in $SAGE_LOCAL/etc/mercurial and $HOME/.hgrc)
@@ -339,7 +305,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -fi
 -
 -if [ "$1" = '-merge' ]; then
--    cd "$CUR"
 -    shift
 -    sage-apply-ticket "$@"
 -    exit $?
@@ -348,7 +313,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  #####################################################################
  # Test coverage of a module?
  #####################################################################
-@@ -685,24 +537,9 @@ if [ "$1" = '-rst2sws' -o "$1" = '--rst2
+@@ -634,23 +516,9 @@ if [ "$1" = '-rst2sws' -o "$1" = '--rst2
  fi
  
  #####################################################################
@@ -357,7 +322,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -
 -if [ "$1" = "-crap" -o "$1" = "--crap" ]; then
 -   shift
--   cd "$CUR"
 -   sage-crap $@
 -   exit $?
 -fi
@@ -371,14 +335,13 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -}
 -
  if [ "$1" = "-notebook"  -o "$1" = '--notebook' -o "$1" = '-n' ]; then
-    cd "$CUR"
     shift
-@@ -711,15 +548,6 @@ if [ "$1" = "-notebook"  -o "$1" = '--no
+    sage-cleaner &>/dev/null &
+@@ -658,14 +526,6 @@ if [ "$1" = "-notebook"  -o "$1" = '--no
     exit $?
  fi
  
 -if [ "$1" = "-bn" -o "$1" = "--build-and-notebook" ]; then
--    cd "$CUR"
 -    shift
 -    sage-cleaner &>/dev/null &
 -    build_sage
@@ -387,18 +350,12 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -fi
 -
  if [ "$1" = "-inotebook"  -o "$1" = '--inotebook' ]; then
-    cd "$CUR"
     shift
-@@ -757,82 +585,7 @@ if [ "$1" = '-q' ]; then
-    exit $?
+    sage-cleaner &>/dev/null &
+@@ -708,76 +568,7 @@ if [ "$1" = '-b' ]; then
+     exit $?
  fi
  
--if [ "$1" = '-b' ]; then
--    shift
--    time build_sage "$@"
--    exit $?
--fi
--
 -if [ "$1" = '-br' -o "$1" = "--br" ]; then
 -    shift
 -    build_sage "$@"
@@ -422,7 +379,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -      # remove the correct file.
 -      rm -f "$SAGE_ROOT/devel/sage"
 -      ln -s "sage-$1" sage
--      cd "$SAGE_ROOT"
 -   fi
 -   sage
 -   exit $?
@@ -455,6 +411,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -
 -if [ "$1" = '-sync-build' -o "$1" = '--sync-build' ]; then
 -   shift
+-   cd "$SAGE_ROOT"
 -   python "$SAGE_LOCAL"/bin/sage-sync-build.py "$@"
 -   exit $?
 -fi
@@ -473,7 +430,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
     if ! [  -f  "$DOT_SAGE"/init.sage ]; then
        echo >&2 "init.sage does not exist ... creating"
        touch "$DOT_SAGE"/init.sage
-@@ -843,10 +596,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' ]; then
+@@ -787,10 +578,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' ]; then
     exit $?
  fi
  
@@ -485,7 +442,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
     if ! [  -f  "$DOT_SAGE"/init.sage ]; then
        echo >&2 "init.sage does not exist ... creating"
        touch "$DOT_SAGE"/init.sage
-@@ -857,10 +607,7 @@ if [ "$1" = '-tp' -o "$1" = '-btp' ]; th
+@@ -800,10 +588,7 @@ if [ "$1" = '-tp' -o "$1" = '-btp' ]; th
     exit $?
  fi
  
@@ -494,28 +451,28 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -      build_sage
 -   fi
 +if [ "$1" = '-tnew' ]; then
-    cd "$CUR"
     shift
     sage-test-new "$@"
-@@ -873,12 +620,6 @@ if [ "$1" = '-testall' -o "$1" = "--test
+    exit $?
+@@ -815,13 +600,6 @@ if [ "$1" = '-testall' -o "$1" = "--test
     exit $?
  fi
  
 -if [ "$1" = '-patchbot' -o "$1" = "--patchbot" ]; then
 -   shift
+-   cd "$SAGE_ROOT"
 -   "$SAGE_LOCAL/bin/patchbot/patchbot.py" "$@"
 -   exit $?
 -fi
 -
  if [ "$1" = '-c' ]; then
-    cd "$CUR"
     shift
-@@ -889,174 +630,6 @@ if [ "$1" = '-c' ]; then
+    SAGE_BANNER="no"
+@@ -831,172 +609,6 @@ if [ "$1" = '-c' ]; then
     exit $?
  fi
  
 -install() {
--    cd "$CUR"
 -    mkdir -p "$SAGE_LOGS"
 -    for PKG in "$@"
 -    do
@@ -600,14 +557,12 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -fi
 -
 -if [ "$1" = '-pkg' -o "$1" = '-spkg' -o "$1" = "--pkg" -o "$1" = "--spkg" ]; then
--   cd "$CUR"
 -   shift
 -   sage-pkg "$@"
 -   exit $?
 -fi
 -
 -if [ "$1" = '-pkg_nc' -o "$1" = "--pkg_nc" ]; then
--   cd "$CUR"
 -   shift
 -   sage-pkg -n "$@"
 -   exit $?
@@ -636,6 +591,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -       echo >&2 "** MISSING VERSION NUMBER! **"
 -       exit 1
 -   fi
+-   cd "$SAGE_ROOT"
 -   sage-bdist $2 "$SAGE_ROOT"
 -   exit $?
 -fi
@@ -653,6 +609,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -
 -if [ "$1" = '-upgrade' -o "$1" = "--upgrade" ]; then
 -    shift
+-    cd "$SAGE_ROOT"
 -
 -    # People often move the Sage install right before doing the upgrade, so it's
 -    # important to fix any path hardcoding issues first, or certain library
@@ -675,7 +632,6 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -fi
 -
 -if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
--   cd "$CUR"
 -   shift
 -   python "$SAGE_ROOT"/devel/sage/doc/common/builder.py $@
 -   exit $?
@@ -685,7 +641,7 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
  if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
      sage_setup
      sage-gdb
-@@ -1101,12 +674,6 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
+@@ -1039,12 +651,6 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
      exit $?
  fi
  
@@ -696,12 +652,12 @@ diff -up sage-5.4.beta1/spkg/bin/sage.orig sage-5.4.beta1/spkg/bin/sage
 -fi
 -
  if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
-     python "$SAGE_LOCAL"/bin/sage-startuptime.py
+     python "$SAGE_LOCAL"/bin/sage-startuptime.py $@
      exit $?
-diff -up sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/ipy_profile_sage.py.orig sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/ipy_profile_sage.py
---- sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/ipy_profile_sage.py.orig	2012-10-20 10:44:34.537047274 -0300
-+++ sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/ipy_profile_sage.py	2012-10-20 10:44:46.794047744 -0300
-@@ -13,10 +13,6 @@ if 'SAGE_CLEAN' not in os.environ:
+diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py
+--- sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py.orig	2012-11-12 21:05:05.086856154 -0200
++++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py	2012-11-12 21:05:13.414856473 -0200
+@@ -12,10 +12,6 @@ if 'SAGE_CLEAN' not in os.environ:
      
      from sage.misc.interpreter import attached_files 
  
@@ -712,9 +668,9 @@ diff -up sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/ipy_profile_sage.py.or
      if not os.environ.has_key('SAGE_IMPORTALL') or os.environ['SAGE_IMPORTALL'] != "no":
          _ip.ex('from sage.all_cmdline import *')
  	
-diff -up sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-doctest.orig sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-doctest
---- sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-doctest.orig	2012-10-20 10:44:57.866048168 -0300
-+++ sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-doctest	2012-10-20 10:46:53.707052604 -0300
+diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest
+--- sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest.orig	2012-11-12 21:05:28.963857069 -0200
++++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest	2012-11-12 21:06:27.527859311 -0200
 @@ -90,11 +90,6 @@ def delete_tmpfiles():
  # Set environment variables
  ######################################################    
@@ -772,9 +728,9 @@ diff -up sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-doctest.orig sage
          our_path = os.path.realpath(argv[1])
  
          if not force_lib and (ext in ['.spyx', '.sage'] or
-diff -up sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-maketest.orig sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-maketest
---- sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-maketest.orig	2012-10-20 10:47:08.610053174 -0300
-+++ sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-maketest	2012-10-20 10:48:01.059055183 -0300
+diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest
+--- sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest.orig	2012-11-12 21:06:44.381859957 -0200
++++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest	2012-11-12 21:07:22.102861401 -0200
 @@ -1,7 +1,7 @@
  #!/usr/bin/env bash
  
@@ -793,15 +749,15 @@ diff -up sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-maketest.orig sag
 -    "$SAGE_ROOT"/devel/sage/doc/[a-z][a-z] \
 -    "$SAGE_ROOT"/devel/sage/sage 2>&1 | tee -a "$SAGE_TEST_LOG"
 +sage -t --sagenb "$@" \
-+    devel/doc/common \
-+    devel/doc/[a-z][a-z] \
-+    devel/sage 2>&1 | tee -a "$SAGE_TEST_LOG"
++    devel/sage/doc/common \
++    devel/sage/doc/[a-z][a-z] \
++    devel/sage/sage 2>&1 | tee -a "$SAGE_TEST_LOG"
  
  if [ "$SAGE_TESTDIR" = "$SAGE_ROOT/tmp" ]; then
      cat "$SAGE_TEST_LOG" >> "$SAGE_ROOT"/test.log
-diff -up sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-valgrind.orig sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-valgrind
---- sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-valgrind.orig	2012-10-20 10:48:25.770056129 -0300
-+++ sage-5.4.beta1/spkg/build/sage_scripts-5.4.beta1/sage-valgrind	2012-10-20 10:48:47.698056969 -0300
+diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind
+--- sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind.orig	2012-11-12 21:07:43.350862215 -0200
++++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind	2012-11-12 21:07:54.478862641 -0200
 @@ -11,7 +11,7 @@ fi
  LOG="$DOT_SAGE"/valgrind/sage-memcheck.%p
  echo "Log file is $LOG"

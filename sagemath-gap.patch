@@ -1,5 +1,5 @@
---- sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/coding/linear_code.py.orig	2012-08-20 10:56:58.382114123 -0300
-+++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/coding/linear_code.py	2012-08-20 10:57:07.836115358 -0300
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/coding/linear_code.py.orig	2012-08-20 10:56:58.382114123 -0300
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/coding/linear_code.py	2012-08-20 10:57:07.836115358 -0300
 @@ -2557,8 +2557,7 @@ class LinearCode(module.Module_old):
                  raise NotImplementedError("The algorithm 'leon' is only implemented for q = 2,3,5,7.")
              # The GAP command DirectoriesPackageLibrary tells the location of the latest

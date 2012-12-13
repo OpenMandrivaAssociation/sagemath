@@ -1,0 +1,80 @@
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/doc/common/builder.py.orig sage-5.4.1/spkg/build/sage-5.4.1/doc/common/builder.py
+--- sage-5.4.1/spkg/build/sage-5.4.1/doc/common/builder.py.orig	2012-11-14 22:45:08.431445104 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/doc/common/builder.py	2012-11-14 22:45:10.583445258 -0200
+@@ -12,7 +12,7 @@ from sage.misc.cachefunc import cached_m
+ from sage.misc.misc import sage_makedirs as mkdir
+ 
+ # Read options
+-execfile(os.path.join(os.getenv('SAGE_ROOT'), 'devel', 'sage', 'doc', 'common' , 'build_options.py'))
++execfile(os.path.join(os.getenv('SAGE_ROOT'), 'devel', 'doc', 'common' , 'build_options.py'))
+ 
+ ##########################################
+ #          Utility Functions             #
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/doc/common/conf.py.orig sage-5.4.1/spkg/build/sage-5.4.1/doc/common/conf.py
+--- sage-5.4.1/spkg/build/sage-5.4.1/doc/common/conf.py.orig	2012-11-14 22:45:08.433445123 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/doc/common/conf.py	2012-11-14 22:45:10.584445272 -0200
+@@ -1,7 +1,7 @@
+ import sys, os, sphinx
+ 
+-SAGE_ROOT = os.environ['SAGE_ROOT']
+-SAGE_DOC = os.path.join(SAGE_ROOT, 'devel/sage/doc')
++SAGE_DEVEL = os.environ['SAGE_DEVEL']
++SAGE_DOC = os.environ['SAGE_DOC']
+ 
+ def get_doc_abspath(path):
+     """
+@@ -178,8 +178,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', F
+     from sage.misc.latex_macros import sage_mathjax_macros
+     html_theme_options['mathjax_macros'] = sage_mathjax_macros
+ 
+-    from pkg_resources import Requirement, working_set
+-    sagenb_path = working_set.find(Requirement.parse('sagenb')).location
++    sagenb_path = SAGE_DEVEL
+     mathjax_relative = os.path.join('sagenb','data','mathjax')
+ 
+     # It would be really nice if sphinx would copy the entire mathjax directory,
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/latex_macros.py.orig sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/latex_macros.py
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/latex_macros.py.orig	2012-11-14 22:45:54.750449111 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/latex_macros.py	2012-11-14 22:46:16.355450709 -0200
+@@ -142,7 +142,7 @@ def convert_latex_macro_to_mathjax(macro
+         return name + ': ["' + defn + '",' + str(num_args) + ']'
+ 
+ from superseded import deprecated_function_alias
+-convert_latex_macro_to_jsmath = deprecated_function_alias(13508, convert_latex_macro_to_mathjax)
++convert_latex_macro_to_jsmath = convert_latex_macro_to_mathjax
+ 
+ # To add a new macro for use in the Sage documentation, add a list or
+ # tuple to the following list.  Each list (or tuple) should have the
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/sagedoc.py.orig sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/sagedoc.py
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/sagedoc.py.orig	2012-11-14 22:45:08.436445142 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/misc/sagedoc.py	2012-11-14 22:45:10.585445274 -0200
+@@ -701,13 +701,13 @@ def _search_src_or_doc(what, string, ext
+         module = ''
+         exts = ['html']
+         title = 'Documentation'
+-        base_path = os.path.join('devel', 'sage', 'doc', 'output')
+-        doc_path = os.path.join(ROOT, 'devel', 'sage', 'doc')
++        base_path = os.path.join('devel', 'output')
++        doc_path = os.path.join(ROOT, 'devel', 'doc')
+ 
+-        # We need to import stuff from SAGE_ROOT/devel/sage/doc/common
++        # We need to import stuff from SAGE_ROOT/devel/doc/common
+         # To do this, we temporarily change sys.path
+         oldpath = sys.path
+-        sys.path = oldpath + [os.path.join(ROOT, 'devel', 'sage', 'doc', 'common')]
++        sys.path = oldpath + [os.path.join(ROOT, 'devel', 'doc', 'common')]
+         import build_options as builder
+         # List of languages
+         lang = builder.LANGUAGES
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/singular.py.orig sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/singular.py
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/singular.py.orig	2012-11-17 08:29:19.799228643 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/singular.py	2012-11-17 08:29:43.157229538 -0200
+@@ -2139,7 +2139,7 @@ def generate_docstring_dictionary():
+     nodes.clear()
+     node_names.clear()
+ 
+-    singular_docdir = os.environ["SAGE_LOCAL"]+"/share/singular/"
++    singular_docdir = os.environ["SINGULAR_BIN_DIR"]+"/info/"
+ 
+     new_node = re.compile("File: singular\.hlp,  Node: ([^,]*),.*")
+     new_lookup = re.compile("\* ([^:]*):*([^.]*)\..*")

@@ -1,6 +1,5 @@
-diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py
---- sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py.orig	2012-10-20 11:02:08.389087630 -0300
-+++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py	2012-10-20 11:02:18.933088034 -0300
+--- sage-5.4.1/spkg/build/sage-5.4.1/module_list.py.orig	2012-12-12 18:32:18.002964459 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/module_list.py	2012-12-12 18:32:59.993727242 -0200
 @@ -971,7 +971,7 @@ ext_modules = [
  
      Extension('sage.matrix.matrix_mod2_dense',

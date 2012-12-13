@@ -1,5 +1,4 @@
 sources:
   "gprc.expect:"	99d7a34799199f90cfd49aee292bae5d5825580a
   "makecmds.sty:"	34284cd8f3c76496757672eb1abc4f57339530a1
-  "sage-5.4.beta1.tar:"	31628e238fb982c34ed5849b134ad1827e0b7532
-  "sagemath.rpmlintrc:"	09b7b9666f4e07fcb19c5dc802492c6c568684df
+  sage-5.4.1.tar: 03c20a8d1f322ce2eb999e9d17949f914132a09c

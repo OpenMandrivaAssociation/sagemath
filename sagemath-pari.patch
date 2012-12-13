@@ -1,0 +1,41 @@
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/gp.py.orig sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/gp.py
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/gp.py.orig	2012-11-12 21:15:40.302880479 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/gp.py	2012-11-12 21:15:43.215880590 -0200
+@@ -980,8 +980,8 @@ def is_GpElement(x):
+ from sage.misc.all import DOT_SAGE, SAGE_ROOT
+ import os
+ 
+-# Set GPRC environment variable to $SAGE_ROOT/local/etc/gprc.expect
+-os.environ["GPRC"] = '%s/local/etc/gprc.expect'%SAGE_ROOT
++# Set GPRC environment variable to $SAGE_ROOT/data/extcode/pari/gprc.expect
++os.environ["GPRC"] = '%s/data/extcode/pari/gprc.expect'%SAGE_ROOT
+ 
+ # An instance
+ gp = Gp(logfile=DOT_SAGE+'/gp-expect.log') # useful for debugging!
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/libs/pari/gen.pyx.orig sage-5.4.1/spkg/build/sage-5.4.1/sage/libs/pari/gen.pyx
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/libs/pari/gen.pyx.orig	2012-11-12 21:15:23.758879845 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/libs/pari/gen.pyx	2012-11-12 21:15:43.213880590 -0200
+@@ -182,6 +182,10 @@ include '../../ext/stdsage.pxi'
+ cdef extern from "mpz_pylong.h":
+     cdef int mpz_set_pylong(mpz_t dst, src) except -1
+ 
++cdef extern from "gmp.h":
++    cdef void mp_get_memory_functions(void**, void**, void**)
++    cdef void mp_set_memory_functions(void*, void*, void*)
++
+ # Make sure we don't use mpz_t_offset before initializing it by
+ # putting in a value that's likely to provoke a segmentation fault,
+ # rather than silently corrupting memory.
+@@ -9171,7 +9175,12 @@ cdef class PariInstance(sage.structure.p
+ 
+         # The size here doesn't really matter, because we will allocate
+         # our own stack anyway. We ask PARI not to set up signal handlers.
++        cdef void *_gmp_malloc
++        cdef void *_gmp_realloc
++        cdef void *_gmp_free
++        mp_get_memory_functions(&_gmp_malloc, &_gmp_realloc, &_gmp_free)
+         pari_init_opts(10000, maxprime, INIT_JMPm | INIT_DFTm)
++        mp_set_memory_functions(_gmp_malloc, _gmp_realloc, _gmp_free)
+         num_primes = maxprime
+ 
+         # NOTE: sig_on() can only come AFTER pari_init_opts()!

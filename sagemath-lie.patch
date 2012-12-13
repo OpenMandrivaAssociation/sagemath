@@ -1,5 +1,5 @@
---- sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/interfaces/lie.py.orig	2012-11-06 13:58:05.290358692 -0200
-+++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/interfaces/lie.py	2012-11-06 13:59:12.601361648 -0200
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/lie.py.orig	2012-11-06 13:58:05.290358692 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/lie.py	2012-11-06 13:59:12.601361648 -0200
 @@ -290,6 +290,7 @@ from sage.misc.misc import verbose, DOT_
  
  COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj'%DOT_SAGE

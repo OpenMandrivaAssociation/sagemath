@@ -1,7 +1,6 @@
-diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py
---- sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py.orig	2012-10-20 15:36:41.528537864 -0300
-+++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py	2012-10-20 15:36:44.697537985 -0300
-@@ -612,6 +612,7 @@ ext_modules = [
+--- sage-5.4.1/spkg/build/sage-5.4.1/module_list.py.orig	2012-12-12 16:55:28.474409933 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/module_list.py	2012-12-12 16:55:49.411289832 -0200
+@@ -613,6 +613,7 @@ ext_modules = [
                libraries = ['gmp', 'mpfr', 'stdc++', 'fplll'],
                language="c++",
                include_dirs = [SAGE_INC + 'fplll'],
@@ -9,9 +8,8 @@ diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/module_list.py.orig sage-5.4.b
                depends = [SAGE_INC + "fplll/fplll.h"]),
  
      Extension('sage.libs.linbox.linbox',
-diff -up sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/fplll/fplll.pxi.orig sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/fplll/fplll.pxi
---- sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/fplll/fplll.pxi.orig	2012-10-20 15:36:33.293537549 -0300
-+++ sage-5.4.beta1/spkg/build/sage-5.4.beta1/sage/libs/fplll/fplll.pxi	2012-10-20 16:20:20.057638137 -0300
+--- sage-5.4.1/spkg/build/sage-5.4.1/sage/libs/fplll/fplll.pxi.orig	2012-12-12 16:55:46.291307765 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/sage/libs/fplll/fplll.pxi	2012-12-12 16:55:49.411289832 -0200
 @@ -10,22 +10,22 @@ cdef extern from "fplll/fplll.h":
  #
  

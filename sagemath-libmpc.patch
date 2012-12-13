@@ -1,0 +1,65 @@
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct.orig sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct
+--- sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct.orig	2012-10-26 21:48:55.103354209 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct	2012-10-26 21:49:11.088354821 -0200
+@@ -134,7 +134,7 @@ cppFiles = Split( "ZZ_pylong.cpp  ntl_wr
+ srcFiles = cFiles + cppFiles
+ 
+ lib = env.SharedLibrary( "csage", [ "src/" + x for x in srcFiles ],
+-                         LIBS=['ntl', 'pari', 'gmp', 'python$PYV'], 
++                         LIBS=['ntl', 'pari', 'gmp', 'mpfr', 'python$PYV'], 
+                          LIBPATH=['$SAGE_LOCAL/lib','$SAGE_LOCAL/lib/python$PYV/config/'],
+                          CPPPATH=includes )
+ env.Install("$SAGE_LOCAL/lib", lib)
+diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c.orig sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c
+--- sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c.orig	2012-10-26 20:48:54.045216312 -0200
++++ sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c	2012-10-26 21:22:22.471293222 -0200
+@@ -43,3 +43,49 @@ void init_csage_module() {
+     init_csage();
+ #endif
+ }
++
++#include <mpc.h>
++
++int
++mpc_div_2ui (mpc_ptr a, mpc_srcptr b, unsigned long int c, mpc_rnd_t rnd)
++{
++  int inex_re, inex_im;
++
++  inex_re = mpfr_div_2ui (mpc_realref(a), mpc_realref(b), c, MPC_RND_RE(rnd));
++  inex_im = mpfr_div_2ui (mpc_imagref(a), mpc_imagref(b), c, MPC_RND_IM(rnd));
++
++  return MPC_INEX(inex_re, inex_im);
++}
++
++int
++mpc_div_2si (mpc_ptr a, mpc_srcptr b, long int c, mpc_rnd_t rnd)
++{
++  int inex_re, inex_im;
++
++  inex_re = mpfr_div_2si (mpc_realref(a), mpc_realref(b), c, MPC_RND_RE(rnd));
++  inex_im = mpfr_div_2si (mpc_imagref(a), mpc_imagref(b), c, MPC_RND_IM(rnd));
++
++  return MPC_INEX(inex_re, inex_im);
++}
++
++int
++mpc_mul_2ui (mpc_ptr a, mpc_srcptr b, unsigned long int c, mpc_rnd_t rnd)
++{
++  int inex_re, inex_im;
++
++  inex_re = mpfr_mul_2ui (mpc_realref(a), mpc_realref(b), c, MPC_RND_RE(rnd));
++  inex_im = mpfr_mul_2ui (mpc_imagref(a), mpc_imagref(b), c, MPC_RND_IM(rnd));
++
++  return MPC_INEX(inex_re, inex_im);
++}
++
++int
++mpc_mul_2si (mpc_ptr a, mpc_srcptr b, long int c, mpc_rnd_t rnd)
++{
++  int inex_re, inex_im;
++
++  inex_re = mpfr_mul_2si (mpc_realref(a), mpc_realref(b), c, MPC_RND_RE(rnd));
++  inex_im = mpfr_mul_2si (mpc_imagref(a), mpc_imagref(b), c, MPC_RND_IM(rnd));
++
++  return MPC_INEX(inex_re, inex_im);
++}
