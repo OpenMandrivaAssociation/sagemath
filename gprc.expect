@@ -1,0 +1,11 @@
+compatible = 0
+
+/* gp prompt */
+prompt = "? "
+
+/* Disable timer */
+timer = 0
+
+/* Disable the break loop, otherwise gp will seem to hang on errors */
+breakloop = 0
+

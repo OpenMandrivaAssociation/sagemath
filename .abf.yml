@@ -1,4 +1,4 @@
 sources:
-  "gprc.expect:"	99d7a34799199f90cfd49aee292bae5d5825580a
-  "makecmds.sty:"	34284cd8f3c76496757672eb1abc4f57339530a1
+  gprc.expect: 99d7a34799199f90cfd49aee292bae5d5825580a
+  makecmds.sty: 34284cd8f3c76496757672eb1abc4f57339530a1
   sage-5.4.1.tar: 03c20a8d1f322ce2eb999e9d17949f914132a09c
