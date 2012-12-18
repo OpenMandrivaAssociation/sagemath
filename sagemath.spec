@@ -58,6 +58,7 @@ Source3:	Jmol.js
 Source4:	JmolHelp.html
 # from jmol-12.3.27.p2 spkg
 Source5:	testjava.sh
+Source6:	%{name}.rpmlintrc
 
 Patch0:		%{name}-gmp.patch
 Patch1:		%{name}-scripts.patch
@@ -191,6 +192,7 @@ Requires:	genus2reduction
 Requires:	gfan
 Requires:	gp2c
 Requires:	iml-devel
+Requires:	java-plugin
 Requires:	jmol
 Requires:	jsmath-fonts
 Requires:	libpari-devel
@@ -693,11 +695,17 @@ pushd spkg/build/%{sagenb_pkg}/src/sagenb
     install -p -m755 %{SOURCE5} $SAGE_LOCAL/bin/testjava.sh
     # jmol
     rm -fr %{buildroot}%{python_sitearch}/sagenb/data/jmol
+# fedora
+%if 0
     mkdir -p %{buildroot}%{python_sitearch}/sagenb/data/jmol/appletweb
     pushd %{buildroot}%{python_sitearch}/sagenb/data/jmol
 	cp -fa %{SOURCE3} %{SOURCE4} appletweb
 	ln -s %{_javadir}/JmolApplet.jar .
     popd
+# mandriva
+%else
+    ln -sf %{_datadir}/jmol %{buildroot}%{python_sitearch}/sagenb/data/jmol
+%endif
     # sage3d
     rm -f %{buildroot}%{_bindir}/sage3d
     ln -sf %{SAGE_LOCAL}/bin/sage3d %{buildroot}%{python_sitearch}/sagenb/data/sage3d/sage3d

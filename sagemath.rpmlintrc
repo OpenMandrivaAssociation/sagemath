@@ -1,0 +1,8 @@
+# expected to compile cython files
+addFilter("E: devel-dependency")
+# no need to set executable bit on every python file
+addFilter("E: non-executable-script")
+# documentation
+addFilter("E: non-versioned-file-in-library-package")
+# use external depfilter to avoid bogus provides
+addFilter("E: external-depfilter-with-internal-depgen")
