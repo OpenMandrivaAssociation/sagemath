@@ -1,5 +1,5 @@
---- sage-5.4.1/spkg/build/sage-5.4.1/module_list.py.orig	2012-12-13 11:42:45.437682932 -0200
-+++ sage-5.4.1/spkg/build/sage-5.4.1/module_list.py	2012-12-13 11:42:50.654658888 -0200
+--- sage-5.5/spkg/build/sage-5.5/module_list.py.orig	2013-01-18 13:23:57.649076891 -0200
++++ sage-5.5/spkg/build/sage-5.5/module_list.py	2013-01-18 13:25:47.767529248 -0200
 @@ -47,11 +47,11 @@ else:
  #########################################################
  ### Commonly used definitions
@@ -15,7 +15,29 @@
  
  flint_depends = [SAGE_INC + 'FLINT/flint.h']
  singular_depends = [SAGE_INC + 'libsingular.h', SAGE_INC + 'givaro/givconfig.h']
-@@ -1684,7 +1684,7 @@ ext_modules = [
+@@ -123,18 +123,21 @@ ext_modules = [
+ 
+     Extension('sage.algebras.letterplace.free_algebra_letterplace',
+               sources = ['sage/algebras/letterplace/free_algebra_letterplace.pyx'],
++              libraries = singular_libs,
+               language="c++",
+               include_dirs = [SAGE_INC +'singular/'],
+               depends = singular_depends),
+ 
+     Extension('sage.algebras.letterplace.free_algebra_element_letterplace',
+               sources = ['sage/algebras/letterplace/free_algebra_element_letterplace.pyx'],
++              libraries = singular_libs,
+               language="c++",
+               include_dirs = [SAGE_INC +'singular/'],
+               depends = singular_depends),
+ 
+     Extension('sage.algebras.letterplace.letterplace_ideal',
+               sources = ['sage/algebras/letterplace/letterplace_ideal.pyx'],
++              libraries = singular_libs,
+               language="c++",
+               include_dirs = [SAGE_INC +'singular/'],
+               depends = singular_depends),
+@@ -1712,7 +1715,7 @@ ext_modules = [
  
      Extension('sage.rings.polynomial.pbori',
                sources = ['sage/rings/polynomial/pbori.pyx'],
@@ -24,8 +46,8 @@
                include_dirs = [SAGE_INC, "sage/libs/polybori"],
                depends = [SAGE_INC + "polybori/" + hd + ".h" for hd in ["polybori", "config"] ] + \
                          [SAGE_INC + 'm4ri/m4ri.h'],
---- sage-5.4.1/spkg/build/sage-5.4.1/sage/combinat/degree_sequences.pyx.orig	2012-12-13 11:42:45.813681216 -0200
-+++ sage-5.4.1/spkg/build/sage-5.4.1/sage/combinat/degree_sequences.pyx	2012-12-13 11:42:50.654658888 -0200
+--- sage-5.5/spkg/build/sage-5.5/sage/combinat/degree_sequences.pyx.orig	2013-01-18 13:24:00.929060774 -0200
++++ sage-5.5/spkg/build/sage-5.5/sage/combinat/degree_sequences.pyx	2013-01-18 13:24:03.410048700 -0200
 @@ -262,7 +262,7 @@ Checking the consistency of enumeration
  from sage.libs.gmp.all cimport mpz_t
  from sage.libs.gmp.all cimport *
@@ -35,8 +57,8 @@
  include '../ext/cdefs.pxi'
  include "../ext/interrupt.pxi"
  
---- sage-5.4.1/spkg/build/sage-5.4.1/sage/numerical/backends/glpk_backend.pxd.orig	2012-12-13 11:42:46.165679605 -0200
-+++ sage-5.4.1/spkg/build/sage-5.4.1/sage/numerical/backends/glpk_backend.pxd	2012-12-13 11:42:50.654658888 -0200
+--- sage-5.5/spkg/build/sage-5.5/sage/numerical/backends/glpk_backend.pxd.orig	2013-01-18 13:24:00.930060777 -0200
++++ sage-5.5/spkg/build/sage-5.5/sage/numerical/backends/glpk_backend.pxd	2013-01-18 13:24:03.410048700 -0200
 @@ -6,7 +6,7 @@
  ##############################################################################
  
@@ -55,8 +77,8 @@
       ctypedef struct c_glp_prob "glp_prob":
           pass
       ctypedef struct c_glp_iocp "glp_iocp":
---- sage-5.4.1/spkg/build/sage-5.4.1/setup.py.orig	2012-12-13 11:42:46.501678086 -0200
-+++ sage-5.4.1/spkg/build/sage-5.4.1/setup.py	2012-12-13 11:47:07.850469434 -0200
+--- sage-5.5/spkg/build/sage-5.5/setup.py.orig	2013-01-18 13:24:00.930060777 -0200
++++ sage-5.5/spkg/build/sage-5.5/setup.py	2013-01-18 13:24:03.410048700 -0200
 @@ -37,6 +37,11 @@ else:
      SAGE_DEVEL = SAGE_ROOT + '/devel'
      SAGE_INC   = SAGE_LOCAL + '/include/'

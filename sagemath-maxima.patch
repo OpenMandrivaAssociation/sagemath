@@ -1,6 +1,6 @@
-diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/maxima.py.orig sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/maxima.py
---- sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/maxima.py.orig	2012-08-04 13:21:54.100575138 -0400
-+++ sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/maxima.py	2012-08-04 13:22:15.580575956 -0400
+diff -up sage-5.5/spkg/build/sage-5.5/sage/interfaces/maxima.py.orig sage-5.5/spkg/build/sage-5.5/sage/interfaces/maxima.py
+--- sage-5.5/spkg/build/sage-5.5/sage/interfaces/maxima.py.orig	2012-08-04 13:21:54.100575138 -0400
++++ sage-5.5/spkg/build/sage-5.5/sage/interfaces/maxima.py	2012-08-04 13:22:15.580575956 -0400
 @@ -544,7 +544,7 @@ class Maxima(MaximaAbstract, Expect):
          Expect.__init__(self,
                          name = 'maxima',
@@ -20,9 +20,9 @@ diff -up sage-5.4.1/spkg/build/sage-5.4.1/sage/interfaces/maxima.py.orig sage-5.
          self._eval_line('0;')
  
      def __reduce__(self):
-diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maxima.lisp.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maxima.lisp
---- sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maxima.lisp.orig	2012-08-04 13:22:07.842575668 -0400
-+++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maxima.lisp	2012-08-04 13:22:15.580575956 -0400
+diff -up sage-5.5/spkg/build/sage_scripts-5.5/sage-maxima.lisp.orig sage-5.5/spkg/build/sage_scripts-5.5/sage-maxima.lisp
+--- sage-5.5/spkg/build/sage_scripts-5.5/sage-maxima.lisp.orig	2012-08-04 13:22:07.842575668 -0400
++++ sage-5.5/spkg/build/sage_scripts-5.5/sage-maxima.lisp	2012-08-04 13:22:15.580575956 -0400
 @@ -3,4 +3,8 @@
  ;(setf *general-display-prefix* "<sage-display>")
  

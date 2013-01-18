@@ -1,6 +1,6 @@
-diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct.orig sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct
---- sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct.orig	2012-10-26 21:48:55.103354209 -0200
-+++ sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct	2012-10-26 21:49:11.088354821 -0200
+diff -up sage-5.5/spkg/build/sage-5.5/c_lib/SConstruct.orig sage-5.5/spkg/build/sage-5.5/c_lib/SConstruct
+--- sage-5.5/spkg/build/sage-5.5/c_lib/SConstruct.orig	2012-10-26 21:48:55.103354209 -0200
++++ sage-5.5/spkg/build/sage-5.5/c_lib/SConstruct	2012-10-26 21:49:11.088354821 -0200
 @@ -134,7 +134,7 @@ cppFiles = Split( "ZZ_pylong.cpp  ntl_wr
  srcFiles = cFiles + cppFiles
  
@@ -10,9 +10,9 @@ diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/SConstruct.orig sage-5.4.1/spkg/
                           LIBPATH=['$SAGE_LOCAL/lib','$SAGE_LOCAL/lib/python$PYV/config/'],
                           CPPPATH=includes )
  env.Install("$SAGE_LOCAL/lib", lib)
-diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c.orig sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c
---- sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c.orig	2012-10-26 20:48:54.045216312 -0200
-+++ sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c	2012-10-26 21:22:22.471293222 -0200
+diff -up sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c.orig sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c
+--- sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c.orig	2012-10-26 20:48:54.045216312 -0200
++++ sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c	2012-10-26 21:22:22.471293222 -0200
 @@ -43,3 +43,49 @@ void init_csage_module() {
      init_csage();
  #endif

@@ -1,6 +1,6 @@
-diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py.orig sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py
---- sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py.orig	2012-10-20 11:29:36.315150735 -0300
-+++ sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py	2012-10-20 11:29:56.569151510 -0300
+diff -up sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py.orig sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py
+--- sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py.orig	2012-10-20 11:29:36.315150735 -0300
++++ sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py	2012-10-20 11:29:56.569151510 -0300
 @@ -27,7 +27,7 @@ class SageNBFlask(Flask):
          self.add_static_path('/javascript', DATA)
          self.add_static_path('/static', DATA)
@@ -10,9 +10,9 @@ diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/flask_version/base.py.or
          import mimetypes
          mimetypes.add_type('text/plain','.jmol')
  
-diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html
---- sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig	2012-10-20 11:31:17.315154602 -0300
-+++ sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html	2012-10-20 11:31:41.764155539 -0300
+diff -up sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html
+--- sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig	2012-10-20 11:31:17.315154602 -0300
++++ sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/notebook/base.html	2012-10-20 11:31:41.764155539 -0300
 @@ -69,7 +69,7 @@ INPUT:
  <!-- Jmol - embedded 3D graphics -->
  <script type="text/javascript" src="/java/jmol/appletweb/Jmol.js"></script>
@@ -22,9 +22,9 @@ diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/html/no
  
  {% if JEDITABLE_TINYMCE and not worksheet.docbrowser() and not worksheet.is_published() %}
  <!-- TinyMCE and jEditable - in-place editing of text cells -->
-diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py.orig sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py
---- sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py.orig	2012-10-20 11:33:00.483158553 -0300
-+++ sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py	2012-10-20 11:33:17.700159212 -0300
+diff -up sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py.orig sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py
+--- sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py.orig	2012-10-20 11:33:00.483158553 -0300
++++ sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py	2012-10-20 11:33:17.700159212 -0300
 @@ -2367,7 +2367,7 @@ class Cell(Cell_generic):
                      jmol_script = jmol_file.read()
                      jmol_file.close()
@@ -34,9 +34,9 @@ diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/cell.py.
  
                      jmol_file = open(jmol_name, 'w')
                      jmol_file.write(jmol_script)
-diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py.orig sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py
---- sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py.orig	2012-10-20 11:31:55.106156049 -0300
-+++ sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py	2012-10-20 11:32:51.460158207 -0300
+diff -up sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py.orig sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py
+--- sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py.orig	2012-10-20 11:31:55.106156049 -0300
++++ sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_notebook.py	2012-10-20 11:32:51.460158207 -0300
 @@ -46,15 +46,14 @@ sagenb.notebook.misc.DIR = %(cwd)r #We s
  # Flask #
  #########
@@ -57,9 +57,9 @@ diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/notebook/run_note
  
  def save_notebook(notebook):
      print "Quitting all running worksheets..."
-diff -up sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js
---- sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig	2012-11-14 22:46:56.488853512 -0200
-+++ sage-5.4.1/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js	2012-11-14 22:49:02.772858348 -0200
+diff -up sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js
+--- sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig	2012-11-14 22:46:56.488853512 -0200
++++ sage-5.5/spkg/build/sagenb-0.10.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js	2012-11-14 22:49:02.772858348 -0200
 @@ -256,9 +256,6 @@ function makeCntrlPanels(url, n, functio
      panelHTML +='<button title="Move to own window" onClick="javascript:void(jmol_popup(\''+n+'\'))">Move to own window</button> arbitrarily resizable.<hr/>';
      //static image to save

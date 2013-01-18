@@ -1,10 +1,12 @@
+%define _enable_debug_packages			%{nil}
+%define	debug_package				%{nil}
 %define _use_internal_dependency_generator	0
 %define _exclude_files_from_autoprov		.*/site-packages/.*\.so
 
 %global with_sphinx_hack	1
 
 # may be required if not matching system version or to be updates proof
-%global with_sage_cython	1
+%global with_sage_cython	0
 
 # ipython-0.11 drastically changed api since ipython-0.10.2
 %global with_sage_ipython	1
@@ -44,13 +46,11 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.4.1
-Release:	1
+Version:	5.5
+Release:	1%{?dist}
 License:	BSD and GPLv2+ and LGPLv2+ and MIT
 URL:		http://www.sagemath.org
-# http://boxen.math.washington.edu/home/sagemath/sage-mirror/src/sage-5.4.1.tar
-# http://sagemath.c3sl.ufpr.br/src/sage-5.4.1.tar
-Source0:	http://www.sagemath.org/src/sage-%{version}.tar
+Source0:	http://boxen.math.washington.edu/home/%{name}/sage-mirror/src/sage-%{version}.tar
 Source1:	gprc.expect
 Source2:	makecmds.sty
 # not installed by jmol package, use one in sagemath jmol spkg
@@ -122,10 +122,11 @@ Patch18:	%{name}-libmpc.patch
 # FIXME besides not using X and told so, fails if DISPLAY is not set
 Patch19:	%{name}-jmol.patch
 
-Patch20:	%{name}-qepcad.patch
-Patch21:	%{name}-networkx.patch
-Patch22:	%{name}-lie.patch
-Patch23:	%{name}-gap.patch
+# http://trac.sagemath.org/sage_trac/ticket/13740
+Patch20:	trac_13740_final_fixes.patch
+
+# adapt for maxima 5.29.1 package
+Patch21:	%{name}-maxima.system.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
@@ -139,8 +140,11 @@ BuildRequires:	ecm-devel
 BuildRequires:	factory-devel
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
-BuildRequires:	gap-system
-BuildRequires:	gap-system-packages
+BuildRequires:	gap
+BuildRequires:	GAPDoc
+BuildRequires:	gap-character-tables
+BuildRequires:	gap-sonata
+BuildRequires:	gap-table-of-marks
 BuildRequires:	gc-devel
 BuildRequires:	gcc-gfortran
 BuildRequires:	gd-devel
@@ -186,8 +190,11 @@ Requires:	4ti2
 Requires:	cddlib-devel
 Requires:	ecl
 Requires:	fonts-otf-stix
-Requires:	gap-system
-Requires:	gap-system-packages
+Requires:	gap
+Requires:	GAPDoc
+Requires:	gap-character-tables
+Requires:	gap-sonata
+Requires:	gap-table-of-marks
 Requires:	genus2reduction
 Requires:	gfan
 Requires:	gp2c
@@ -524,13 +531,15 @@ popd
 #%#patch18 -p1		# if pre libmpc1
 %patch19 -p1
 
-# currently cooker specific
+%if !%{with_sage_cython}
+pushd spkg/build/sage-%{version}
 %patch20 -p1
-%if %{with_sage_networkx}
+popd
+%endif
+
+%if 0%{?fedora} >= 18
 %patch21 -p1
 %endif
-%patch22 -p1
-%patch23 -p1
 
 # make sure buildroot is clean
 rm -rf %{buildroot}
@@ -925,7 +934,6 @@ pushd spkg/build/sage-%{version}/doc
 
     # should not be required and encodes buildroot
     rm -fr $SAGE_DOC/output/doctrees
-    sed -e 's|%{buildroot}||g' -i $SAGE_DOC/output/html/en/reference/sage/misc/hg.html
 popd
 
 %if %{with_check}
@@ -933,6 +941,8 @@ export SAGE_TIMEOUT=%{SAGE_TIMEOUT}
 export SAGE_TIMEOUT_LONG=%{SAGE_TIMEOUT_LONG}
 sage -testall --verbose || :
 install -p -m644 $DOT_SAGE/tmp/test.log $SAGE_DOC/test.log
+# remove buildroot references from test.log
+sed -i 's|%{buildroot}||g' $SAGE_DOC/test.log
 %endif
 
 %if %{with_sage_pexpect}
@@ -1128,6 +1138,9 @@ rm -fr $DOT_SAGE
 
 ########################################################################
 %changelog
+* Fri Jan 18 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.5-1
+- Update to sagemath 5.5.
+
 * Thu Dec 13 2012 <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4.1-1
 - Update to sagemath 5.4.1.
 

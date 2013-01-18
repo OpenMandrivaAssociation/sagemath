@@ -1,6 +1,6 @@
-diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/include/ntl_wrap.h.orig sage-5.4.1/spkg/build/sage-5.4.1/c_lib/include/ntl_wrap.h
---- sage-5.4.1/spkg/build/sage-5.4.1/c_lib/include/ntl_wrap.h.orig	2012-07-10 12:05:11.194637965 -0400
-+++ sage-5.4.1/spkg/build/sage-5.4.1/c_lib/include/ntl_wrap.h	2012-07-10 12:05:21.552638275 -0400
+diff -up sage-5.5/spkg/build/sage-5.5/c_lib/include/ntl_wrap.h.orig sage-5.5/spkg/build/sage-5.5/c_lib/include/ntl_wrap.h
+--- sage-5.5/spkg/build/sage-5.5/c_lib/include/ntl_wrap.h.orig	2012-07-10 12:05:11.194637965 -0400
++++ sage-5.5/spkg/build/sage-5.5/c_lib/include/ntl_wrap.h	2012-07-10 12:05:21.552638275 -0400
 @@ -35,8 +35,6 @@ using namespace NTL;
  
  EXTERN void del_charstar(char*);
@@ -10,9 +10,9 @@ diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/include/ntl_wrap.h.orig sage-5.4
  ////////  ZZ //////////
  
  #ifndef __cplusplus
-diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/ntl_wrap.cpp.orig sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/ntl_wrap.cpp
---- sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/ntl_wrap.cpp.orig	2012-07-10 12:05:30.034638682 -0400
-+++ sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/ntl_wrap.cpp	2012-07-10 12:05:41.648639141 -0400
+diff -up sage-5.5/spkg/build/sage-5.5/c_lib/src/ntl_wrap.cpp.orig sage-5.5/spkg/build/sage-5.5/c_lib/src/ntl_wrap.cpp
+--- sage-5.5/spkg/build/sage-5.5/c_lib/src/ntl_wrap.cpp.orig	2012-07-10 12:05:30.034638682 -0400
++++ sage-5.5/spkg/build/sage-5.5/c_lib/src/ntl_wrap.cpp	2012-07-10 12:05:41.648639141 -0400
 @@ -11,13 +11,6 @@ void del_charstar(char* a) {
    delete[] a;
  }
@@ -27,9 +27,9 @@ diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/ntl_wrap.cpp.orig sage-5.4.1
  //////// ZZ //////////
  
  /* Return value is only valid if the result should fit into an int.
-diff -up sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c.orig sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c
---- sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c.orig	2012-07-10 12:05:49.618639376 -0400
-+++ sage-5.4.1/spkg/build/sage-5.4.1/c_lib/src/stdsage.c	2012-07-10 12:06:01.472639923 -0400
+diff -up sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c.orig sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c
+--- sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c.orig	2012-07-10 12:05:49.618639376 -0400
++++ sage-5.5/spkg/build/sage-5.5/c_lib/src/stdsage.c	2012-07-10 12:06:01.472639923 -0400
 @@ -29,27 +29,12 @@ void init_global_empty_tuple(void) {
    global_empty_tuple = PyTuple_New(0);
  }

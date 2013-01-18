@@ -1,6 +1,6 @@
-diff -up sage-5.4.1/spkg/bin/sage.orig sage-5.4.1/spkg/bin/sage
---- sage-5.4.1/spkg/bin/sage.orig	2012-11-12 20:55:02.293833071 -0200
-+++ sage-5.4.1/spkg/bin/sage	2012-11-12 21:04:54.375855744 -0200
+diff -up sage-5.5/spkg/bin/sage.orig sage-5.5/spkg/bin/sage
+--- sage-5.5/spkg/bin/sage.orig	2012-11-12 20:55:02.293833071 -0200
++++ sage-5.5/spkg/bin/sage	2012-11-12 21:04:54.375855744 -0200
 @@ -11,17 +11,14 @@ usage() {
      echo "  file.<sage|py|spyx> -- run given .sage, .py or .spyx files"
      echo "  -advanced           -- list all command line options"
@@ -654,9 +654,9 @@ diff -up sage-5.4.1/spkg/bin/sage.orig sage-5.4.1/spkg/bin/sage
  if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
      python "$SAGE_LOCAL"/bin/sage-startuptime.py $@
      exit $?
-diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py
---- sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py.orig	2012-11-12 21:05:05.086856154 -0200
-+++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py	2012-11-12 21:05:13.414856473 -0200
+diff -up sage-5.5/spkg/build/sage_scripts-5.5/ipy_profile_sage.py.orig sage-5.5/spkg/build/sage_scripts-5.5/ipy_profile_sage.py
+--- sage-5.5/spkg/build/sage_scripts-5.5/ipy_profile_sage.py.orig	2012-11-12 21:05:05.086856154 -0200
++++ sage-5.5/spkg/build/sage_scripts-5.5/ipy_profile_sage.py	2012-11-12 21:05:13.414856473 -0200
 @@ -12,10 +12,6 @@ if 'SAGE_CLEAN' not in os.environ:
      
      from sage.misc.interpreter import attached_files 
@@ -668,9 +668,9 @@ diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/ipy_profile_sage.py.orig sage-
      if not os.environ.has_key('SAGE_IMPORTALL') or os.environ['SAGE_IMPORTALL'] != "no":
          _ip.ex('from sage.all_cmdline import *')
  	
-diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest
---- sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest.orig	2012-11-12 21:05:28.963857069 -0200
-+++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest	2012-11-12 21:06:27.527859311 -0200
+diff -up sage-5.5/spkg/build/sage_scripts-5.5/sage-doctest.orig sage-5.5/spkg/build/sage_scripts-5.5/sage-doctest
+--- sage-5.5/spkg/build/sage_scripts-5.5/sage-doctest.orig	2012-11-12 21:05:28.963857069 -0200
++++ sage-5.5/spkg/build/sage_scripts-5.5/sage-doctest	2012-11-12 21:06:27.527859311 -0200
 @@ -90,11 +90,6 @@ def delete_tmpfiles():
  # Set environment variables
  ######################################################    
@@ -728,9 +728,9 @@ diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-doctest.orig sage-5.4.1/s
          our_path = os.path.realpath(argv[1])
  
          if not force_lib and (ext in ['.spyx', '.sage'] or
-diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest
---- sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest.orig	2012-11-12 21:06:44.381859957 -0200
-+++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest	2012-11-12 21:07:22.102861401 -0200
+diff -up sage-5.5/spkg/build/sage_scripts-5.5/sage-maketest.orig sage-5.5/spkg/build/sage_scripts-5.5/sage-maketest
+--- sage-5.5/spkg/build/sage_scripts-5.5/sage-maketest.orig	2012-11-12 21:06:44.381859957 -0200
++++ sage-5.5/spkg/build/sage_scripts-5.5/sage-maketest	2012-11-12 21:07:22.102861401 -0200
 @@ -1,7 +1,7 @@
  #!/usr/bin/env bash
  
@@ -755,9 +755,9 @@ diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-maketest.orig sage-5.4.1/
  
  if [ "$SAGE_TESTDIR" = "$SAGE_ROOT/tmp" ]; then
      cat "$SAGE_TEST_LOG" >> "$SAGE_ROOT"/test.log
-diff -up sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind.orig sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind
---- sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind.orig	2012-11-12 21:07:43.350862215 -0200
-+++ sage-5.4.1/spkg/build/sage_scripts-5.4.1/sage-valgrind	2012-11-12 21:07:54.478862641 -0200
+diff -up sage-5.5/spkg/build/sage_scripts-5.5/sage-valgrind.orig sage-5.5/spkg/build/sage_scripts-5.5/sage-valgrind
+--- sage-5.5/spkg/build/sage_scripts-5.5/sage-valgrind.orig	2012-11-12 21:07:43.350862215 -0200
++++ sage-5.5/spkg/build/sage_scripts-5.5/sage-valgrind	2012-11-12 21:07:54.478862641 -0200
 @@ -11,7 +11,7 @@ fi
  LOG="$DOT_SAGE"/valgrind/sage-memcheck.%p
  echo "Log file is $LOG"
