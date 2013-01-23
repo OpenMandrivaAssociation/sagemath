@@ -1,0 +1,24 @@
+--- sage-5.5/spkg/build/sage-5.5/setup.py.orig	2013-01-18 17:49:10.760251740 -0200
++++ sage-5.5/spkg/build/sage-5.5/setup.py	2013-01-18 17:52:12.845384177 -0200
+@@ -220,10 +220,17 @@ def execute_list_of_commands_in_parallel
+     WARNING: commands are run roughly in order, but of course successive
+     commands may be run at the same time.
+     """
+-    from multiprocessing import Pool
+-    import fpickle_setup #doing this import will allow instancemethods to be pickable
+-    p = Pool(nthreads)
+-    process_command_results(p.imap(apply_pair, command_list))
++    if nthreads <= 1:
++        for f, v in command_list:
++            r = f(v)
++            if r and r != 0:
++                print "Error running command, exited with status %s."%r
++                sys.exit(1)
++    else:
++        from multiprocessing import Pool
++        import fpickle_setup #doing this import will allow instancemethods to be pickable
++        p = Pool(nthreads)
++        process_command_results(p.imap(apply_pair, command_list))
+ 
+ def process_command_results(result_values):
+     error = None

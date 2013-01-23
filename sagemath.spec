@@ -128,6 +128,26 @@ Patch20:	trac_13740_final_fixes.patch
 # adapt for maxima 5.29.1 package
 Patch21:	%{name}-maxima.system.patch
 
+# only cremona mini database built and installed
+# FIXME add a package with the full cremona database
+# FIXME actually it should be already available in pari-elldata
+Patch22:	%{name}-cremona.patch
+
+# lrslib is a requires
+Patch23:	%{name}-lrslib.patch
+
+# nauty cannot be packaged due to license restrictions
+# http://cs.anu.edu.au/~bdm/nauty/
+# http://pallini.di.uniroma1.it/
+Patch24:	%{name}-nauty.patch
+
+# gap hap package not (yet) available
+# http://www-gap.mcs.st-and.ac.uk/Packages/hap.html
+Patch25:	%{name}-gap-hap.patch
+
+# for buildsystems without /dev/shm available
+Patch26:	%{name}-parallel.patch
+
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
 BuildRequires:	boost-devel
@@ -203,6 +223,7 @@ Requires:	java-plugin
 Requires:	jmol
 Requires:	jsmath-fonts
 Requires:	libpari-devel
+Requires:	lrslib
 Requires:	maxima-gui
 Requires:	maxima-runtime-ecl
 Requires:	palp
@@ -541,6 +562,13 @@ popd
 %patch21 -p1
 %endif
 
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+
+%patch26 -p1
+
 # make sure buildroot is clean
 rm -rf %{buildroot}
 
@@ -704,17 +732,17 @@ pushd spkg/build/%{sagenb_pkg}/src/sagenb
     install -p -m755 %{SOURCE5} $SAGE_LOCAL/bin/testjava.sh
     # jmol
     rm -fr %{buildroot}%{python_sitearch}/sagenb/data/jmol
-# fedora
-%if 0
+
     mkdir -p %{buildroot}%{python_sitearch}/sagenb/data/jmol/appletweb
     pushd %{buildroot}%{python_sitearch}/sagenb/data/jmol
 	cp -fa %{SOURCE3} %{SOURCE4} appletweb
+%if 0%{?fedora}
 	ln -s %{_javadir}/JmolApplet.jar .
-    popd
-# mandriva
 %else
-    ln -sf %{_datadir}/jmol %{buildroot}%{python_sitearch}/sagenb/data/jmol
+	ln -s %{_datadir}/jmol/JmolApplet.jar .
 %endif
+    popd
+
     # sage3d
     rm -f %{buildroot}%{_bindir}/sage3d
     ln -sf %{SAGE_LOCAL}/bin/sage3d %{buildroot}%{python_sitearch}/sagenb/data/sage3d/sage3d
