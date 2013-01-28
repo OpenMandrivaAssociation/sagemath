@@ -46,7 +46,7 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.5
+Version:	5.6
 Release:	1%{?dist}
 License:	BSD and GPLv2+ and LGPLv2+ and MIT
 URL:		http://www.sagemath.org
@@ -122,31 +122,28 @@ Patch18:	%{name}-libmpc.patch
 # FIXME besides not using X and told so, fails if DISPLAY is not set
 Patch19:	%{name}-jmol.patch
 
-# http://trac.sagemath.org/sage_trac/ticket/13740
-Patch20:	trac_13740_final_fixes.patch
-
 # adapt for maxima 5.29.1 package
-Patch21:	%{name}-maxima.system.patch
+Patch20:	%{name}-maxima.system.patch
 
 # only cremona mini database built and installed
 # FIXME add a package with the full cremona database
 # FIXME actually it should be already available in pari-elldata
-Patch22:	%{name}-cremona.patch
+Patch21:	%{name}-cremona.patch
 
 # lrslib is a requires
-Patch23:	%{name}-lrslib.patch
+Patch22:	%{name}-lrslib.patch
 
 # nauty cannot be packaged due to license restrictions
 # http://cs.anu.edu.au/~bdm/nauty/
 # http://pallini.di.uniroma1.it/
-Patch24:	%{name}-nauty.patch
+Patch23:	%{name}-nauty.patch
 
 # gap hap package not (yet) available
 # http://www-gap.mcs.st-and.ac.uk/Packages/hap.html
-Patch25:	%{name}-gap-hap.patch
+Patch24:	%{name}-gap-hap.patch
 
 # for buildsystems without /dev/shm available
-Patch26:	%{name}-parallel.patch
+Patch25:	%{name}-parallel.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
@@ -231,6 +228,9 @@ Requires:	pari
 Requires:	pari-data
 Requires:	python-pycrypto
 Requires:	python-cvxopt
+%if !%{with_sage_cython}
+BuildRequires:	python-cython
+%endif
 Requires:	python-flask-autoindex
 Requires:	python-flask-babel
 Requires:	python-flask-openid
@@ -552,22 +552,16 @@ popd
 #%#patch18 -p1		# if pre libmpc1
 %patch19 -p1
 
-%if !%{with_sage_cython}
-pushd spkg/build/sage-%{version}
-%patch20 -p1
-popd
-%endif
-
 %if 0%{?fedora} >= 18
-%patch21 -p1
+%patch20 -p1
 %endif
 
+%patch21 -p1
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
-%patch25 -p1
 
-%patch26 -p1
+%patch25 -p1
 
 # make sure buildroot is clean
 rm -rf %{buildroot}
@@ -1166,6 +1160,10 @@ rm -fr $DOT_SAGE
 
 ########################################################################
 %changelog
+* Fri Jan 25 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-1
+- Update to sagemath 5.6.
+- Remove no longer required patch to build with system cython.
+
 * Fri Jan 18 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.5-1
 - Update to sagemath 5.5.
 

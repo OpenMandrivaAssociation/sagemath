@@ -1,5 +1,5 @@
---- sage-5.5/spkg/build/sage-5.5/setup.py.orig	2013-01-18 17:49:10.760251740 -0200
-+++ sage-5.5/spkg/build/sage-5.5/setup.py	2013-01-18 17:52:12.845384177 -0200
+--- sage-5.6/spkg/build/sage-5.6/setup.py.orig	2013-01-18 17:49:10.760251740 -0200
++++ sage-5.6/spkg/build/sage-5.6/setup.py	2013-01-18 17:52:12.845384177 -0200
 @@ -220,10 +220,17 @@ def execute_list_of_commands_in_parallel
      WARNING: commands are run roughly in order, but of course successive
      commands may be run at the same time.

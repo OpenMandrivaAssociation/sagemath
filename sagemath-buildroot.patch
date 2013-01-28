@@ -1,5 +1,6 @@
---- sage-5.5/spkg/build/sage-5.5/module_list.py.orig	2013-01-18 13:31:26.092773091 -0200
-+++ sage-5.5/spkg/build/sage-5.5/module_list.py	2013-01-18 13:31:34.804727376 -0200
+diff -up sage-5.6/spkg/build/sage-5.6/module_list.py.orig sage-5.6/spkg/build/sage-5.6/module_list.py
+--- sage-5.6/spkg/build/sage-5.6/module_list.py.orig	2013-01-25 21:29:02.164052933 -0200
++++ sage-5.6/spkg/build/sage-5.6/module_list.py	2013-01-25 21:29:10.605053257 -0200
 @@ -16,7 +16,7 @@ else:
      SAGE_ROOT  = os.environ['SAGE_ROOT']
      SAGE_LOCAL = SAGE_ROOT + '/local'
@@ -9,7 +10,7 @@
  
  
  #########################################################
-@@ -1640,8 +1640,8 @@ ext_modules = [
+@@ -1638,8 +1638,8 @@ ext_modules = [
                sources = ['sage/rings/polynomial/plural.pyx'],
                libraries = ['m', 'readline', 'singular', 'givaro', 'gmpxx', 'gmp'],
                language="c++",

@@ -1,5 +1,6 @@
---- sage-5.5/spkg/build/sage-5.5/module_list.py.orig	2013-01-18 13:23:57.649076891 -0200
-+++ sage-5.5/spkg/build/sage-5.5/module_list.py	2013-01-18 13:25:47.767529248 -0200
+diff -up sage-5.6/spkg/build/sage-5.6/module_list.py.orig sage-5.6/spkg/build/sage-5.6/module_list.py
+--- sage-5.6/spkg/build/sage-5.6/module_list.py.orig	2013-01-25 21:22:07.482037054 -0200
++++ sage-5.6/spkg/build/sage-5.6/module_list.py	2013-01-25 21:23:22.417039923 -0200
 @@ -47,11 +47,11 @@ else:
  #########################################################
  ### Commonly used definitions
@@ -15,29 +16,7 @@
  
  flint_depends = [SAGE_INC + 'FLINT/flint.h']
  singular_depends = [SAGE_INC + 'libsingular.h', SAGE_INC + 'givaro/givconfig.h']
-@@ -123,18 +123,21 @@ ext_modules = [
- 
-     Extension('sage.algebras.letterplace.free_algebra_letterplace',
-               sources = ['sage/algebras/letterplace/free_algebra_letterplace.pyx'],
-+              libraries = singular_libs,
-               language="c++",
-               include_dirs = [SAGE_INC +'singular/'],
-               depends = singular_depends),
- 
-     Extension('sage.algebras.letterplace.free_algebra_element_letterplace',
-               sources = ['sage/algebras/letterplace/free_algebra_element_letterplace.pyx'],
-+              libraries = singular_libs,
-               language="c++",
-               include_dirs = [SAGE_INC +'singular/'],
-               depends = singular_depends),
- 
-     Extension('sage.algebras.letterplace.letterplace_ideal',
-               sources = ['sage/algebras/letterplace/letterplace_ideal.pyx'],
-+              libraries = singular_libs,
-               language="c++",
-               include_dirs = [SAGE_INC +'singular/'],
-               depends = singular_depends),
-@@ -1712,7 +1715,7 @@ ext_modules = [
+@@ -1713,7 +1713,7 @@ ext_modules = [
  
      Extension('sage.rings.polynomial.pbori',
                sources = ['sage/rings/polynomial/pbori.pyx'],
@@ -46,8 +25,9 @@
                include_dirs = [SAGE_INC, "sage/libs/polybori"],
                depends = [SAGE_INC + "polybori/" + hd + ".h" for hd in ["polybori", "config"] ] + \
                          [SAGE_INC + 'm4ri/m4ri.h'],
---- sage-5.5/spkg/build/sage-5.5/sage/combinat/degree_sequences.pyx.orig	2013-01-18 13:24:00.929060774 -0200
-+++ sage-5.5/spkg/build/sage-5.5/sage/combinat/degree_sequences.pyx	2013-01-18 13:24:03.410048700 -0200
+diff -up sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx.orig sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx
+--- sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx.orig	2013-01-25 21:23:35.816040436 -0200
++++ sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx	2013-01-25 21:23:59.160041330 -0200
 @@ -262,7 +262,7 @@ Checking the consistency of enumeration
  from sage.libs.gmp.all cimport mpz_t
  from sage.libs.gmp.all cimport *
@@ -57,8 +37,9 @@
  include '../ext/cdefs.pxi'
  include "../ext/interrupt.pxi"
  
---- sage-5.5/spkg/build/sage-5.5/sage/numerical/backends/glpk_backend.pxd.orig	2013-01-18 13:24:00.930060777 -0200
-+++ sage-5.5/spkg/build/sage-5.5/sage/numerical/backends/glpk_backend.pxd	2013-01-18 13:24:03.410048700 -0200
+diff -up sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd.orig sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd
+--- sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd.orig	2013-01-25 21:24:11.084041787 -0200
++++ sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd	2013-01-25 21:24:35.047042705 -0200
 @@ -6,7 +6,7 @@
  ##############################################################################
  
@@ -77,8 +58,9 @@
       ctypedef struct c_glp_prob "glp_prob":
           pass
       ctypedef struct c_glp_iocp "glp_iocp":
---- sage-5.5/spkg/build/sage-5.5/setup.py.orig	2013-01-18 13:24:00.930060777 -0200
-+++ sage-5.5/spkg/build/sage-5.5/setup.py	2013-01-18 13:24:03.410048700 -0200
+diff -up sage-5.6/spkg/build/sage-5.6/setup.py.orig sage-5.6/spkg/build/sage-5.6/setup.py
+--- sage-5.6/spkg/build/sage-5.6/setup.py.orig	2013-01-25 21:24:44.059043050 -0200
++++ sage-5.6/spkg/build/sage-5.6/setup.py	2013-01-25 21:28:28.695051652 -0200
 @@ -37,6 +37,11 @@ else:
      SAGE_DEVEL = SAGE_ROOT + '/devel'
      SAGE_INC   = SAGE_LOCAL + '/include/'
@@ -130,7 +112,7 @@
  CYTHON_INCLUDE_DIRS=[
 -    SAGE_LOCAL + '/lib/python/site-packages/Cython/Includes/',
 -    SAGE_LOCAL + '/lib/python/site-packages/Cython/Includes/Deprecated/',
-+    SAGE_LOCAL + '/lib/python.27/site-packages/Cython/Includes/',
++    SAGE_LOCAL + '/lib/python2.7/site-packages/Cython/Includes/',
 +    SAGE_LOCAL + '/lib/python2.7/site-packages/Cython/Includes/Deprecated/',
  ]
  
@@ -175,10 +157,10 @@
 +        if os.path.exists(outfile) and os.path.getmtime(outfile) > os.path.getmtime(f):
 +            return 0
 +
-         # call cython, abort if it failed
-         cmd = "python `which cython` %s --old-style-globals --embed-positions --directive cdivision=True,autotestdict=False,fast_getattr=True -I%s -o %s %s"%(cplus, os.getcwd(), outfile, f)
-         r = run_command(cmd)
-@@ -745,7 +743,7 @@ def compile_command0(p):
+         if os.environ.get('SAGE_DEBUG', None)=='no':
+             debug = ''
+         else:
+@@ -750,7 +748,7 @@ def compile_command0(p):
              return r
  
          # if cython worked, copy the file to the build directory

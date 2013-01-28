@@ -1,6 +1,6 @@
-diff -up sage-5.5/spkg/build/sage-5.5/sage/groups/perm_gps/permgroup.py.orig sage-5.5/spkg/build/sage-5.5/sage/groups/perm_gps/permgroup.py
---- sage-5.5/spkg/build/sage-5.5/sage/groups/perm_gps/permgroup.py.orig	2013-01-19 11:58:06.207194119 -0200
-+++ sage-5.5/spkg/build/sage-5.5/sage/groups/perm_gps/permgroup.py	2013-01-19 12:00:26.429199488 -0200
+diff -up sage-5.6/spkg/build/sage-5.6/sage/groups/perm_gps/permgroup.py.orig sage-5.6/spkg/build/sage-5.6/sage/groups/perm_gps/permgroup.py
+--- sage-5.6/spkg/build/sage-5.6/sage/groups/perm_gps/permgroup.py.orig	2013-01-19 11:58:06.207194119 -0200
++++ sage-5.6/spkg/build/sage-5.6/sage/groups/perm_gps/permgroup.py	2013-01-19 12:00:26.429199488 -0200
 @@ -175,8 +175,7 @@ def hap_decorator(f):
      """
      @wraps(f)

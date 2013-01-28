@@ -1,6 +1,6 @@
-diff -up sage-5.5/spkg/build/sage-5.5/sage/interfaces/jmoldata.py.orig sage-5.5/spkg/build/sage-5.5/sage/interfaces/jmoldata.py
---- sage-5.5/spkg/build/sage-5.5/sage/interfaces/jmoldata.py.orig	2012-11-10 12:03:07.742817945 -0200
-+++ sage-5.5/spkg/build/sage-5.5/sage/interfaces/jmoldata.py	2012-11-10 12:03:34.499818970 -0200
+diff -up sage-5.6/spkg/build/sage-5.6/sage/interfaces/jmoldata.py.orig sage-5.6/spkg/build/sage-5.6/sage/interfaces/jmoldata.py
+--- sage-5.6/spkg/build/sage-5.6/sage/interfaces/jmoldata.py.orig	2012-11-10 12:03:07.742817945 -0200
++++ sage-5.6/spkg/build/sage-5.6/sage/interfaces/jmoldata.py	2012-11-10 12:03:34.499818970 -0200
 @@ -86,7 +86,7 @@ class JmolData(SageObject):
              sage_makedirs(jmolscratch)
          scratchout = os.path.join(jmolscratch,"jmolout.txt")
