@@ -1,7 +1,7 @@
-%define _enable_debug_packages			%{nil}
-%define	debug_package				%{nil}
-%define _use_internal_dependency_generator	0
-%define _exclude_files_from_autoprov		.*/site-packages/.*\.so
+%global _enable_debug_packages			0
+%global	__debug_package				0
+%global _use_internal_dependency_generator	0
+%global _exclude_files_from_autoprov		.*/site-packages/.*\.so
 
 %global with_sphinx_hack	1
 
