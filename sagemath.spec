@@ -200,6 +200,7 @@ BuildRequires:	polybori-devel
 BuildRequires:	ratpoints
 BuildRequires:	readline-devel
 BuildRequires:	scons
+BuildRequires:	singular
 BuildRequires:	singular-devel
 BuildRequires:	symmetrica-devel
 
