@@ -1,4 +1,3 @@
-%global workaround_same_build_ID_in_nonidentical_files	1
 %global _use_internal_dependency_generator	0
 %global _exclude_files_from_autoprov		.*/site-packages/.*\.so
 
@@ -637,7 +636,7 @@ pushd spkg/build/%{flintqs_pkg}/src
 popd
 
 pushd spkg/build/%{rubiks_pkg}/src
-    make %{?_smp_mflags} CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}"
+    make %{?_smp_mflags} CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}" CXXFLAGS="%{optflags}"
 popd
 
 # last build command
@@ -788,9 +787,7 @@ pushd spkg/build/%{rubiks_pkg}/src
 	reid/optimal \
 	dietz/solver/cubex \
 	dietz/mcube/mcube \
-%if !%{workaround_same_build_ID_in_nonidentical_files}
 	dietz/cu2/cu2 \
-%endif
 	dik/dikcube \
 	dik/size222 \
 	$SAGE_LOCAL/bin
@@ -1014,11 +1011,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 find %{buildroot} -name '*.so' | xargs chmod 755
 pushd %{buildroot}%{SAGE_LOCAL}/bin
     chmod 755 QuadraticSieve
-    chmod 755 mcube dikcube \
-%if !%{workaround_same_build_ID_in_nonidentical_files}
-	cu2 \
-%endif
-	size222 cubex optimal
+    chmod 755 mcube dikcube cu2 size222 cubex optimal
 popd
 for file in `find %{buildroot} -name \*.py`; do
     if head -1 $file | grep -q '^#!'; then
@@ -1154,9 +1147,7 @@ rm -fr $DOT_SAGE
 %{SAGE_LOCAL}/bin/optimal
 %{SAGE_LOCAL}/bin/cubex
 %{SAGE_LOCAL}/bin/mcube
-%if !%{workaround_same_build_ID_in_nonidentical_files}
 %{SAGE_LOCAL}/bin/cu2
-%endif
 %{SAGE_LOCAL}/bin/dikcube
 %{SAGE_LOCAL}/bin/size222
 
