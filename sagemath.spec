@@ -1014,7 +1014,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 find %{buildroot} -name '*.so' | xargs chmod 755
 pushd %{buildroot}%{SAGE_LOCAL}/bin
     chmod 755 QuadraticSieve
-    chmod 755 mcube dikcube cu2 size222 cubex optimal
+    chmod 755 mcube dikcube \
+%if !%{workaround_same_build_ID_in_nonidentical_files}
+	cu2 \
+%endif
+	size222 cubex optimal
 popd
 for file in `find %{buildroot} -name \*.py`; do
     if head -1 $file | grep -q '^#!'; then
