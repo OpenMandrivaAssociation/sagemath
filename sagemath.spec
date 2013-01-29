@@ -788,7 +788,7 @@ pushd spkg/build/%{rubiks_pkg}/src
 	reid/optimal \
 	dietz/solver/cubex \
 	dietz/mcube/mcube \
-%if %{workaround_same_build_ID_in_nonidentical_files}
+%if !%{workaround_same_build_ID_in_nonidentical_files}
 	dietz/cu2/cu2 \
 %endif
 	dik/dikcube \
@@ -1150,7 +1150,7 @@ rm -fr $DOT_SAGE
 %{SAGE_LOCAL}/bin/optimal
 %{SAGE_LOCAL}/bin/cubex
 %{SAGE_LOCAL}/bin/mcube
-%if %{workaround_same_build_ID_in_nonidentical_files}
+%if !%{workaround_same_build_ID_in_nonidentical_files}
 %{SAGE_LOCAL}/bin/cu2
 %endif
 %{SAGE_LOCAL}/bin/dikcube
