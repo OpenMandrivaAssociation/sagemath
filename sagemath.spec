@@ -1,4 +1,4 @@
-%define __noautoprov		'.*\.so\(\)'
+%define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
 
 %global with_sphinx_hack	1
 
@@ -44,7 +44,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	5.6
-Release:	1%{?dist}
+Release:	2%{?dist}
 License:	BSD and GPLv2+ and LGPLv2+ and MIT
 URL:		http://www.sagemath.org
 Source0:	http://boxen.math.washington.edu/home/%{name}/sage-mirror/src/sage-%{version}.tar
@@ -1158,6 +1158,9 @@ rm -fr $DOT_SAGE
 
 ########################################################################
 %changelog
+* Thu Feb 14 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-2
+- Try to workaround limitations in imposed buggy rpm internal depsolver.
+
 * Fri Jan 25 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-1
 - Update to sagemath 5.6.
 - Remove no longer required patch to build with system cython.
@@ -1170,25 +1173,25 @@ rm -fr $DOT_SAGE
 
 * Tue Nov 20 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4-2
 - Do not install alternate cygdb in %%_bindir
-- Create the %{name}-core subpackage
-- Create the %{name}-doc subpackage
-- Create the %{name}-doc-en subpackage
-- Create the %{name}-doc-de subpackage
-- Create the %{name}-doc-fr subpackage
-- Create the %{name}-doc-pt subpackage
-- Create the %{name}-doc-ru subpackage
-- Create the %{name}-doc-tr subpackage
-- Create the %{name}-data metapackage
-- Create the %{name}-data-conway_polynomials subpackage
-- Create the %{name}-data-elliptic_curves subpackage
-- Create the %{name}-data-extcode subpackage
+- Create the sagemath-core subpackage
+- Create the sagemath-doc subpackage
+- Create the sagemath-doc-en subpackage
+- Create the sagemath-doc-de subpackage
+- Create the sagemath-doc-fr subpackage
+- Create the sagemath-doc-pt subpackage
+- Create the sagemath-doc-ru subpackage
+- Create the sagemath-doc-tr subpackage
+- Create the sagemath-data metapackage
+- Create the sagemath-data-conway_polynomials subpackage
+- Create the sagemath-data-elliptic_curves subpackage
+- Create the sagemath-data-extcode subpackage
 - Do not install pickle_jar extcode contents
 - Do not install notebook extcode contents
-- Create the %{name}-data-graphs subpackage
-- Create the %{name}-data-polytopes_db subpackage
-- Create the %{name}-notebook subpackage
-- Create the %{name}-rubiks subpackage
-- Create the %{name}-sagetex subpackage
+- Create the sagemath-data-graphs subpackage
+- Create the sagemath-data-polytopes_db subpackage
+- Create the sagemath-notebook subpackage
+- Create the sagemath-rubiks subpackage
+- Create the sagemath-sagetex subpackage
 
 * Mon Nov 12 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4-1
 - Update to sagemath 5.4.
@@ -1197,7 +1200,7 @@ rm -fr $DOT_SAGE
 - Prevent rpm from providing private shared object.
 - Change base directory to %%{_libdir} to avoid rpmlint errors.
 - Correct permissions of installed shared objects.
-- Rename most patches to use %%{name} prefix as "suggested" by fedora-review.
+- Rename most patches to use sagemath prefix as "suggested" by fedora-review.
 - Remove bundled jar files before %%build.
 - Make cube solvers build optional and disabled by default.
 - Add option to run "sage -testall" during package build.
