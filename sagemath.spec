@@ -1,5 +1,4 @@
-%global _use_internal_dependency_generator	0
-%global _exclude_files_from_autoprov		.*/site-packages/.*\.so
+%define __noautoprov		'.*\.so\(\)'
 
 %global with_sphinx_hack	1
 
