@@ -1,4 +1,4 @@
-%define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
+#%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
 
 %global with_sphinx_hack	1
 
@@ -44,7 +44,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	5.6
-Release:	2%{?dist}
+Release:	3%{?dist}
 License:	BSD and GPLv2+ and LGPLv2+ and MIT
 URL:		http://www.sagemath.org
 Source0:	http://boxen.math.washington.edu/home/%{name}/sage-mirror/src/sage-%{version}.tar
@@ -1158,6 +1158,9 @@ rm -fr $DOT_SAGE
 
 ########################################################################
 %changelog
+* Fri Feb 15 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-3
+- Do not try to prevent shared objects provides.
+
 * Thu Feb 14 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-2
 - Try to workaround limitations in imposed buggy rpm internal depsolver.
 
