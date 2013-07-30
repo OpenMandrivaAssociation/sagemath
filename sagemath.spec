@@ -221,6 +221,7 @@ BuildRequires:	glpk-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	gsl-devel
 BuildRequires:	iml-devel
+BuildRequires:	ipython
 BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libfac-devel
@@ -279,6 +280,7 @@ Requires:	genus2reduction
 Requires:	gfan
 Requires:	gp2c
 Requires:	iml-devel
+Requires:	ipython
 Requires:	java-plugin
 Requires:	jmol
 Requires:	jsmath-fonts
@@ -1148,7 +1150,6 @@ exit 0
 %dir %{SAGE_LOCAL}
 %dir %{SAGE_LOCAL}/bin
 %{SAGE_LOCAL}/bin/QuadraticSieve
-%{SAGE_LOCAL}/bin/ecm
 %{SAGE_LOCAL}/bin/gap_stamp
 %{SAGE_LOCAL}/bin/sage*
 %{SAGE_LOCAL}/bin/testjava.sh
@@ -1181,6 +1182,7 @@ exit 0
 #------------------------------------------------------------------------
 %files		data
 %dir %{SAGE_SHARE}
+%dir %{SAGE_EXTCODE}
 %{SAGE_EXTCODE}/sage
 
 #------------------------------------------------------------------------
@@ -1197,7 +1199,6 @@ exit 0
 #------------------------------------------------------------------------
 %files		data-extcode
 # GPLv2+
-%dir %{SAGE_EXTCODE}
 %{SAGE_EXTCODE}/gap
 %{SAGE_EXTCODE}/images
 %{SAGE_EXTCODE}/magma
