@@ -16,7 +16,7 @@ diff --git a/MANIFEST.in b/MANIFEST.in
 +include doc/pt/a_tour_of_sage/sin_plot.png
  include doc/tr/a_tour_of_sage/eigen_plot.png
  include doc/tr/a_tour_of_sage/sin_plot.png
- graft   doc/en/reference/media
+ graft   doc/en/reference/*/media
 diff --git a/doc/pt/a_tour_of_sage/conf.py b/doc/pt/a_tour_of_sage/conf.py
 new file mode 100644
 --- /dev/null

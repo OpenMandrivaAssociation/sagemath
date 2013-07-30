@@ -1,29 +1,30 @@
---- sage-5.6/spkg/build/sage-5.6/module_list.py.orig	2013-01-18 13:34:23.658856437 -0200
-+++ sage-5.6/spkg/build/sage-5.6/module_list.py	2013-01-18 13:34:29.938823476 -0200
-@@ -992,7 +992,7 @@ ext_modules = [
+diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sage-5.9/module_list.py
+--- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-05-06 13:47:27.554742671 -0300
++++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-05-06 13:47:44.223743310 -0300
+@@ -1023,7 +1023,7 @@ ext_modules = [
  
      Extension('sage.matrix.matrix_mod2_dense',
                sources = ['sage/matrix/matrix_mod2_dense.pyx'],
 -              libraries = ['gmp','m4ri', 'gd', 'png12', 'z'],
 +              libraries = ['gmp','m4ri', 'gd', 'png', 'z'],
                extra_compile_args = ['-std=c99'] + m4ri_extra_compile_args,
-               depends = [SAGE_INC + "png.h", SAGE_INC + "m4ri/m4ri.h"]),
+               depends = [SAGE_INC + "/png.h", SAGE_INC + "/m4ri/m4ri.h"]),
  
-@@ -1245,7 +1245,7 @@ ext_modules = [
+@@ -1285,7 +1285,7 @@ ext_modules = [
  
      Extension('sage.modules.vector_mod2_dense',
                sources = ['sage/modules/vector_mod2_dense.pyx'],
 -              libraries = ['gmp','m4ri', 'png12', 'gd'],
 +              libraries = ['gmp','m4ri', 'png', 'gd'],
                extra_compile_args = ['-std=c99'] + m4ri_extra_compile_args,
-               depends = [SAGE_INC + "png.h", SAGE_INC + "m4ri/m4ri.h"]),
+               depends = [SAGE_INC + "/png.h", SAGE_INC + "/m4ri/m4ri.h"]),
      
-@@ -1715,7 +1715,7 @@ ext_modules = [
- 
+@@ -1760,7 +1760,7 @@ ext_modules = [
      Extension('sage.rings.polynomial.pbori',
                sources = ['sage/rings/polynomial/pbori.pyx'],
--              libraries=['polybori', 'polybori_groebner', 'cudd', 'gd', 'png12', 'm4ri'],
-+              libraries=['polybori', 'polybori_groebner', 'cudd', 'gd', 'png', 'm4ri'],
+               libraries=['polybori-' + polybori_major_version,
+-                         'polybori_groebner-' + polybori_major_version, 'm4ri', 'png12'],
++                         'polybori_groebner-' + polybori_major_version, 'm4ri', 'png'],
                include_dirs = [SAGE_INC, "sage/libs/polybori"],
-               depends = [SAGE_INC + "polybori/" + hd + ".h" for hd in ["polybori", "config"] ] + \
-                         [SAGE_INC + 'm4ri/m4ri.h'],
+               depends = [SAGE_INC + "/polybori/" + hd + ".h" for hd in ["polybori", "config"] ] + \
+                         [SAGE_INC + '/m4ri/m4ri.h'],

@@ -1,0 +1,12 @@
+diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sage-5.9/module_list.py
+--- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-03-19 18:13:55.457986912 -0300
++++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-03-19 18:14:03.785987230 -0300
+@@ -1988,7 +1988,7 @@ ext_modules = [
+ def is_package_installed(name):
+     return False
+ 
+-if is_package_installed('fes'):
++if 1:
+     ext_modules.extend([
+        Extension("sage.libs.fes",
+                  ["sage/libs/fes.pyx"],

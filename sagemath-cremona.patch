@@ -1,6 +1,6 @@
-diff -up sage-5.6/spkg/build/sage-5.6/sage/databases/cremona.py.orig sage-5.6/spkg/build/sage-5.6/sage/databases/cremona.py
---- sage-5.6/spkg/build/sage-5.6/sage/databases/cremona.py.orig	2013-01-19 11:44:58.950163972 -0200
-+++ sage-5.6/spkg/build/sage-5.6/sage/databases/cremona.py	2013-01-19 11:45:57.644166220 -0200
+diff -up sage-5.9/spkg/build/sage-5.9/sage/databases/cremona.py.orig sage-5.9/spkg/build/sage-5.9/sage/databases/cremona.py
+--- sage-5.9/spkg/build/sage-5.9/sage/databases/cremona.py.orig	2013-02-22 17:33:50.579875129 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/databases/cremona.py	2013-02-22 17:34:05.051875683 -0300
 @@ -889,14 +889,9 @@ class MiniCremonaDatabase(SQLDatabase):
              if N < self.largest_conductor():
                  message = "There is no elliptic curve with label " + label \
@@ -17,7 +17,7 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/databases/cremona.py.orig sage-5.6/sp
              raise ValueError(message)
  
      def iter(self, conductors):
-@@ -1598,10 +1593,12 @@ def CremonaDatabase(name=None,mini=None,
+@@ -1594,10 +1589,12 @@ def CremonaDatabase(name=None,mini=None,
      if name is None and not set_global:
          return _db
      if set_global and name is None:

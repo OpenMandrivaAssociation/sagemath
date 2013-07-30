@@ -1,0 +1,11 @@
+--- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-07-29 18:06:26.053833138 -0300
++++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-07-29 18:06:44.380832801 -0300
+@@ -1761,7 +1761,7 @@ ext_modules = [
+     Extension('sage.rings.polynomial.pbori',
+               sources = ['sage/rings/polynomial/pbori.pyx'],
+               libraries=['polybori-' + polybori_major_version,
+-                         'polybori_groebner-' + polybori_major_version, 'm4ri', 'png'],
++                         'polybori_groebner-' + polybori_major_version, 'cudd', 'm4ri', 'png'],
+               include_dirs = [SAGE_INC, "sage/libs/polybori"],
+               depends = [SAGE_INC + "/polybori/" + hd + ".h" for hd in ["polybori", "config"] ] + \
+                         [SAGE_INC + '/m4ri/m4ri.h'],

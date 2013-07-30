@@ -1,0 +1,54 @@
+diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sage-5.9/module_list.py
+--- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-05-06 14:26:48.178833068 -0300
++++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-05-06 14:28:09.378836177 -0300
+@@ -485,8 +485,8 @@ ext_modules = [
+     Extension('sage.groups.old',
+               sources = ['sage/groups/old.pyx']),
+ 
+-    Extension('sage.groups.libgap_wrapper',
+-              sources = ['sage/groups/libgap_wrapper.pyx']),
++#    Extension('sage.groups.libgap_wrapper',
++#              sources = ['sage/groups/libgap_wrapper.pyx']),
+ 
+     Extension('sage.groups.perm_gps.permgroup_element',
+               sources = ['sage/groups/perm_gps/permgroup_element.pyx']),
+@@ -780,25 +780,25 @@ ext_modules = [
+         ##
+         ################################
+ 
+-    Extension('sage.libs.gap.util',
+-              sources = ["sage/libs/gap/util.pyx"],
+-              libraries = ['csage', 'gmp', 'gap', 'm'],
+-              include_dirs = [SAGE_INC]),
+-
+-    Extension('sage.libs.gap.element',
+-              sources = ["sage/libs/gap/element.pyx"],
+-              libraries = ['csage', 'gmp', 'gap', 'm'],
+-              include_dirs = [SAGE_INC]),
++#    Extension('sage.libs.gap.util',
++#              sources = ["sage/libs/gap/util.pyx"],
++#              libraries = ['csage', 'gmp', 'gap', 'm'],
++#              include_dirs = [SAGE_INC]),
++#
++#    Extension('sage.libs.gap.element',
++#              sources = ["sage/libs/gap/element.pyx"],
++#              libraries = ['csage', 'gmp', 'gap', 'm'],
++#              include_dirs = [SAGE_INC]),
+ 
+     # Extension('sage.libs.gap.type',
+     #           sources = ["sage/libs/gap/type.pyx"],
+     #           libraries = ['csage', 'gmp', 'gap', 'm'],
+     #           include_dirs = [SAGE_INC]),
+-    
+-    Extension('sage.libs.gap.libgap',
+-              sources = ["sage/libs/gap/libgap.pyx"],
+-              libraries = ['csage', 'gmp', 'gap', 'm'],
+-              include_dirs = [SAGE_INC]),
++#    
++#    Extension('sage.libs.gap.libgap',
++#              sources = ["sage/libs/gap/libgap.pyx"],
++#              libraries = ['csage', 'gmp', 'gap', 'm'],
++#              include_dirs = [SAGE_INC]),
+ 
+         ###################################
+         ##

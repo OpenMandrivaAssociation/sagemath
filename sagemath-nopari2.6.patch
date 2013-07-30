@@ -1,0 +1,25 @@
+diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi.orig sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi
+--- sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi.orig	2013-03-19 17:20:25.960864009 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi	2013-03-19 17:20:33.246864288 -0300
+@@ -595,7 +595,6 @@ cdef extern from 'pari/pari.h':
+     GEN     polredabs0(GEN x, long flag)
+     GEN     polredabs2(GEN x)
+     GEN     polredabsall(GEN x, long flun)
+-    GEN     polredbest(GEN x, long flag)
+     GEN     qflll0(GEN x, long flag)
+     GEN     qflllgram0(GEN x, long flag)
+     GEN     smallpolred(GEN x)
+diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx.orig sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx
+--- sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx.orig	2013-03-19 17:20:55.992865159 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx	2013-03-19 17:21:02.118865393 -0300
+@@ -8011,10 +8011,6 @@ cdef class gen(sage.structure.element.Ri
+         sig_on()
+         return self.new_gen(polredabs0(self.g, flag))
+ 
+-    def polredbest(self, flag=0):
+-        sig_on()
+-        return self.new_gen(polredbest(self.g, flag))
+-
+     def polresultant(self, y, var=-1, flag=0):
+         t0GEN(y)
+         sig_on()

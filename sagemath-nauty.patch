@@ -1,7 +1,7 @@
-diff -up sage-5.6/spkg/build/sage-5.6/sage/graphs/graph_generators.py.orig sage-5.6/spkg/build/sage-5.6/sage/graphs/graph_generators.py
---- sage-5.6/spkg/build/sage-5.6/sage/graphs/graph_generators.py.orig	2013-01-19 11:52:38.927181586 -0200
-+++ sage-5.6/spkg/build/sage-5.6/sage/graphs/graph_generators.py	2013-01-19 11:53:03.845182540 -0200
-@@ -8595,8 +8595,7 @@ class GraphGenerators():
+diff -up sage-5.9/spkg/build/sage-5.9/sage/graphs/graph_generators.py.orig sage-5.9/spkg/build/sage-5.9/sage/graphs/graph_generators.py
+--- sage-5.9/spkg/build/sage-5.9/sage/graphs/graph_generators.py.orig	2013-05-06 14:13:14.875801924 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/graphs/graph_generators.py	2013-05-06 14:13:24.820802304 -0300
+@@ -772,8 +772,7 @@ class GraphGenerators():
          """
          import subprocess
          from sage.misc.package import is_package_installed

@@ -1,0 +1,12 @@
+diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sage-5.9/module_list.py
+--- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-05-06 14:14:11.852804105 -0300
++++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-05-06 14:14:20.940804453 -0300
+@@ -2056,7 +2056,7 @@ if UNAME[0] == "Darwin" and not UNAME[2]
+         )
+ 
+ 
+-if is_package_installed('lrcalc'):
++if 1:
+     ext_modules.append(
+         Extension('sage.libs.lrcalc.lrcalc',
+                   sources = ["sage/libs/lrcalc/lrcalc.pyx"],

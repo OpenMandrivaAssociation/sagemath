@@ -1,51 +1,59 @@
 #%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
 
+# not functional due to missing jar dependencies
+%global with_sage3d		0
+
 %global with_sphinx_hack	1
-
-# may be required if not matching system version or to be updates proof
-%global with_sage_cython	0
-
-# ipython-0.11 drastically changed api since ipython-0.10.2
-%global with_sage_ipython	1
-
-# sagemath uses a somewhat old and heavily patched networkx
-%global with_sage_networkx	0
 
 # sagemath works only with pexpect-2.0
 %global with_sage_pexpect	1
+
+%global have_lrcalc		1
+
+%global have_coin_or_Cbc	0
+
+%global have_libgap		0
+
+%ifarch x86_64
+%global have_fes		1
+%else
+%global have_fes		0
+%endif
 
 # set to run sage -testall in %%install
 %global with_check		0
 %global SAGE_TIMEOUT		60
 %global SAGE_TIMEOUT_LONG	180
 
-%global conway_polynomials_pkg	conway_polynomials-0.3
-%global cython_pkg		cython-0.17pre
+%global conway_polynomials_pkg	conway_polynomials-0.4.p0
 %global	elliptic_curves_pkg	elliptic_curves-0.7
 %global	flintqs_pkg		flintqs-20070817.p8
 %global graphs_pkg		graphs-20120404.p4
-%global ipython_pkg		ipython-0.10.2.p1
-%global networkx_pkg		networkx-1.6
 %global pexpect_pkg		pexpect-2.0.p5
 %global polytopes_db_pkg	polytopes_db-20100210.p2
 %global rubiks_pkg		rubiks-20070912.p18
-%global	sagenb_pkg		sagenb-0.10.2
-%global sagetex_pkg		sagetex-2.3.3.p2
+%global	sagenb_pkg		sagenb-0.10.4
+%global sagetex_pkg		sagetex-2.3.4
+
+%global sagemath_share		%{_datadir}/%{name}
 
 %global SAGE_ROOT		%{_libdir}/sagemath
 %global SAGE_LOCAL		%{SAGE_ROOT}/local
-%global SAGE_DEVEL		%{SAGE_ROOT}/devel
-%global SAGE_DOC		%{SAGE_DEVEL}/doc
-%global SAGE_SHARE		%{SAGE_ROOT}/share
-%global SAGE_EXTCODE		%{SAGE_SHARE}/extcode
+%global SAGE_SRC		%{SAGE_ROOT}/src
+%global SAGE_DOC		%{_docdir}/%{name}-%{version}
+%global SAGE_SHARE		%{_datadir}/sagemath
+%global SAGE_EXTCODE		%{SAGE_SHARE}/ext
 %global SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
 
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.6
-Release:	3%{?dist}
-License:	BSD and GPLv2+ and LGPLv2+ and MIT
+Version:	5.9
+Release:	1%{?dist}
+# The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
+# Additionally, every $files section has a comment with the license name
+# before files with that license
+License:	ASL 2.0 and BSD and GPL+ and GPLv2+ and LGPLv2+ and MIT and Public Domain
 URL:		http://www.sagemath.org
 Source0:	http://boxen.math.washington.edu/home/%{name}/sage-mirror/src/sage-%{version}.tar
 Source1:	gprc.expect
@@ -57,15 +65,28 @@ Source4:	JmolHelp.html
 Source5:	testjava.sh
 Source6:	%{name}.rpmlintrc
 
-Patch0:		%{name}-gmp.patch
-Patch1:		%{name}-scripts.patch
-Patch2:		%{name}-unpatched_ntl.patch
+# 1. scons ignores most environment variables
+# 2. scons 2.2* does not have soname support (expected for scons 2.3*)
+# This patch adds some regex substition templates for CFLAGS, etc, and
+# minor adaptation from full scons patch at:
+# http://scons.tigris.org/nonav/issues/showattachment.cgi/902/soname_func.py
+# Discussed at:
+# http://scons.tigris.org/issues/show_bug.cgi?id=2869
+Patch0:		%{name}-scons.patch
+
+# Upstream uses mpir not gmp, but the rpm package is tailored to use gmp
+Patch1:		%{name}-gmp.patch
+
+# Set of patches to work with system wide packages
+Patch2:		%{name}-scripts.patch
+
+# Adapt to ntl 6.0.0.
+Patch4:		%{name}-ntl6.patch
 
 # remove call to not implemented sagemath "is_package_installed" interfaces
-# mpc is available in all modern linux distros
 # need to package coin-or solver in fedora
 # remove check for non free solvers
-Patch3:		%{name}-extensions.patch
+Patch5:		%{name}-extensions.patch
 
 # helper to:
 #	o respect a DESTDIR environment variable
@@ -73,85 +94,119 @@ Patch3:		%{name}-extensions.patch
 #	o minor change to help in incremental builds by avoiding rebuilding
 #	  files
 #	o do not assume there is an installed sagemath
-Patch4:		%{name}-rpmbuild.patch
-
-# avoid buildroot in some binaries due to not expanding symlinks
-Patch5:		%{name}-buildroot.patch
+Patch6:		%{name}-rpmbuild.patch
 
 # build documentation in buildroot environment
-Patch6:		%{name}-sagedoc.patch
+Patch7:		%{name}-sagedoc.patch
 
 # sage notebook rpm and system environment adjustments
-Patch7:		%{name}-sagenb.patch
+Patch8:		%{name}-sagenb.patch
 
 # do not attempt to create state files in system directories
-Patch8:		%{name}-readonly.patch
+Patch9:		%{name}-readonly.patch
 
 # force coercion of ecl t_string to ecl t_base_string
 # this is hackish and only required if ecl is built with unicode support
-Patch9:		%{name}-ecl-unicode.patch
+Patch10:		%{name}-ecl-unicode.patch
 
 # do not link explicitly to png12
-Patch10:	%{name}-png.patch
+Patch11:	%{name}-png.patch
 
 # work with all maxima-runtime lisp backend packages
-Patch11:	%{name}-maxima.patch
+Patch12:	%{name}-maxima.patch
 
 # execute 4ti2 programs in $PATH not in $SAGE_ROOT/local/bin
-Patch12:	%{name}-4ti2.patch
+Patch13:	%{name}-4ti2.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/12992
 # http://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=1317
-Patch13:	%{name}-pari.patch
+Patch14:	%{name}-pari.patch
 
-# in rawhide it was updated to latest fplll
-Patch14:	%{name}-fplll.patch
+# in fedora 18 it was updated to latest fplll
+Patch15:	%{name}-fplll.patch
 
 # Portuguese translations: http://trac.sagemath.org/sage_trac/ticket/12822
-Patch15:	trac_12502_pt_translation_of_a_tour_of_sage_rebase1.patch
-Patch16:	trac_12822_pt_translation_of_tutorial.patch
-Patch17:	trac_12822_pt_translation_of_tutorial_rev1.patch
-
-# wrappers for distros with libmpc 0.9
-Patch18:	%{name}-libmpc.patch
+Patch16:	trac_12502_pt_translation_of_a_tour_of_sage_rebase1.patch
+Patch17:	trac_12822_pt_translation_of_tutorial.patch
+Patch18:	trac_12822_pt_translation_of_tutorial_rev1.patch
 
 # use jmol itself to export preview images
 # FIXME besides not using X and told so, fails if DISPLAY is not set
-Patch19:	%{name}-jmol.patch
+Patch20:	%{name}-jmol.patch
 
 # adapt for maxima 5.29.1 package
-Patch20:	%{name}-maxima.system.patch
+Patch21:	%{name}-maxima.system.patch
 
 # only cremona mini database built and installed
 # FIXME add a package with the full cremona database
 # FIXME actually it should be already available in pari-elldata
-Patch21:	%{name}-cremona.patch
+Patch22:	%{name}-cremona.patch
 
 # lrslib is a requires
-Patch22:	%{name}-lrslib.patch
+Patch23:	%{name}-lrslib.patch
 
 # nauty cannot be packaged due to license restrictions
 # http://cs.anu.edu.au/~bdm/nauty/
 # http://pallini.di.uniroma1.it/
-Patch23:	%{name}-nauty.patch
+Patch24:	%{name}-nauty.patch
 
 # gap hap package not (yet) available
 # http://www-gap.mcs.st-and.ac.uk/Packages/hap.html
-Patch24:	%{name}-gap-hap.patch
+Patch25:	%{name}-gap-hap.patch
 
-# for buildsystems without /dev/shm available
-Patch25:	%{name}-parallel.patch
+# Patch to enable lrcalc once review request is done in Fedora
+Patch26:	%{name}-lrcalc.patch
+
+# Patch to enable cbc once review requests are done in Fedora
+Patch27:	%{name}-cbc.patch
+
+# Patch to enable libgap once review request is done in Fedora
+Patch28:	%{name}-libgap.patch
+
+# Patch to disable libgap because it is not optional by default
+Patch29:	%{name}-nolibgap.patch
+
+# Patch to enable fes once review requests are done in Fedora
+Patch30:	%{name}-fes.patch
+
+# Get package to build with known problem if not yet updated to pari 2.6.
+Patch31:	%{name}-nopari2.6.patch
+
+# sagemath 5.8 (optionally) requires cryptominisat 2.9.6 (in rawhide)
+# and does not work with cryptominisat 2.9.5 (in f18)
+Patch32:	%{name}-cryptominisat.patch
+
+# Adapt to m4rie 20130416
+Patch33:	%{name}-m4rie.patch
+
+# Until cython is fixed for f18 and f19; just override wrong cython definition
+# https://bugzilla.redhat.com/show_bug.cgi?id=961372
+Patch34:	%{name}-rh_bz_961372.patch
+
+# Upgrade to Cython 0.19.1
+# http://trac.sagemath.org/attachment/ticket/14569/trac14569.patch
+Patch35:	trac14569.patch
+
+# Mandriva specific
+Patch36:	%{name}-underlink.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
 BuildRequires:	boost-devel
 BuildRequires:	cliquer-devel
+%if %{have_coin_or_Cbc}
+BuildRequires:	coin-or-Cbc-devel
+%endif
+BuildRequires:	cryptominisat-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	dos2unix
 BuildRequires:	ecl
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
 BuildRequires:	factory-devel
+%if %{have_fes}
+BuildRequires:	fes-devel
+%endif
 BuildRequires:	flint-devel
 BuildRequires:	fplll-devel
 BuildRequires:	gap
@@ -168,9 +223,16 @@ BuildRequires:	gsl-devel
 BuildRequires:	iml-devel
 BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
+BuildRequires:	libfac-devel
+%if %{have_libgap}
+BuildRequires:	libgap-devel
+%endif
 BuildRequires:	libmpc-devel
 BuildRequires:	libpari-devel
 BuildRequires:	linalg-linbox-devel
+%if %{have_lrcalc}
+BuildRequires:	lrcalc-devel
+%endif
 BuildRequires:	m4ri-devel
 BuildRequires:	m4rie-devel
 # try to ensure a sane /dev will exist when building documentation
@@ -178,28 +240,31 @@ BuildRequires:	makedev
 BuildRequires:	maxima-runtime-ecl
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
-BuildRequires:	polybori
+BuildRequires:	polybori-devel
 BuildRequires:	ppl-devel
 BuildRequires:	pynac-devel
+BuildRequires:	python-cython
 BuildRequires:	python-devel
 BuildRequires:	python-flask-autoindex
 BuildRequires:	python-flask-babel
 BuildRequires:	python-flask-openid
 BuildRequires:	python-flask-silk
 BuildRequires:	python-matplotlib
-%if !%{with_sage_networkx}
 BuildRequires:	python-networkx
-%endif
 BuildRequires:	python-numpy-devel
 BuildRequires:	python-scipy
 BuildRequires:	python-twisted
-BuildRequires:	polybori-devel
-BuildRequires:	ratpoints
+BuildRequires:	python-twisted-web
+BuildRequires:	python-twisted-web2
+BuildRequires:	R
+BuildRequires:	ratpoints-devel
 BuildRequires:	readline-devel
+BuildRequires:	rpy
 BuildRequires:	scons
 BuildRequires:	singular
 BuildRequires:	singular-devel
 BuildRequires:	symmetrica-devel
+BuildRequires:	texlive-dvipng
 
 Requires:	4ti2
 Requires:	cddlib-devel
@@ -226,17 +291,13 @@ Requires:	pari
 Requires:	pari-data
 Requires:	python-pycrypto
 Requires:	python-cvxopt
-%if !%{with_sage_cython}
 BuildRequires:	python-cython
-%endif
 Requires:	python-flask-autoindex
 Requires:	python-flask-babel
 Requires:	python-flask-openid
 Requires:	python-flask-silk
 Requires:	python-matplotlib
-%if !%{with_sage_networkx}
 Requires:	python-networkx
-%endif
 Requires:	python-sympy
 Requires:	python-twisted-web
 Requires:	python-twisted-web2
@@ -462,19 +523,10 @@ mkdir -p spkg/build
 pushd spkg/build
     for pkg in					\
 	%{conway_polynomials_pkg}		\
-%if %{with_sage_cython}
-	%{cython_pkg}				\
-%endif
 	%{elliptic_curves_pkg}			\
 	extcode-%{version}			\
 	%{flintqs_pkg}				\
 	%{graphs_pkg}				\
-%if %{with_sage_ipython}
-	%{ipython_pkg}				\
-%endif
-%if %{with_sage_networkx}
-	%{networkx_pkg}				\
-%endif
 %if %{with_sage_pexpect}
 	%{pexpect_pkg}				\
 %endif
@@ -501,13 +553,6 @@ pushd %{sagenb_pkg}/src
     mv  %{sagenb_pkg} sagenb
 popd
 
-%if %{with_sage_ipython}
-    pushd %{ipython_pkg}/src
-	for diff in `ls ../patches/*.patch ../patches/*.diff`; do
-	    patch -p1 < $diff
-	done
-    popd
-%endif
 %if %{with_sage_pexpect}
     pushd %{pexpect_pkg}/src
 	for diff in `ls ../patches/*.patch ../patches/*.diff`; do
@@ -525,8 +570,8 @@ popd
 
 %patch0 -p1
 %patch1 -p1
-# patch2 is only for fedora or if droping NTL sagemath patch
-%patch3 -p1
+%patch2 -p1
+
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
@@ -538,41 +583,58 @@ popd
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 pushd spkg/build/sage-%{version}
 mkdir -p doc/pt/a_tour_of_sage/
 cp -fa doc/en/a_tour_of_sage/*.png doc/pt/a_tour_of_sage/
-%patch15 -p1
+
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 popd
 
-#%#patch18 -p1		# if pre libmpc1
-%patch19 -p1
-
-%if 0%{?fedora} >= 18
 %patch20 -p1
+
+# Not required for Mandriva
+%if 0
+%patch21 -p1
 %endif
 
-%patch21 -p1
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
-
 %patch25 -p1
 
-# make sure buildroot is clean
-rm -rf %{buildroot}
+%if %{have_lrcalc}
+%patch26 -p1
+%endif
 
-# match system packages as sagemath packages
-export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
-export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
-export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
-mkdir -p $SAGE_ROOT $SAGE_LOCAL $SAGE_DEVEL/sage
-ln -sf $PWD/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
-ln -sf %{_libdir} $SAGE_LOCAL/lib
-ln -sf %{_includedir} $SAGE_LOCAL/include
-ln -sf %{_datadir} $SAGE_LOCAL/share
+# other coin-or packages are build requires or coin-or-Cbc
+%if %{have_coin_or_Cbc}
+%patch27 -p1
+%endif
+
+%if %{have_libgap}
+%patch28 -p1
+%else
+%patch29 -p1
+%endif
+
+%if %{have_fes}
+%patch30 -p1
+%endif
+
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+
+pushd spkg/build/sage-%{version}
+%patch35 -p1
+popd
+
+%patch36 -p1
 
 #------------------------------------------------------------------------
 # ensure proper/preferred libatlas is in linker path
@@ -586,11 +648,16 @@ popd
 rm spkg/build/extcode-%{version}/notebook/java/3d/lib/sage3d.jar \
    spkg/build/%{sagenb_pkg}/src/sagenb/sagenb/data/sage3d/lib/sage3d.jar
 
+# remove binary egg
+rm -r spkg/build/%{sagenb_pkg}/src/sagenb/sagenb.egg-info
+
 ########################################################################
 %build
+export CFLAGS="%{optflags}"
+export CXXFLAGS="%{optflags}"
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
-export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
+export SAGE_SRC=%{buildroot}%{SAGE_SRC}
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 export DESTDIR=%{buildroot}
@@ -598,25 +665,31 @@ export DESTDIR=%{buildroot}
 export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
+# match system packages as sagemath packages
+export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
+export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
+export SAGE_SRC=%{buildroot}%{SAGE_SRC}
+mkdir -p $SAGE_ROOT $SAGE_LOCAL $SAGE_SRC
+ln -sf $PWD/spkg/build/sage-%{version}/sage $SAGE_SRC/sage
+ln -sf %{_libdir} $SAGE_LOCAL/lib
+ln -sf %{_includedir} $SAGE_LOCAL/include
+ln -sf %{_datadir} $SAGE_LOCAL/share
+
 export PATH=%{buildroot}%{_bindir}:$PATH
 export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
-
-%if %{with_sage_cython}
-    pushd spkg/build/%{cython_pkg}/src
-	%__python setup.py install --root=%{buildroot}
-    popd
-%endif
-
-%if %{with_sage_ipython}
-    pushd spkg/build/%{ipython_pkg}/src
-	%__python setup.py install --root=%{buildroot}
-    popd
-%endif
 
 #------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     pushd c_lib
+	# scons ignores most environment variables
+	# and does not have soname support
+	sed -e 's|@@includedir@@|%{_includedir}|g' \
+	    -e 's|@@libdir@@|%{_libdir}|g' \
+	    -e 's|@@optflags@@|%{optflags}|g' \
+	    -e 's|@@ldflags@@|%{ldflags}|g' \
+	    -i SConstruct
 	CXX=g++ UNAME=Linux SAGE64=auto scons
+	ln -s libcsage.so.0 libcsage.so
     popd
     pushd sage/libs/mpmath
 	dos2unix ext_impl.pxd ext_libmp.pyx ext_main.pxd ext_main.pyx
@@ -645,11 +718,12 @@ rm -fr $DOT_SAGE
 %install
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
-export SAGE_DEVEL=%{buildroot}%{SAGE_DEVEL}
+export SAGE_SRC=%{buildroot}%{SAGE_SRC}
 export SAGE_SHARE=%{buildroot}%{SAGE_SHARE}
 export SAGE_EXTCODE=%{buildroot}%{SAGE_EXTCODE}
 export SAGE_DOC=%{buildroot}%{SAGE_DOC}
 export SAGE_PYTHONPATH=%{buildroot}%{SAGE_PYTHONPATH}
+export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
 export DESTDIR=%{buildroot}
 export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
@@ -661,53 +735,18 @@ export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p $SAGE_PYTHONPATH
-rm -fr $SAGE_DEVEL/sage $SAGE_LOCAL/{include,lib,share,notebook}
-mkdir -p $SAGE_SHARE $SAGE_DOC $SAGE_LOCAL/bin $SAGE_DEVEL/sage
-ln -sf $PWD/spkg/build/sage-%{version}/sage $SAGE_DEVEL/sage/sage
+rm -fr $SAGE_LOCAL/{include,lib,share,notebook}
+mkdir -p $SAGE_SHARE $SAGE_DOC $SAGE_LOCAL/bin $SAGE_SRC
+ln -sf $PWD/spkg/build/sage-%{version}/sage $SAGE_SRC/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 ln -sf %{_datadir} $SAGE_LOCAL/share
 
 #------------------------------------------------------------------------
-# reinstall due to implicit clean
-%if %{with_sage_cython}
-    pushd spkg/build/%{cython_pkg}/src
-	%__python setup.py install --root=%{buildroot}
-    popd
-    [ -f %{buildroot}%{_bindir}/cython ] &&
-	mv -f %{buildroot}%{_bindir}/cython $SAGE_LOCAL/bin
-    [ -d %{buildroot}%{python_sitearch}/Cython ] &&
-	mv -f	%{buildroot}%{python_sitearch}/[Cc]ython*	\
-		%{buildroot}%{SAGE_PYTHONPATH}
-    # Do not override system cygdb
-    mv %{buildroot}%{_bindir}/cygdb $SAGE_LOCAL/bin
-%endif
-
-#------------------------------------------------------------------------
-# reinstall due to implicit clean
-%if %{with_sage_ipython}
-    pushd spkg/build/%{ipython_pkg}/src
-	%__python setup.py install --root=%{buildroot}
-    popd
-    [ -f %{buildroot}%{_bindir}/%{ipython} &&
-	mv -f %{buildroot}%{_bindir}/ipython $SAGE_LOCAL/bin
-    rm -f	%{buildroot}%{_bindir}/ip*			\
-		%{buildroot}%{_bindir}/irunner			\
-		%{buildroot}%{_bindir}/pycolor
-    [ -d %{buildroot}%{python_sitelib}/IPython ] &&
-	mv -f	%{buildroot}%{python_sitelib}/IPython		\
-		%{buildroot}%{python_sitelib}/ipython-*		\
-		%{buildroot}%{SAGE_PYTHONPATH}
-    rm -fr %{buildroot}%{_docdir}/ipython
-    rm -f	%{buildroot}%{_mandir}/man1/ip*			\
-		%{buildroot}%{_mandir}/man1/irunner*		\
-		%{buildroot}%{_mandir}/man1/pycolor*
-%endif
-
-#------------------------------------------------------------------------
 pushd spkg/build/sage-%{version}
     python setup.py install --root=%{buildroot}
-    cp -fa c_lib/libcsage.so %{buildroot}%{_libdir}
+    cp -fa c_lib/libcsage.so.0 %{buildroot}%{_libdir}
+    ln -sf libcsage.so.0 %{buildroot}%{_libdir}/libcsage.so
     pushd sage
 	# install sage notebook templates
 	cp -fa server/notebook/templates %{buildroot}%{python_sitearch}/sage/server/notebook
@@ -721,26 +760,21 @@ popd
 pushd spkg/build/%{sagenb_pkg}/src/sagenb
     rm -f %{buildroot}%{python_sitearch}/sagenb/data/sage3d/sage3d
     python setup.py install --root=%{buildroot} --install-purelib=%{python_sitearch}
-    install -p -m755 %{SOURCE5} $SAGE_LOCAL/bin/testjava.sh
+    install -p -m0755 %{SOURCE5} $SAGE_LOCAL/bin/testjava.sh
     # jmol
     rm -fr %{buildroot}%{python_sitearch}/sagenb/data/jmol
-
     mkdir -p %{buildroot}%{python_sitearch}/sagenb/data/jmol/appletweb
     pushd %{buildroot}%{python_sitearch}/sagenb/data/jmol
 	cp -fa %{SOURCE3} %{SOURCE4} appletweb
-%if 0%{?fedora}
-	ln -s %{_javadir}/JmolApplet.jar .
-%else
-	ln -s %{_datadir}/jmol/JmolApplet.jar .
-%endif
     popd
-
     # sage3d
     rm -f %{buildroot}%{_bindir}/sage3d
+%if %{with_sage3d}
     ln -sf %{SAGE_LOCAL}/bin/sage3d %{buildroot}%{python_sitearch}/sagenb/data/sage3d/sage3d
+%endif
     # flask stuff not installed
     cp -ar flask_version %{buildroot}%{python_sitearch}/sagenb
-    ln -sf %{python_sitearch}/sagenb %{buildroot}%{SAGE_DEVEL}/sagenb
+    ln -sf %{python_sitearch}/sagenb %{buildroot}%{SAGE_SRC}/sagenb
 popd
 
 #------------------------------------------------------------------------
@@ -751,23 +785,10 @@ popd
 %endif
 
 #------------------------------------------------------------------------
-%if %{with_sage_networkx}
-pushd spkg/build/%{networkx_pkg}/src
-    rm -fr $SAGE_PYTHONPATH/networkx*
-    rm -fr %{buildroot}%{python_sitearch}/networkx*
-    python setup.py install --root=%{buildroot} --install-purelib=%{SAGE_PYTHONPATH}
-    rm -fr $SAGE_DOC/networkx*
-    mv -f %{buildroot}/%{_datadir}/doc/* $SAGE_DOC
-    rmdir %{buildroot}/%{_datadir}/doc
-popd
-%endif
-
-#------------------------------------------------------------------------
 cp -fa COPYING.txt $SAGE_ROOT
-cp -far ipython $SAGE_ROOT
 pushd spkg/build/sage_scripts-%{version}
     mkdir -p $SAGE_LOCAL/bin
-    cp -fa sage-* *doctest.py ipy_profile_sage.py $SAGE_LOCAL/bin
+    cp -fa sage-* $SAGE_LOCAL/bin
     pushd $SAGE_LOCAL/bin
 	ln -sf %{_bindir}/python sage.bin
 	ln -sf %{_bindir}/gp sage_pari
@@ -793,21 +814,47 @@ pushd spkg/build/%{rubiks_pkg}/src
 popd
 
 #------------------------------------------------------------------------
-rm -f %{buildroot}%{_bindir}/spkg-debian-maybe
 pushd $SAGE_LOCAL/bin/
-    rm -f sage-{bdist,build,build-debian,clone,crap,debsource,download_package,env,libdist,location,make_devel_packages,omega,pkg,pkg-nocompress,pull,push,sdist,sbuildhack,upgrade}
-    rm -f sage-list-* sage-mirror* SbuildHack.pm sage-test-*
-    rm -f sage-{verify-pyc,hardcode_sage_root,check-64,spkg*,update*,starts}
-    rm -f *~
-    rm -f sage-{check-libraries.py,ldwrap,open,osx-open,README-osx.txt}
-    rm -f sage-rebase_sage.sh
-    rm -f sage-{combinat,massif}
+    for file in \
+	sage-apply-ticket \
+	sage-bdist \
+	sage-build \
+	sage-clone \
+	sage-combinat \
+	sage-crap \
+	sage-list-experimental \
+	sage-list-optional \
+	sage-list-packages \
+	sage-list-standard \
+	sage-location \
+	sage-make_devel_packages \
+	sage-omega \
+	sage-pkg \
+	sage-pull \
+	sage-push \
+	sage-pypkg-location \
+	sage-README-osx.txt \
+	sage-rebaseall.bat \
+	sage-rebaseall.sh \
+	sage-rebase.bat \
+	sage-rebase.sh \
+	sage-rsyncdist \
+	sage-sdist \
+	sage-spkg-install \
+	sage-startuptime.py \
+	sage-sync-build.py \
+	sage-test-import \
+	sage-update \
+	sage-update-build \
+	sage-upgrade \
+	spkg-install; do
+	rm -f $file
+    done
 popd
 
 #------------------------------------------------------------------------
 pushd spkg/build/%{conway_polynomials_pkg}
-    mkdir -p $SAGE_SHARE/conway_polynomials
-    cp -fa src/conway_polynomials/* $SAGE_SHARE/conway_polynomials
+    python ./spkg-install
 popd
 
 #------------------------------------------------------------------------
@@ -818,7 +865,7 @@ popd
 #------------------------------------------------------------------------
 pushd spkg/build/extcode-%{version}
     mkdir -p $SAGE_EXTCODE
-    cp -far			\
+    for dir in 			\
 	gap			\
 	genus2reduction		\
 	gnuplot			\
@@ -833,12 +880,16 @@ pushd spkg/build/extcode-%{version}
 	MuPAD			\
 	mwrank			\
 	octave			\
-	pari			\
 	QEPCAD			\
 	scilab			\
 	singular		\
-	sobj			\
-	$SAGE_EXTCODE
+	sobj; do
+	COUNT=`find $dir -type f | wc -l `
+	if [ $COUNT -gt 0 ]; then
+	    cp -far $dir $SAGE_EXTCODE
+	fi
+	cp -far pari $SAGE_EXTCODE
+    done
     cp -fa %{SOURCE1} $SAGE_EXTCODE/pari
 popd
 
@@ -880,7 +931,7 @@ export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
 export SAGE_SHARE="$SAGE_SHARE"
 export SAGE_EXTCODE="$SAGE_EXTCODE"
-export SAGE_DEVEL="$SAGE_DEVEL"
+export SAGE_SRC="$SAGE_SRC"
 ##export SAGE_DOC="$SAGE_DOC"
 export PATH=$SAGE_LOCAL/bin:%{_libdir}/4ti2/bin:\$PATH
 export SINGULARPATH=%{_libdir}/Singular/LIB
@@ -899,12 +950,14 @@ EOF
 chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
+%if %{with_sage3d}
 cat > %{buildroot}%{SAGE_LOCAL}/bin/sage3d << EOF
 #!/bin/sh
 
-java -classpath %{SAGE_DEVEL}/sage/sagenb/data/sage3d/lib/sage3d.jar:%{_javadir}/j3dcore.jar:%{_javadir}/vecmath.jar:%{_javadir}/j3dutils.jar org.sagemath.sage3d.ObjectViewerApp "\$1"
+java -classpath %{SAGE_SRC}/sage/sagenb/data/sage3d/lib/sage3d.jar:%{_javadir}/j3dcore.jar:%{_javadir}/vecmath.jar:%{_javadir}/j3dutils.jar org.sagemath.sage3d.ObjectViewerApp "\$1"
 EOF
 chmod +x %{buildroot}%{SAGE_LOCAL}/bin/sage3d
+%endif
 
 #------------------------------------------------------------------------
 # adjust cython interface:
@@ -948,12 +1001,14 @@ pushd spkg/build/sage-%{version}/doc
 %endif
 
     # there we go
+    ln -sf %{buildroot}%{SAGE_DOC} $SAGE_SRC/doc
     python common/builder.py all html
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
     cp -far output $SAGE_DOC
 
     # should not be required and encodes buildroot
     rm -fr $SAGE_DOC/output/doctrees
+    sed -e 's|%{buildroot}||g' -i $SAGE_DOC/output/html/en/reference/sage/misc/hg.html
 popd
 
 %if %{with_check}
@@ -979,15 +1034,20 @@ perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 # More wrong buildroot references
 perl -pi -e 's|%{buildroot}||g;' \
 	 -e "s|$PWD/spkg/build/sage-%{version}/doc|%{SAGE_DOC}|g;" \
-    %{buildroot}%{SAGE_DOC}/output/html/en/reference/todolist.html
+    %{buildroot}%{SAGE_DOC}/output/html/en/reference/todolist.html \
+    %{buildroot}%{SAGE_DOC}/output/html/en/reference/misc/sage/misc/hg.html
 
 #------------------------------------------------------------------------
 # Fix links
-rm -fr $SAGE_DEVEL/sage $SAGE_EXTCODE/sage $SAGE_ROOT/doc
-ln -sf %{python_sitearch} $SAGE_DEVEL/sage
+rm -fr $SAGE_SRC/sage $SAGE_EXTCODE/sage $SAGE_ROOT/doc $SAGE_SRC/doc
+rm -fr $SAGE_ROOT/share $SAGE_ROOT/devel
+ln -sf %{python_sitearch}/sage $SAGE_SRC/sage
 ln -sf %{python_sitearch} $SAGE_EXTCODE/sage
 ln -sf %{SAGE_DOC} $SAGE_ROOT/doc
-rm -fr %{buildroot}%{python_sitearch}/site-packages
+ln -sf %{SAGE_DOC} $SAGE_SRC/doc
+ln -sf %{SAGE_SHARE} $SAGE_ROOT/share
+# compat devel symlink
+ln -sf src $SAGE_ROOT/devel
 
 # Install menu and icons
 pushd spkg/build/extcode-%{version}
@@ -1017,89 +1077,154 @@ for file in `find %{buildroot} -name \*.py`; do
 	chmod +x $file
     fi
 done
+chmod -x %{buildroot}%{SAGE_DOC}/en/prep/media/Rplot001.png
 
 # Documentation is not rebuilt (also corrects rpmlint warning of hidden file)
 find %{buildroot}%{SAGE_DOC} -name .buildinfo -exec rm {} \;
+rm -fr %{buildroot}%{SAGE_DOC}/output/inventory
+find %{buildroot}%{SAGE_DOC} -type d -name _sources | xargs rm -fr
 
 rm %{buildroot}%{python_sitearch}/sagenb/data/mathjax/.gitignore \
    %{buildroot}%{python_sitearch}/sagenb/data/mathjax/docs/.gitignore
 
+# remove bundles fonts
+rm -r %{buildroot}%{python_sitearch}/sagenb/data/mathjax/fonts
+
+# remove .po files
+rm %{buildroot}%{python_sitearch}/sagenb/translations/*/LC_MESSAGES/*.po
+
+# remove zero length files
+rm %{buildroot}%{python_sitearch}/sage/server/notebook/compress/all.py* \
+   %{buildroot}%{python_sitearch}/sage/misc/test_cpickle_sage.py*
+
+%if !%{with_sage3d}
+rm -r %{buildroot}%{python_sitearch}/sagenb/data/sage3d
+%endif
+
 # last install command
 rm -fr $DOT_SAGE
 
-
 ########################################################################
+%pretrans
+# Temporary due to moving directory to symlink
+if [ ! -L %{SAGE_ROOT}/devel -a -d %{SAGE_ROOT}/devel ]; then
+    mkdir %{SAGE_SRC}
+    mv %{SAGE_ROOT}/devel/* %{SAGE_SRC}
+    rmdir %{SAGE_ROOT}/devel
+    ln -s src %{SAGE_ROOT}/devel
+fi
+
+# Use symlinks and a minor patch to the notebook to not bundle jmol
+%post		notebook
+ln -sf %{_javadir}/JmolApplet.jar %{python_sitearch}/sagenb/data/jmol/
+ln -sf %{_javadir}/vecmath.jar %{python_sitearch}/sagenb/data/jmol/
+exit 0
+
+%postun		notebook
+if [ $1 -eq 0 ] ; then
+    rm -f %{python_sitearch}/sagenb/data/jmol/JmolApplet.jar
+    rm -f %{python_sitearch}/sagenb/data/jmol/vecmath.jar
+    rmdir %{python_sitearch}/sagenb/data/jmol &&
+	rmdir %{python_sitearch}/sagenb/data &&
+	    rmdir %{python_sitearch}/sagenb
+fi
+exit 0
+
 %post		sagetex
 %{_bindir}/mktexlsr
+exit 0
 
 %postun		sagetex
-%{_bindir}/mktexlsr
+if [ $1 -eq 0 ] ; then
+    %{_bindir}/mktexlsr
+fi
+exit 0
 
 ########################################################################
 %files
+# GPLv2+
 %dir %{SAGE_ROOT}
 %doc %{SAGE_ROOT}/COPYING.txt
-%{SAGE_ROOT}/ipython
 %dir %{SAGE_LOCAL}
 %dir %{SAGE_LOCAL}/bin
-%{SAGE_LOCAL}/bin/ipy_profile_sage.py
-%{SAGE_LOCAL}/bin/ncadoctest.py
 %{SAGE_LOCAL}/bin/QuadraticSieve
+%{SAGE_LOCAL}/bin/ecm
 %{SAGE_LOCAL}/bin/gap_stamp
-%if %{with_sage_cython}
-%{SAGE_LOCAL}/bin/cython
-%{SAGE_LOCAL}/bin/cygdb
-%endif
 %{SAGE_LOCAL}/bin/sage*
 %{SAGE_LOCAL}/bin/testjava.sh
 %{SAGE_LOCAL}/include
 %{SAGE_LOCAL}/lib
 %{SAGE_LOCAL}/share
-%dir %{SAGE_DEVEL}
-%{SAGE_PYTHONPATH}
-%dir %{SAGE_SHARE}
+%{SAGE_ROOT}/doc
+%{SAGE_ROOT}/devel
+%{SAGE_ROOT}/share
+%dir %{SAGE_SRC}
+%{SAGE_SRC}/doc
+%{SAGE_SRC}/sage
+%dir %{SAGE_PYTHONPATH}
+%if %{with_sage_pexpect}
+# MIT
+%{SAGE_PYTHONPATH}/*.py*
+%endif
+# GPLv2+
 %{_bindir}/sage
 %{_datadir}/pixmaps/%{name}.png
 %{_datadir}/applications/%{name}.desktop
 
 #------------------------------------------------------------------------
 %files		core
-%{SAGE_DEVEL}/sage
-%{_libdir}/libcsage.so
+# GPLv2+
+%{_libdir}/libcsage.so.*
 %{python_sitearch}/sage
 %{python_sitearch}/sage-*.egg-info
 
 #------------------------------------------------------------------------
+%files		data
+%dir %{SAGE_SHARE}
+%{SAGE_EXTCODE}/sage
+
+#------------------------------------------------------------------------
 %files		data-conway_polynomials
+# GPLv2+
 %{SAGE_SHARE}/conway_polynomials
 
 #------------------------------------------------------------------------
-%files		data
-
-#------------------------------------------------------------------------
 %files		data-elliptic_curves
+# GPLv2+
 %{SAGE_SHARE}/cremona
 %{SAGE_SHARE}/ellcurves
 
 #------------------------------------------------------------------------
 %files		data-extcode
-%{SAGE_EXTCODE}
+# GPLv2+
+%dir %{SAGE_EXTCODE}
+%{SAGE_EXTCODE}/gap
+%{SAGE_EXTCODE}/images
+%{SAGE_EXTCODE}/magma
+%{SAGE_EXTCODE}/maxima
+%{SAGE_EXTCODE}/mwrank
+%{SAGE_EXTCODE}/pari
+%{SAGE_EXTCODE}/singular
 
 #------------------------------------------------------------------------
 %files		data-graphs
+# GPLv2+
 %{SAGE_SHARE}/graphs
 
 #------------------------------------------------------------------------
 %files		data-polytopes_db
+# GPL+
 %{SAGE_SHARE}/reflexive_polytopes
 
 #------------------------------------------------------------------------
 %files		devel
+# GPLv2+
 %{_includedir}/csage
+%{_libdir}/libcsage.so
 
 #------------------------------------------------------------------------
 %files		doc
-%{SAGE_ROOT}/doc
+# GPLv2+
 %dir %{SAGE_DOC}
 %{SAGE_DOC}/common
 %dir %{SAGE_DOC}/output
@@ -1107,123 +1232,116 @@ rm -fr $DOT_SAGE
 
 #------------------------------------------------------------------------
 %files		doc-de
+# GPLv2+
 %{SAGE_DOC}/de
 %{SAGE_DOC}/output/html/de
 
 #------------------------------------------------------------------------
 %files		doc-en
+# GPLv2+
 %{SAGE_DOC}/en
 %{SAGE_DOC}/output/html/en
 
 #------------------------------------------------------------------------
 %files		doc-fr
+# GPLv2+
 %{SAGE_DOC}/fr
 %{SAGE_DOC}/output/html/fr
 
 #------------------------------------------------------------------------
 %files		doc-pt
+# GPLv2+
 %{SAGE_DOC}/pt
 %{SAGE_DOC}/output/html/pt
 
 #------------------------------------------------------------------------
 %files		doc-ru
+# GPLv2+
 %{SAGE_DOC}/ru
 %{SAGE_DOC}/output/html/ru
 
 #------------------------------------------------------------------------
 %files		doc-tr
+# GPLv2+
 %{SAGE_DOC}/tr
 %{SAGE_DOC}/output/html/tr
 
 #------------------------------------------------------------------------
 %files		notebook
-%{SAGE_DEVEL}/sagenb
-%{python_sitearch}/sagenb
+# GPLv2+
+%{SAGE_SRC}/sagenb
+%dir %{python_sitearch}/sagenb
+%{python_sitearch}/sagenb/*.py*
 %{python_sitearch}/sagenb-*.egg-info
+%dir %{python_sitearch}/sagenb/data
+# BSD
+%{python_sitearch}/sagenb/data/codemirror
+# MIT
+%{python_sitearch}/sagenb/data/graph_editor
+# ASL 2.0
+%{python_sitearch}/sagenb/data/highlight
+# LGPLv2+
+%{python_sitearch}/sagenb/data/jmol
+# (MIT or GPLv2) and (MIT and BSD and GPL)
+%{python_sitearch}/sagenb/data/jquery
+# (MIT or GPLv2) and (MIT and BSD and GPL)
+%{python_sitearch}/sagenb/data/jqueryui
+# Public Domain
+%{python_sitearch}/sagenb/data/json
+# ASL 2.0
+%{python_sitearch}/sagenb/data/mathjax
+# BSD
+%{python_sitearch}/sagenb/data/openid-realselector
+# GPLv2+
+%{python_sitearch}/sagenb/data/sage
+%if %{with_sage3d}
+# GPLv2+
+%{python_sitearch}/sagenb/data/sage3d
+%endif
+# LGPLv2+
+%{python_sitearch}/sagenb/data/tiny_mce
+# LGPLv2+
+%{python_sitearch}/sagenb/data/zorn
+# GPLv2+
+%{python_sitearch}/sagenb/flask_version
+# GPLv2+
+%{python_sitearch}/sagenb/interfaces
+# GPLv2+
+%{python_sitearch}/sagenb/misc
+# GPLv2+
+%{python_sitearch}/sagenb/notebook
+# GPLv2+
+%{python_sitearch}/sagenb/simple
+# GPLv2+
+%{python_sitearch}/sagenb/storage
+# GPLv2+
+%dir %{python_sitearch}/sagenb/testing
+%{python_sitearch}/sagenb/testing/*.py*
+%{python_sitearch}/sagenb/testing/tests
+# ASL 2.0
+%{python_sitearch}/sagenb/testing/selenium
+# GPLv2+
+%dir %{python_sitearch}/sagenb/translations
+%lang(cs_CZ) %{python_sitearch}/sagenb/translations/cs_CZ
+%lang(de_AT) %{python_sitearch}/sagenb/translations/de_AT
+%lang(pt_BR) %{python_sitearch}/sagenb/translations/pt_BR
+%lang(ru_RU) %{python_sitearch}/sagenb/translations/ru_RU
 
 #------------------------------------------------------------------------
 %files		rubiks
+# GPL+
 %{SAGE_LOCAL}/bin/optimal
-%{SAGE_LOCAL}/bin/cubex
-%{SAGE_LOCAL}/bin/mcube
-%{SAGE_LOCAL}/bin/cu2
+# MIT
 %{SAGE_LOCAL}/bin/dikcube
 %{SAGE_LOCAL}/bin/size222
+# GPL+
+%{SAGE_LOCAL}/bin/cu2
+%{SAGE_LOCAL}/bin/cubex
+%{SAGE_LOCAL}/bin/mcube
 
 #------------------------------------------------------------------------
 %files		sagetex
+# GPLv2+
 %{python_sitearch}/sagetex*
 %{_datadir}/texmf/tex/generic/sagetex
 %doc %{_docdir}/%{sagetex_pkg}
-
-########################################################################
-%changelog
-* Fri Feb 15 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-3
-- Do not try to prevent shared objects provides.
-
-* Thu Feb 14 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-2
-- Try to workaround limitations in imposed buggy rpm internal depsolver.
-
-* Fri Jan 25 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.6-1
-- Update to sagemath 5.6.
-- Remove no longer required patch to build with system cython.
-
-* Fri Jan 18 2013 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.5-1
-- Update to sagemath 5.5.
-
-* Thu Dec 13 2012 <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4.1-1
-- Update to sagemath 5.4.1.
-
-* Tue Nov 20 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4-2
-- Do not install alternate cygdb in %%_bindir
-- Create the sagemath-core subpackage
-- Create the sagemath-doc subpackage
-- Create the sagemath-doc-en subpackage
-- Create the sagemath-doc-de subpackage
-- Create the sagemath-doc-fr subpackage
-- Create the sagemath-doc-pt subpackage
-- Create the sagemath-doc-ru subpackage
-- Create the sagemath-doc-tr subpackage
-- Create the sagemath-data metapackage
-- Create the sagemath-data-conway_polynomials subpackage
-- Create the sagemath-data-elliptic_curves subpackage
-- Create the sagemath-data-extcode subpackage
-- Do not install pickle_jar extcode contents
-- Do not install notebook extcode contents
-- Create the sagemath-data-graphs subpackage
-- Create the sagemath-data-polytopes_db subpackage
-- Create the sagemath-notebook subpackage
-- Create the sagemath-rubiks subpackage
-- Create the sagemath-sagetex subpackage
-
-* Mon Nov 12 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4-1
-- Update to sagemath 5.4.
-- Build with system networkx.
-- Install only one fallback icon.
-- Prevent rpm from providing private shared object.
-- Change base directory to %%{_libdir} to avoid rpmlint errors.
-- Correct permissions of installed shared objects.
-- Rename most patches to use sagemath prefix as "suggested" by fedora-review.
-- Remove bundled jar files before %%build.
-- Make cube solvers build optional and disabled by default.
-- Add option to run "sage -testall" during package build.
-
-* Sat Nov 10 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4.beta1-4
-- Add patch to make jmol export image functional
-- Update pari patch to use proper path to gprc.expect
-- Force usage of firefox in notebook (known to work are firefox and chromium)
-
-* Tue Nov  6 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.4.beta1-1
-- Update to sagemath 5.4.beta1
-- Add Portuguese translations of Tutorial and A Tour of Sage
-- Removed already applied upstream linbox upgrade patch
-- Removed already applied upstream givaro upgrade patch
-- Removed already applied upstream singular upgrade patch
-- Install rubiks spkg binaries
-- Use system genus2reduction
-
-* Sat Aug 4 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.2-1
-- Update to sagemath 5.2.
-
-* Sun Jul 1 2012 pcpa <paulo.cesar.pereira.de.andrade@gmail.com> - 5.0.1-1
-- Initial sagemath spec.

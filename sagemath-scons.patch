@@ -1,0 +1,39 @@
+diff -up sage-5.9/spkg/build/sage-5.9/c_lib/SConstruct.orig sage-5.9/spkg/build/sage-5.9/c_lib/SConstruct
+--- sage-5.9/spkg/build/sage-5.9/c_lib/SConstruct.orig	2013-02-23 12:55:48.382841120 -0300
++++ sage-5.9/spkg/build/sage-5.9/c_lib/SConstruct	2013-02-23 12:56:25.037842523 -0300
+@@ -126,18 +126,31 @@ env['PYV']=platform.python_version().rsp
+ # The SCons convenience function Split is the only strange thing 
+ # to python programmers. It just makes a list by splitting on 
+ # whitespace without the syntax clutter of lists of strings.
+-includes = ['$SAGE_LOCAL/include/', '$SAGE_LOCAL/include/python$PYV/',
+-            '$SAGE_LOCAL/include/NTL/', 'include']
++includes = ['@@includedir@@', '@@includedir@@/python$PYV/',
++            '@@includedir@@/NTL/', 'include']
+ cFiles = Split( "convert.c  interrupt.c  memory.c  mpn_pylong.c  mpz_pylong.c") + \
+          Split( "mpz_longlong.c stdsage.c  gmp_globals.c" )
+ cppFiles = Split( "ZZ_pylong.cpp  ntl_wrap.cpp" )
+ srcFiles = cFiles + cppFiles
+ 
++env.Append(CFLAGS='@@optflags@@')
++env.Append(CXXFLAGS='@@optflags@@')
++env.Append(LINKFLAGS='@@ldflags@@')
++
++libname = "libcsage"
++major = "0"
++shlib_suffix = '.so.' + major
++shlink_flags = [ '-shared', '-fPIC' ]
++soname = libname + shlib_suffix
++shlink_flags += [ '-Wl,-Bsymbolic', '-Wl,-soname=%s' % soname ]
++
+ lib = env.SharedLibrary( "csage", [ "src/" + x for x in srcFiles ],
+                          LIBS=['ntl', 'pari', 'gmp', 'python$PYV'], 
+-                         LIBPATH=['$SAGE_LOCAL/lib','$SAGE_LOCAL/lib/python$PYV/config/'],
++                         LIBPATH=['@@libdir@@','@@libdir@@/python$PYV/config/'],
++                         SHLIBSUFFIX=shlib_suffix,
++                         SHLINKFLAGS=shlink_flags,
+                          CPPPATH=includes )
+-env.Install("$SAGE_LOCAL/lib", lib)
++env.Install("@@libdir@@", lib)
+ 
+ #Here we only copy the files over if we are on Cygwin.  Otherwise, the
+ #library will be handled by the symlinks created in

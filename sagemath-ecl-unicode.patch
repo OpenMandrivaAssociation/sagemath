@@ -1,6 +1,6 @@
-diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pxd.orig sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pxd
---- sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pxd.orig	2012-07-10 13:52:08.348883750 -0400
-+++ sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pxd	2012-07-10 13:52:28.810884452 -0400
+diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pxd.orig sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pxd
+--- sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pxd.orig	2013-03-19 16:11:17.358705144 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pxd	2013-03-19 16:11:27.719705541 -0300
 @@ -133,6 +133,7 @@ cdef extern from "ecl/ecl.h":
      cl_object ecl_read_from_cstring_safe(char *s, cl_object err)
      cl_object cl_write_to_string(cl_narg narg, cl_object o) 
@@ -9,12 +9,12 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pxd.orig sage-5.6/spkg/build
      
      # S-expr evaluation and function calls
      
-diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx.orig sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx
---- sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx.orig	2012-07-10 13:52:37.365884807 -0400
-+++ sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx	2012-07-10 13:57:57.867897111 -0400
-@@ -249,17 +249,19 @@ cdef cl_object ecl_safe_eval(cl_object f
+diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pyx.orig sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pyx
+--- sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pyx.orig	2013-03-19 16:11:07.489704766 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/libs/ecl.pyx	2013-03-19 16:11:27.719705541 -0300
+@@ -238,17 +238,19 @@ cdef cl_object ecl_safe_eval(cl_object f
          ...
-         RuntimeError: ECL says: Console interrupt
+         RuntimeError: ECL says: Console interrupt.
      """
 +    cdef cl_object s
      ecl_sig_on()
@@ -34,7 +34,7 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx.orig sage-5.6/spkg/build
      l = cl_cons(func,cl_cons(arg,Cnil));
  
      ecl_sig_on()
-@@ -267,17 +269,20 @@ cdef cl_object ecl_safe_funcall(cl_objec
+@@ -256,17 +258,20 @@ cdef cl_object ecl_safe_funcall(cl_objec
      ecl_sig_off()
  
      if ecl_nvalues > 1:
@@ -57,7 +57,7 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx.orig sage-5.6/spkg/build
      else:
          return ecl_values(0)
  
-@@ -327,10 +332,11 @@ def print_objects():
+@@ -316,10 +321,11 @@ def print_objects():
          HELLO
      """
      
@@ -71,7 +71,7 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx.orig sage-5.6/spkg/build
          c=cl_cadr(c)
          if c == Cnil:
              break
-@@ -405,6 +411,7 @@ cdef cl_object python_to_ecl(pyobj) exce
+@@ -394,6 +400,7 @@ cdef cl_object python_to_ecl(pyobj) exce
          raise TypeError,"Unimplemented type for python_to_ecl"
  
  cdef ecl_to_python(cl_object o):
@@ -79,7 +79,7 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx.orig sage-5.6/spkg/build
      cdef Integer N
      # conversions from an ecl object to a python object.
  
-@@ -439,7 +446,8 @@ cdef ecl_to_python(cl_object o):
+@@ -428,7 +435,8 @@ cdef ecl_to_python(cl_object o):
                  return tuple(L)
          return L
      else:
@@ -89,7 +89,7 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/libs/ecl.pyx.orig sage-5.6/spkg/build
  
  #Maxima's BFLOAT multiprecision float type can be read with:
  #def bfloat_to_python(e):
-@@ -655,7 +663,7 @@ cdef class EclObject:
+@@ -644,7 +652,7 @@ cdef class EclObject:
  
          """
          cdef cl_object s

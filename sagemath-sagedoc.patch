@@ -1,42 +1,86 @@
-diff -up sage-5.6/spkg/build/sage-5.6/doc/common/builder.py.orig sage-5.6/spkg/build/sage-5.6/doc/common/builder.py
---- sage-5.6/spkg/build/sage-5.6/doc/common/builder.py.orig	2012-12-29 14:31:14.033053854 -0200
-+++ sage-5.6/spkg/build/sage-5.6/doc/common/builder.py	2012-12-29 14:31:16.846053962 -0200
-@@ -12,7 +12,7 @@ from sage.misc.cachefunc import cached_m
- from sage.misc.misc import sage_makedirs as mkdir
+diff -up sage-5.9/spkg/build/sage-5.9/doc/common/builder.py.orig sage-5.9/spkg/build/sage-5.9/doc/common/builder.py
+--- sage-5.9/spkg/build/sage-5.9/doc/common/builder.py.orig	2013-05-07 18:11:12.277264082 -0300
++++ sage-5.9/spkg/build/sage-5.9/doc/common/builder.py	2013-05-07 18:11:15.785264216 -0300
+@@ -32,7 +32,7 @@ from sage.env import SAGE_DOC, SAGE_SRC
+ #     SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT,
+ #     PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS
+ # from build_options.py.
+-execfile(os.path.join(SAGE_DOC, 'common' , 'build_options.py'))
++execfile(os.path.join(os.getenv('SAGE_ROOT'), 'src', 'doc', 'common' , 'build_options.py'))
  
- # Read options
--execfile(os.path.join(os.getenv('SAGE_ROOT'), 'devel', 'sage', 'doc', 'common' , 'build_options.py'))
-+execfile(os.path.join(os.getenv('SAGE_ROOT'), 'devel', 'doc', 'common' , 'build_options.py'))
  
  ##########################################
- #          Utility Functions             #
-diff -up sage-5.6/spkg/build/sage-5.6/doc/common/conf.py.orig sage-5.6/spkg/build/sage-5.6/doc/common/conf.py
---- sage-5.6/spkg/build/sage-5.6/doc/common/conf.py.orig	2012-12-29 14:30:47.254052829 -0200
-+++ sage-5.6/spkg/build/sage-5.6/doc/common/conf.py	2012-12-29 14:31:16.850053962 -0200
-@@ -1,7 +1,7 @@
+diff -up sage-5.9/spkg/build/sage-5.9/doc/common/conf.py.orig sage-5.9/spkg/build/sage-5.9/doc/common/conf.py
+--- sage-5.9/spkg/build/sage-5.9/doc/common/conf.py.orig	2013-05-07 18:11:12.286264082 -0300
++++ sage-5.9/spkg/build/sage-5.9/doc/common/conf.py	2013-05-07 18:11:15.788264216 -0300
+@@ -1,5 +1,5 @@
  import sys, os, sphinx
- 
--SAGE_ROOT = os.environ['SAGE_ROOT']
--SAGE_DOC = os.path.join(SAGE_ROOT, 'devel/sage/doc')
-+SAGE_DEVEL = os.environ['SAGE_DEVEL']
-+SAGE_DOC = os.environ['SAGE_DOC']
+-from sage.env import SAGE_DOC
++from sage.env import SAGE_DOC, SAGE_SRC
  
  def get_doc_abspath(path):
      """
-@@ -180,8 +180,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', '
+@@ -202,8 +202,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', '
      from sage.misc.latex_macros import sage_mathjax_macros
-     html_theme_options['mathjax_macros'] = sage_mathjax_macros
+     html_theme_options['mathjax_macros'] = sage_mathjax_macros()
  
 -    from pkg_resources import Requirement, working_set
 -    sagenb_path = working_set.find(Requirement.parse('sagenb')).location
-+    sagenb_path = SAGE_DEVEL
++    sagenb_path = SAGE_SRC
      mathjax_relative = os.path.join('sagenb','data','mathjax')
  
      # It would be really nice if sphinx would copy the entire mathjax directory,
-diff -up sage-5.6/spkg/build/sage-5.6/sage/interfaces/singular.py.orig sage-5.6/spkg/build/sage-5.6/sage/interfaces/singular.py
---- sage-5.6/spkg/build/sage-5.6/sage/interfaces/singular.py.orig	2012-12-29 14:31:14.088053856 -0200
-+++ sage-5.6/spkg/build/sage-5.6/sage/interfaces/singular.py	2012-12-29 14:31:16.856053962 -0200
-@@ -2139,7 +2139,7 @@ def generate_docstring_dictionary():
+diff -up sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py
+--- sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig	2013-05-07 18:11:29.325264735 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py	2013-05-07 18:12:09.794266284 -0300
+@@ -88,7 +88,6 @@ class DocTestDefaults(SageObject):
+         self.valgrind = False
+         self.massif = False
+         self.cachegrind = False
+-        self.omega = False
+         self.failed = False
+         self.new = False
+         self.show_skipped = False
+@@ -161,7 +160,7 @@ class DocTestController(SageObject):
+             if options.gdb or options.debug:
+                 # Interactive debuggers: "infinite" timeout
+                 options.timeout = 0
+-            elif options.valgrind or options.massif or options.cachegrind or options.omega:
++            elif options.valgrind or options.massif or options.cachegrind:
+                 # Non-interactive debuggers: 48 hours
+                 options.timeout = int(os.getenv('SAGE_TIMEOUT_VALGRIND', 48 * 60 * 60))
+             elif options.long:
+@@ -766,13 +765,8 @@ class DocTestController(SageObject):
+             elif opt.cachegrind:
+                 toolname = "cachegrind"
+                 flags = os.getenv("SAGE_CACHEGRIND_FLAGS", "")
+-            elif opt.omega:
+-                toolname = "exp-omega"
+-                flags = os.getenv("SAGE_OMEGA_FLAGS", "")
+             cmd = "exec valgrind --tool=%s "%(toolname)
+             flags += ''' --log-file="%s" ''' % logfile
+-            if opt.omega:
+-                toolname = "omega"
+             if "%s" in flags:
+                 flags %= toolname + ".%p" # replace %s with toolname
+         cmd += flags + sage_cmd
+@@ -832,10 +826,10 @@ class DocTestController(SageObject):
+             0
+         """
+         opt = self.options
+-        L = (opt.gdb, opt.valgrind, opt.massif, opt.cachegrind, opt.omega)
++        L = (opt.gdb, opt.valgrind, opt.massif, opt.cachegrind)
+         if any(L):
+             if L.count(True) > 1:
+-                self.log("You may only specify one of gdb, valgrind/memcheck, massif, cachegrind, omega")
++                self.log("You may only specify one of gdb, valgrind/memcheck, massif, cachegrind")
+                 return 2
+             return self.run_val_gdb()
+         else:
+diff -up sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py.orig sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py
+--- sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py.orig	2013-05-07 18:11:12.296264082 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py	2013-05-07 18:11:15.792264216 -0300
+@@ -2149,7 +2149,7 @@ def generate_docstring_dictionary():
      nodes.clear()
      node_names.clear()
  
@@ -45,9 +89,9 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/interfaces/singular.py.orig sage-5.6/
  
      new_node = re.compile("File: singular\.hlp,  Node: ([^,]*),.*")
      new_lookup = re.compile("\* ([^:]*):*([^.]*)\..*")
-diff -up sage-5.6/spkg/build/sage-5.6/sage/misc/latex_macros.py.orig sage-5.6/spkg/build/sage-5.6/sage/misc/latex_macros.py
---- sage-5.6/spkg/build/sage-5.6/sage/misc/latex_macros.py.orig	2012-12-29 14:31:14.060053855 -0200
-+++ sage-5.6/spkg/build/sage-5.6/sage/misc/latex_macros.py	2012-12-29 14:31:16.852053962 -0200
+diff -up sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py.orig sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py
+--- sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py.orig	2013-05-07 18:11:12.303264083 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py	2013-05-07 18:11:15.793264216 -0300
 @@ -142,7 +142,7 @@ def convert_latex_macro_to_mathjax(macro
          return name + ': ["' + defn + '",' + str(num_args) + ']'
  
@@ -57,24 +101,3 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/misc/latex_macros.py.orig sage-5.6/sp
  
  # To add a new macro for use in the Sage documentation, add a list or
  # tuple to the following list.  Each list (or tuple) should have the
-diff -up sage-5.6/spkg/build/sage-5.6/sage/misc/sagedoc.py.orig sage-5.6/spkg/build/sage-5.6/sage/misc/sagedoc.py
---- sage-5.6/spkg/build/sage-5.6/sage/misc/sagedoc.py.orig	2012-12-29 14:31:14.073053856 -0200
-+++ sage-5.6/spkg/build/sage-5.6/sage/misc/sagedoc.py	2012-12-29 14:31:16.854053962 -0200
-@@ -701,13 +701,13 @@ def _search_src_or_doc(what, string, ext
-         module = ''
-         exts = ['html']
-         title = 'Documentation'
--        base_path = os.path.join('devel', 'sage', 'doc', 'output')
--        doc_path = os.path.join(ROOT, 'devel', 'sage', 'doc')
-+        base_path = os.path.join('devel', 'output')
-+        doc_path = os.path.join(ROOT, 'devel', 'doc')
- 
--        # We need to import stuff from SAGE_ROOT/devel/sage/doc/common
-+        # We need to import stuff from SAGE_ROOT/devel/doc/common
-         # To do this, we temporarily change sys.path
-         oldpath = sys.path
--        sys.path = oldpath + [os.path.join(ROOT, 'devel', 'sage', 'doc', 'common')]
-+        sys.path = oldpath + [os.path.join(ROOT, 'devel', 'doc', 'common')]
-         import build_options as builder
-         # List of languages
-         lang = builder.LANGUAGES

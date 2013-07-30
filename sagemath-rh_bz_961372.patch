@@ -1,0 +1,14 @@
+diff -up sage-5.9/spkg/build/sage-5.9/sage/ext/cdefs.pxi.orig sage-5.9/spkg/build/sage-5.9/sage/ext/cdefs.pxi
+--- sage-5.9/spkg/build/sage-5.9/sage/ext/cdefs.pxi.orig	2013-04-25 10:00:51.000000000 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/ext/cdefs.pxi	2013-05-11 11:30:58.472438774 -0300
+@@ -7,6 +7,9 @@ include "python.pxi"
+ from libc.stdio cimport *
+ from libc.string cimport strlen, strcpy, memset, memcpy
+ 
+-from libc.math cimport sqrt, frexp, ldexp
++cdef extern from "math.h":
++    cdef double sqrt "sqrt" (double)
++    cdef double frexp "frexp" (double, int*)
++    cdef double ldexp "ldexp" (double, int)
+ 
+ from sage.libs.gmp.all cimport *

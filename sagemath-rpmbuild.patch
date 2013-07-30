@@ -1,11 +1,19 @@
-diff -up sage-5.6/spkg/build/sage-5.6/module_list.py.orig sage-5.6/spkg/build/sage-5.6/module_list.py
---- sage-5.6/spkg/build/sage-5.6/module_list.py.orig	2013-01-25 21:22:07.482037054 -0200
-+++ sage-5.6/spkg/build/sage-5.6/module_list.py	2013-01-25 21:23:22.417039923 -0200
-@@ -47,11 +47,11 @@ else:
+diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sage-5.9/module_list.py
+--- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-05-06 16:21:08.750095783 -0300
++++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-05-06 16:22:01.411097799 -0300
+@@ -5,7 +5,7 @@ from distutils.core import setup
+ from distutils.extension import Extension
+ from sage.env import *
+ 
+-SAGE_INC = os.path.join(SAGE_LOCAL, 'include')
++SAGE_INC = '/usr/include'
+ 
  #########################################################
+ ### BLAS setup
+@@ -36,10 +36,11 @@ else:
  ### Commonly used definitions
  #########################################################
--
+ 
 -numpy_include_dirs = [SAGE_LOCAL + '/lib/python/site-packages/numpy/core/include']
 +from distutils.sysconfig import get_python_lib
 +numpy_include_dirs = [get_python_lib(1) + '/numpy/core/include']
@@ -14,41 +22,29 @@ diff -up sage-5.6/spkg/build/sage-5.6/module_list.py.orig sage-5.6/spkg/build/sa
 -numpy_depends = [SAGE_LOCAL + '/lib/python/site-packages/numpy/core/include/numpy/_numpyconfig.h']
 +numpy_depends = [get_python_lib(1) + '/numpy/core/include/numpy/_numpyconfig.h']
  
- flint_depends = [SAGE_INC + 'FLINT/flint.h']
- singular_depends = [SAGE_INC + 'libsingular.h', SAGE_INC + 'givaro/givconfig.h']
-@@ -1713,7 +1713,7 @@ ext_modules = [
+ flint_depends = [SAGE_INC + '/FLINT/flint.h']
+ singular_depends = [SAGE_INC + '/libsingular.h', SAGE_INC + '/givaro/givconfig.h']
+@@ -71,7 +72,7 @@ givaro_extra_compile_args =['-D__STDC_LI
+ ### PolyBoRi settings
+ #########################################################
  
-     Extension('sage.rings.polynomial.pbori',
-               sources = ['sage/rings/polynomial/pbori.pyx'],
--              libraries=['polybori', 'polybori_groebner', 'gd', 'png12', 'm4ri'],
-+              libraries=['polybori', 'polybori_groebner', 'cudd', 'gd', 'png12', 'm4ri'],
-               include_dirs = [SAGE_INC, "sage/libs/polybori"],
-               depends = [SAGE_INC + "polybori/" + hd + ".h" for hd in ["polybori", "config"] ] + \
-                         [SAGE_INC + 'm4ri/m4ri.h'],
-diff -up sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx.orig sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx
---- sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx.orig	2013-01-25 21:23:35.816040436 -0200
-+++ sage-5.6/spkg/build/sage-5.6/sage/combinat/degree_sequences.pyx	2013-01-25 21:23:59.160041330 -0200
-@@ -262,7 +262,7 @@ Checking the consistency of enumeration
- from sage.libs.gmp.all cimport mpz_t
- from sage.libs.gmp.all cimport *
- from sage.rings.integer cimport Integer
--include '../../../../devel/sage/sage/ext/stdsage.pxi'
-+include '../ext/stdsage.pxi'
- include '../ext/cdefs.pxi'
- include "../ext/interrupt.pxi"
- 
-diff -up sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd.orig sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd
---- sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd.orig	2013-01-25 21:24:11.084041787 -0200
-+++ sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd	2013-01-25 21:24:35.047042705 -0200
-@@ -6,7 +6,7 @@
- ##############################################################################
- 
- from generic_backend cimport GenericBackend
--include '../../../../../devel/sage/sage/ext/stdsage.pxi'
-+include '../../ext/stdsage.pxi'
+-polybori_extra_compile_args = []
++polybori_extra_compile_args = ['-DPBORI_USE_ORIGINAL_CUDD']
+ polybori_major_version = '0.8'
  
  
- cdef extern from *:
+@@ -662,7 +663,7 @@ ext_modules = [
+               sources = ['sage/libs/lcalc/lcalc_Lfunction.pyx'],
+               libraries = ['m', 'ntl', 'mpfr', 'gmp', 'gmpxx',
+                            'Lfunction', 'stdc++'],
+-              include_dirs = [SAGE_INC + "/libLfunction"],
++              include_dirs = [SAGE_INC + "/Lfunction"],
+               extra_compile_args=["-O3", "-ffast-math"],
+               language = 'c++'),
+      
+diff -up sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd.orig sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd
+--- sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd.orig	2013-05-06 16:21:08.763095783 -0300
++++ sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd	2013-05-06 16:21:12.815095939 -0300
 @@ -16,7 +16,7 @@ cdef extern from *:
  cdef extern from "float.h":
      cdef double DBL_MAX
@@ -58,25 +54,17 @@ diff -up sage-5.6/spkg/build/sage-5.6/sage/numerical/backends/glpk_backend.pxd.o
       ctypedef struct c_glp_prob "glp_prob":
           pass
       ctypedef struct c_glp_iocp "glp_iocp":
-diff -up sage-5.6/spkg/build/sage-5.6/setup.py.orig sage-5.6/spkg/build/sage-5.6/setup.py
---- sage-5.6/spkg/build/sage-5.6/setup.py.orig	2013-01-25 21:24:44.059043050 -0200
-+++ sage-5.6/spkg/build/sage-5.6/setup.py	2013-01-25 21:28:28.695051652 -0200
-@@ -37,6 +37,11 @@ else:
-     SAGE_DEVEL = SAGE_ROOT + '/devel'
-     SAGE_INC   = SAGE_LOCAL + '/include/'
+diff -up sage-5.9/spkg/build/sage-5.9/setup.py.orig sage-5.9/spkg/build/sage-5.9/setup.py
+--- sage-5.9/spkg/build/sage-5.9/setup.py.orig	2013-05-06 16:21:08.770095784 -0300
++++ sage-5.9/spkg/build/sage-5.9/setup.py	2013-05-06 16:21:12.817095939 -0300
+@@ -38,21 +38,11 @@ except KeyError:
  
-+if os.environ.has_key('DESTDIR'):
-+    DESTDIR = os.environ['DESTDIR']
-+else:
-+    DESTDIR = ''
-+
- if not os.environ.has_key('SAGE_VERSION'):
-     SAGE_VERSION=0
- else:
-@@ -53,17 +58,9 @@ SITE_PACKAGES = '%s/lib/python%s/site-pa
- if not os.path.exists(SITE_PACKAGES):
-     raise RuntimeError, "Unable to find site-packages directory (see setup.py file in sage python code)."
+ SAGE_INC = os.path.join(SAGE_LOCAL,'include')
  
+-SITE_PACKAGES = '%s/lib/python%s/site-packages/'%(SAGE_LOCAL,platform.python_version().rsplit('.', 1)[0])
+-if not os.path.exists(SITE_PACKAGES):
+-    raise RuntimeError, "Unable to find site-packages directory (see setup.py file in sage python code)."
+-
 -if not os.path.exists('build/sage'):
 -    os.makedirs('build/sage')
 -
@@ -84,15 +72,16 @@ diff -up sage-5.6/spkg/build/sage-5.6/setup.py.orig sage-5.6/spkg/build/sage-5.6
 -if not os.path.islink(sage_link) or not os.path.exists(sage_link):
 -    os.system('rm -rf "%s"'%sage_link)
 -    os.system('cd %s; ln -sf ../../../../devel/sage/build/sage .'%SITE_PACKAGES)
--
++SITE_PACKAGES = '%s/lib/python%s/site-packages'%(SAGE_LOCAL,platform.python_version().rsplit('.', 1)[0])
+ 
  # search for dependencies and add to gcc -I<path>
- include_dirs = ['%s/include'%SAGE_LOCAL,
--                '%s/include/csage'%SAGE_LOCAL,
+ include_dirs = [SAGE_INC,
+-                os.path.join(SAGE_INC, 'csage'),
 +                'c_lib/include',
-                 '%s/sage/sage/ext'%SAGE_DEVEL]
+                 os.path.join(SAGE_SRC, 'sage', 'ext')]
  
  # search for dependencies only
-@@ -173,11 +170,11 @@ for m in ext_modules:
+@@ -170,11 +160,11 @@ for m in ext_modules:
  
      # FIMXE: Do NOT link the following libraries to each and
      #        every module (regardless of the language btw.):
@@ -106,66 +95,20 @@ diff -up sage-5.6/spkg/build/sage-5.6/setup.py.orig sage-5.6/spkg/build/sage-5.6
  
  
  
-@@ -507,8 +504,8 @@ class sage_build_ext(build_ext):
- #############################################
+diff -up sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install
+--- sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig	2013-05-06 17:47:06.493293291 -0300
++++ sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install	2013-05-06 17:48:27.883296408 -0300
+@@ -2,9 +2,11 @@
  
- CYTHON_INCLUDE_DIRS=[
--    SAGE_LOCAL + '/lib/python/site-packages/Cython/Includes/',
--    SAGE_LOCAL + '/lib/python/site-packages/Cython/Includes/Deprecated/',
-+    SAGE_LOCAL + '/lib/python2.7/site-packages/Cython/Includes/',
-+    SAGE_LOCAL + '/lib/python2.7/site-packages/Cython/Includes/Deprecated/',
- ]
+ import os
+ from sage.all import save
+-from sage.misc.misc import SAGE_SHARE
  
- # matches any dependency
-@@ -534,7 +531,7 @@ class DependencyTree:
-         self._timestamps = {}
-         self._deps = {}
-         self._deps_all = {}
--        self.root = "%s/devel/sage/" % SAGE_ROOT
-+        self.root = "%s/devel/sage" % SAGE_ROOT
- 
-     def __getstate__(self):
-         """
-@@ -555,7 +552,7 @@ class DependencyTree:
-         self.__dict__.update(state)
-         self._timestamps = {}
-         self._deps_all = {}
--        self.root = "%s/devel/sage/" % SAGE_ROOT
-+        self.root = "%s/devel/sage" % SAGE_ROOT
- 
-     def timestamp(self, filename):
-         """
-@@ -642,11 +639,8 @@ class DependencyTree:
-                 # so we really couldn't find the dependency -- raise
-                 # an exception. 
-                 if not found_include:
--                    msg = 'could not find dependency %s included in %s.'%(path, filename)
--                    if is_cython_file(path):
--                        raise IOError, msg
--                    else:
--                        warnings.warn(msg+' I will assume it is a system C/C++ header.')
-+                    if path[-2:] != '.h' and path[-4:] != '.hpp' and path[-4:] != '.pxd':  # there are implicit headers from distutils, etc
-+                        raise IOError, "could not find dependency %s included in %s."%(path, filename)
-         f.close()
-         return list(deps)
- 
-@@ -738,6 +732,10 @@ def compile_command0(p):
-             outfile += ".c"
-             cplus = ''
- 
-+        # speed up if doing an incremental builds
-+        if os.path.exists(outfile) and os.path.getmtime(outfile) > os.path.getmtime(f):
-+            return 0
+-install_root = os.path.join(SAGE_SHARE, 'conway_polynomials')
++if 'SAGE_SHARE' not in os.environ:
++    raise RuntimeError("SAGE_SHARE undefined, maybe run `sage -sh`?")
 +
-         if os.environ.get('SAGE_DEBUG', None)=='no':
-             debug = ''
-         else:
-@@ -750,7 +748,7 @@ def compile_command0(p):
-             return r
++install_root = os.path.join(os.environ['SAGE_SHARE'], 'conway_polynomials')
  
-         # if cython worked, copy the file to the build directory
--        pyx_inst_file = '%s/%s'%(SITE_PACKAGES, f)
-+        pyx_inst_file = '%s%s/%s'%(DESTDIR, SITE_PACKAGES, f)
-         retval = os.system('cp %s %s 2>/dev/null'%(f, pyx_inst_file))
-         # we could do this more elegantly -- load the files, use
-         # os.path.exists to check that they exist, etc. ... but the
+ def create_db():
+     db = {}
