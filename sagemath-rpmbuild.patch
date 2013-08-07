@@ -1,6 +1,22 @@
-diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sage-5.9/module_list.py
---- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-05-06 16:21:08.750095783 -0300
-+++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-05-06 16:22:01.411097799 -0300
+diff -up sage-5.10/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig sage-5.10/spkg/build/conway_polynomials-0.4.p0/spkg-install
+--- sage-5.10/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig	2013-07-29 19:43:09.049027449 -0300
++++ sage-5.10/spkg/build/conway_polynomials-0.4.p0/spkg-install	2013-07-29 19:43:39.434028612 -0300
+@@ -2,9 +2,10 @@
+ 
+ import os
+ from sage.all import save
+-from sage.misc.misc import SAGE_SHARE
++if 'SAGE_SHARE' not in os.environ:
++    raise RuntimeError("SAGE_SHARE undefined, maybe run `sage -sh`?")
+ 
+-install_root = os.path.join(SAGE_SHARE, 'conway_polynomials')
++install_root = os.path.join(os.environ['SAGE_SHARE'], 'conway_polynomials')
+ 
+ def create_db():
+     db = {}
+diff -up sage-5.10/spkg/build/sage-5.10/module_list.py.orig sage-5.10/spkg/build/sage-5.10/module_list.py
+--- sage-5.10/spkg/build/sage-5.10/module_list.py.orig	2013-07-29 19:43:09.023027448 -0300
++++ sage-5.10/spkg/build/sage-5.10/module_list.py	2013-07-29 19:44:52.051031393 -0300
 @@ -5,7 +5,7 @@ from distutils.core import setup
  from distutils.extension import Extension
  from sage.env import *
@@ -22,7 +38,7 @@ diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sa
 -numpy_depends = [SAGE_LOCAL + '/lib/python/site-packages/numpy/core/include/numpy/_numpyconfig.h']
 +numpy_depends = [get_python_lib(1) + '/numpy/core/include/numpy/_numpyconfig.h']
  
- flint_depends = [SAGE_INC + '/FLINT/flint.h']
+ flint_depends = [SAGE_INC + '/flint/flint.h']
  singular_depends = [SAGE_INC + '/libsingular.h', SAGE_INC + '/givaro/givconfig.h']
 @@ -71,7 +72,7 @@ givaro_extra_compile_args =['-D__STDC_LI
  ### PolyBoRi settings
@@ -33,7 +49,7 @@ diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sa
  polybori_major_version = '0.8'
  
  
-@@ -662,7 +663,7 @@ ext_modules = [
+@@ -653,7 +654,7 @@ ext_modules = [
                sources = ['sage/libs/lcalc/lcalc_Lfunction.pyx'],
                libraries = ['m', 'ntl', 'mpfr', 'gmp', 'gmpxx',
                             'Lfunction', 'stdc++'],
@@ -42,21 +58,9 @@ diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sa
                extra_compile_args=["-O3", "-ffast-math"],
                language = 'c++'),
       
-diff -up sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd.orig sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd
---- sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd.orig	2013-05-06 16:21:08.763095783 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/numerical/backends/glpk_backend.pxd	2013-05-06 16:21:12.815095939 -0300
-@@ -16,7 +16,7 @@ cdef extern from *:
- cdef extern from "float.h":
-     cdef double DBL_MAX
- 
--cdef extern from "../../../local/include/glpk.h":
-+cdef extern from "glpk.h":
-      ctypedef struct c_glp_prob "glp_prob":
-          pass
-      ctypedef struct c_glp_iocp "glp_iocp":
-diff -up sage-5.9/spkg/build/sage-5.9/setup.py.orig sage-5.9/spkg/build/sage-5.9/setup.py
---- sage-5.9/spkg/build/sage-5.9/setup.py.orig	2013-05-06 16:21:08.770095784 -0300
-+++ sage-5.9/spkg/build/sage-5.9/setup.py	2013-05-06 16:21:12.817095939 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/setup.py.orig sage-5.10/spkg/build/sage-5.10/setup.py
+--- sage-5.10/spkg/build/sage-5.10/setup.py.orig	2013-07-29 19:43:09.041027448 -0300
++++ sage-5.10/spkg/build/sage-5.10/setup.py	2013-07-29 19:48:14.195039134 -0300
 @@ -38,21 +38,11 @@ except KeyError:
  
  SAGE_INC = os.path.join(SAGE_LOCAL,'include')
@@ -78,10 +82,19 @@ diff -up sage-5.9/spkg/build/sage-5.9/setup.py.orig sage-5.9/spkg/build/sage-5.9
  include_dirs = [SAGE_INC,
 -                os.path.join(SAGE_INC, 'csage'),
 +                'c_lib/include',
+                 SAGE_SRC,
                  os.path.join(SAGE_SRC, 'sage', 'ext')]
  
- # search for dependencies only
-@@ -170,11 +160,11 @@ for m in ext_modules:
+@@ -77,7 +67,7 @@ if DEVEL:
+ # compiler flag -Og is used. See also
+ # * http://trac.sagemath.org/sage_trac/ticket/14460
+ # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56982
+-if subprocess.call("""$CC --version | grep -i 'gcc.* 4[.][89]' >/dev/null """, shell=True) == 0:
++if subprocess.call("""gcc --version | grep -i 'gcc.* 4[.][89]' >/dev/null """, shell=True) == 0:
+     extra_compile_args.append('-fno-tree-dominator-opts')
+ 
+ # Generate interpreters
+@@ -171,11 +161,11 @@ for m in ext_modules:
  
      # FIMXE: Do NOT link the following libraries to each and
      #        every module (regardless of the language btw.):
@@ -95,20 +108,3 @@ diff -up sage-5.9/spkg/build/sage-5.9/setup.py.orig sage-5.9/spkg/build/sage-5.9
  
  
  
-diff -up sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install
---- sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig	2013-05-06 17:47:06.493293291 -0300
-+++ sage-5.9/spkg/build/conway_polynomials-0.4.p0/spkg-install	2013-05-06 17:48:27.883296408 -0300
-@@ -2,9 +2,11 @@
- 
- import os
- from sage.all import save
--from sage.misc.misc import SAGE_SHARE
- 
--install_root = os.path.join(SAGE_SHARE, 'conway_polynomials')
-+if 'SAGE_SHARE' not in os.environ:
-+    raise RuntimeError("SAGE_SHARE undefined, maybe run `sage -sh`?")
-+
-+install_root = os.path.join(os.environ['SAGE_SHARE'], 'conway_polynomials')
- 
- def create_db():
-     db = {}

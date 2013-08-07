@@ -1,6 +1,6 @@
-diff -up sage-5.9/spkg/build/sage-5.9/sage/interfaces/maxima_lib.py.orig sage-5.9/spkg/build/sage-5.9/sage/interfaces/maxima_lib.py
---- sage-5.9/spkg/build/sage-5.9/sage/interfaces/maxima_lib.py.orig	2012-12-29 15:42:54.811218546 -0200
-+++ sage-5.9/spkg/build/sage-5.9/sage/interfaces/maxima_lib.py	2012-12-29 15:43:06.739219003 -0200
+diff -up sage-5.10/spkg/build/sage-5.10/sage/interfaces/maxima_lib.py.orig sage-5.10/spkg/build/sage-5.10/sage/interfaces/maxima_lib.py
+--- sage-5.10/spkg/build/sage-5.10/sage/interfaces/maxima_lib.py.orig	2012-12-29 15:42:54.811218546 -0200
++++ sage-5.10/spkg/build/sage-5.10/sage/interfaces/maxima_lib.py	2012-12-29 15:43:06.739219003 -0200
 @@ -77,7 +77,7 @@ from maxima_abstract import (MaximaAbstr
  ## We begin here by initializing Maxima in library mode
  ## i.e. loading it into ECL

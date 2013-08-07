@@ -30,7 +30,7 @@
 %global	flintqs_pkg		flintqs-20070817.p8
 %global graphs_pkg		graphs-20120404.p4
 %global pexpect_pkg		pexpect-2.0.p5
-%global polytopes_db_pkg	polytopes_db-20100210.p2
+%global polytopes_db_pkg	polytopes_db-20120220
 %global rubiks_pkg		rubiks-20070912.p18
 %global	sagenb_pkg		sagenb-0.10.4
 %global sagetex_pkg		sagetex-2.3.4
@@ -40,7 +40,7 @@
 %global SAGE_ROOT		%{_libdir}/sagemath
 %global SAGE_LOCAL		%{SAGE_ROOT}/local
 %global SAGE_SRC		%{SAGE_ROOT}/src
-%global SAGE_DOC		%{_docdir}/%{name}-%{version}
+%global SAGE_DOC		%{_docdir}/%{name}
 %global SAGE_SHARE		%{_datadir}/sagemath
 %global SAGE_EXTCODE		%{SAGE_SHARE}/ext
 %global SAGE_PYTHONPATH		%{SAGE_ROOT}/site-packages
@@ -48,7 +48,7 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.9
+Version:	5.10
 Release:	1%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
@@ -183,12 +183,8 @@ Patch33:	%{name}-m4rie.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=961372
 Patch34:	%{name}-rh_bz_961372.patch
 
-# Upgrade to Cython 0.19.1
-# http://trac.sagemath.org/attachment/ticket/14569/trac14569.patch
-Patch35:	trac14569.patch
-
 # Mandriva specific
-Patch36:	%{name}-underlink.patch
+Patch35:	%{name}-underlink.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
@@ -629,14 +625,13 @@ popd
 
 %patch31 -p1
 %patch32 -p1
+# Not required for Mandriva
+%if 0
 %patch33 -p1
+%endif
 %patch34 -p1
 
-pushd spkg/build/sage-%{version}
 %patch35 -p1
-popd
-
-%patch36 -p1
 
 #------------------------------------------------------------------------
 # ensure proper/preferred libatlas is in linker path
@@ -647,8 +642,7 @@ pushd spkg/build/sage-%{version}
 popd
 
 # remove bundled jar files before build
-rm spkg/build/extcode-%{version}/notebook/java/3d/lib/sage3d.jar \
-   spkg/build/%{sagenb_pkg}/src/sagenb/sagenb/data/sage3d/lib/sage3d.jar
+rm spkg/build/%{sagenb_pkg}/src/sagenb/sagenb/data/sage3d/lib/sage3d.jar
 
 # remove binary egg
 rm -r spkg/build/%{sagenb_pkg}/src/sagenb/sagenb.egg-info

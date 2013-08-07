@@ -1,6 +1,6 @@
-diff -up sage-5.9/spkg/build/sage-5.9/sage/geometry/polyhedron/base.py.orig sage-5.9/spkg/build/sage-5.9/sage/geometry/polyhedron/base.py
---- sage-5.9/spkg/build/sage-5.9/sage/geometry/polyhedron/base.py.orig	2013-05-06 14:12:21.664799886 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/geometry/polyhedron/base.py	2013-05-06 14:12:28.625800152 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/sage/geometry/polyhedron/base.py.orig sage-5.10/spkg/build/sage-5.10/sage/geometry/polyhedron/base.py
+--- sage-5.10/spkg/build/sage-5.10/sage/geometry/polyhedron/base.py.orig	2013-05-06 14:12:21.664799886 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/geometry/polyhedron/base.py	2013-05-06 14:12:28.625800152 -0300
 @@ -3281,11 +3281,6 @@ class Polyhedron_base(Element):
  
               David Avis's lrs program.

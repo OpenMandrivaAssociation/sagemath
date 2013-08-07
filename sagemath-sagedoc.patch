@@ -1,6 +1,6 @@
-diff -up sage-5.9/spkg/build/sage-5.9/doc/common/builder.py.orig sage-5.9/spkg/build/sage-5.9/doc/common/builder.py
---- sage-5.9/spkg/build/sage-5.9/doc/common/builder.py.orig	2013-05-07 18:11:12.277264082 -0300
-+++ sage-5.9/spkg/build/sage-5.9/doc/common/builder.py	2013-05-07 18:11:15.785264216 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/doc/common/builder.py.orig sage-5.10/spkg/build/sage-5.10/doc/common/builder.py
+--- sage-5.10/spkg/build/sage-5.10/doc/common/builder.py.orig	2013-07-29 19:49:41.413042474 -0300
++++ sage-5.10/spkg/build/sage-5.10/doc/common/builder.py	2013-07-29 19:49:53.076042920 -0300
 @@ -32,7 +32,7 @@ from sage.env import SAGE_DOC, SAGE_SRC
  #     SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT,
  #     PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS
@@ -10,9 +10,9 @@ diff -up sage-5.9/spkg/build/sage-5.9/doc/common/builder.py.orig sage-5.9/spkg/b
  
  
  ##########################################
-diff -up sage-5.9/spkg/build/sage-5.9/doc/common/conf.py.orig sage-5.9/spkg/build/sage-5.9/doc/common/conf.py
---- sage-5.9/spkg/build/sage-5.9/doc/common/conf.py.orig	2013-05-07 18:11:12.286264082 -0300
-+++ sage-5.9/spkg/build/sage-5.9/doc/common/conf.py	2013-05-07 18:11:15.788264216 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/doc/common/conf.py.orig sage-5.10/spkg/build/sage-5.10/doc/common/conf.py
+--- sage-5.10/spkg/build/sage-5.10/doc/common/conf.py.orig	2013-07-29 19:49:41.420042474 -0300
++++ sage-5.10/spkg/build/sage-5.10/doc/common/conf.py	2013-07-29 19:49:53.077042920 -0300
 @@ -1,5 +1,5 @@
  import sys, os, sphinx
 -from sage.env import SAGE_DOC
@@ -30,9 +30,9 @@ diff -up sage-5.9/spkg/build/sage-5.9/doc/common/conf.py.orig sage-5.9/spkg/buil
      mathjax_relative = os.path.join('sagenb','data','mathjax')
  
      # It would be really nice if sphinx would copy the entire mathjax directory,
-diff -up sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py
---- sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig	2013-05-07 18:11:29.325264735 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py	2013-05-07 18:12:09.794266284 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/sage/doctest/control.py.orig sage-5.10/spkg/build/sage-5.10/sage/doctest/control.py
+--- sage-5.10/spkg/build/sage-5.10/sage/doctest/control.py.orig	2013-07-29 19:48:53.706040647 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/doctest/control.py	2013-07-29 19:49:53.079042920 -0300
 @@ -88,7 +88,6 @@ class DocTestDefaults(SageObject):
          self.valgrind = False
          self.massif = False
@@ -41,7 +41,7 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig sage-5.9/spkg
          self.failed = False
          self.new = False
          self.show_skipped = False
-@@ -161,7 +160,7 @@ class DocTestController(SageObject):
+@@ -213,7 +212,7 @@ class DocTestController(SageObject):
              if options.gdb or options.debug:
                  # Interactive debuggers: "infinite" timeout
                  options.timeout = 0
@@ -50,7 +50,7 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig sage-5.9/spkg
                  # Non-interactive debuggers: 48 hours
                  options.timeout = int(os.getenv('SAGE_TIMEOUT_VALGRIND', 48 * 60 * 60))
              elif options.long:
-@@ -766,13 +765,8 @@ class DocTestController(SageObject):
+@@ -809,13 +808,8 @@ class DocTestController(SageObject):
              elif opt.cachegrind:
                  toolname = "cachegrind"
                  flags = os.getenv("SAGE_CACHEGRIND_FLAGS", "")
@@ -64,7 +64,7 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig sage-5.9/spkg
              if "%s" in flags:
                  flags %= toolname + ".%p" # replace %s with toolname
          cmd += flags + sage_cmd
-@@ -832,10 +826,10 @@ class DocTestController(SageObject):
+@@ -875,10 +869,10 @@ class DocTestController(SageObject):
              0
          """
          opt = self.options
@@ -77,9 +77,9 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/doctest/control.py.orig sage-5.9/spkg
                  return 2
              return self.run_val_gdb()
          else:
-diff -up sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py.orig sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py
---- sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py.orig	2013-05-07 18:11:12.296264082 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py	2013-05-07 18:11:15.792264216 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/sage/interfaces/singular.py.orig sage-5.10/spkg/build/sage-5.10/sage/interfaces/singular.py
+--- sage-5.10/spkg/build/sage-5.10/sage/interfaces/singular.py.orig	2013-07-29 19:49:41.443042475 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/interfaces/singular.py	2013-07-29 19:49:53.081042920 -0300
 @@ -2149,7 +2149,7 @@ def generate_docstring_dictionary():
      nodes.clear()
      node_names.clear()
@@ -89,9 +89,9 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/interfaces/singular.py.orig sage-5.9/
  
      new_node = re.compile("File: singular\.hlp,  Node: ([^,]*),.*")
      new_lookup = re.compile("\* ([^:]*):*([^.]*)\..*")
-diff -up sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py.orig sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py
---- sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py.orig	2013-05-07 18:11:12.303264083 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/misc/latex_macros.py	2013-05-07 18:11:15.793264216 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/sage/misc/latex_macros.py.orig sage-5.10/spkg/build/sage-5.10/sage/misc/latex_macros.py
+--- sage-5.10/spkg/build/sage-5.10/sage/misc/latex_macros.py.orig	2013-07-29 19:49:41.450042475 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/misc/latex_macros.py	2013-07-29 19:49:53.082042920 -0300
 @@ -142,7 +142,7 @@ def convert_latex_macro_to_mathjax(macro
          return name + ': ["' + defn + '",' + str(num_args) + ']'
  

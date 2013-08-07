@@ -1,6 +1,6 @@
-diff -up sage-5.9/spkg/build/sage-5.9/sage/interfaces/gp.py.orig sage-5.9/spkg/build/sage-5.9/sage/interfaces/gp.py
---- sage-5.9/spkg/build/sage-5.9/sage/interfaces/gp.py.orig	2013-03-28 16:19:35.000000000 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/interfaces/gp.py	2013-05-06 17:34:56.021265319 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/sage/interfaces/gp.py.orig sage-5.10/spkg/build/sage-5.10/sage/interfaces/gp.py
+--- sage-5.10/spkg/build/sage-5.10/sage/interfaces/gp.py.orig	2013-07-29 19:56:27.093058008 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/interfaces/gp.py	2013-07-29 19:56:38.015058427 -0300
 @@ -977,11 +977,11 @@ def is_GpElement(x):
      """
      return isinstance(x, GpElement)
@@ -16,10 +16,10 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/interfaces/gp.py.orig sage-5.9/spkg/b
  
  # An instance
  gp = Gp(logfile=os.path.join(DOT_SAGE,'gp-expect.log')) # useful for debugging!
-diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx.orig sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx
---- sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx.orig	2013-05-06 17:34:09.952263554 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx	2013-05-06 17:34:24.826264124 -0300
-@@ -182,6 +182,10 @@ include '../../ext/stdsage.pxi'
+diff -up sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx.orig sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx
+--- sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx.orig	2013-07-29 19:56:11.479057411 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx	2013-07-29 19:56:38.025058427 -0300
+@@ -183,6 +183,10 @@ include 'sage/ext/python.pxi'
  cdef extern from "mpz_pylong.h":
      cdef int mpz_set_pylong(mpz_t dst, src) except -1
  
@@ -30,7 +30,7 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx.orig sage-5.9/spkg/
  # Make sure we don't use mpz_t_offset before initializing it by
  # putting in a value that's likely to provoke a segmentation fault,
  # rather than silently corrupting memory.
-@@ -9218,7 +9222,12 @@ cdef class PariInstance(sage.structure.p
+@@ -9240,7 +9244,12 @@ cdef class PariInstance(sage.structure.p
  
          # The size here doesn't really matter, because we will allocate
          # our own stack anyway. We ask PARI not to set up signal handlers.

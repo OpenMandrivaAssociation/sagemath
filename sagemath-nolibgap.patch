@@ -1,7 +1,7 @@
-diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sage-5.9/module_list.py
---- sage-5.9/spkg/build/sage-5.9/module_list.py.orig	2013-05-06 14:26:48.178833068 -0300
-+++ sage-5.9/spkg/build/sage-5.9/module_list.py	2013-05-06 14:28:09.378836177 -0300
-@@ -485,8 +485,8 @@ ext_modules = [
+diff -up sage-5.10/spkg/build/sage-5.10/module_list.py.orig sage-5.10/spkg/build/sage-5.10/module_list.py
+--- sage-5.10/spkg/build/sage-5.10/module_list.py.orig	2013-07-29 20:07:17.633082920 -0300
++++ sage-5.10/spkg/build/sage-5.10/module_list.py	2013-07-29 20:07:28.577083339 -0300
+@@ -487,8 +487,8 @@ ext_modules = [
      Extension('sage.groups.old',
                sources = ['sage/groups/old.pyx']),
  
@@ -12,7 +12,7 @@ diff -up sage-5.9/spkg/build/sage-5.9/module_list.py.orig sage-5.9/spkg/build/sa
  
      Extension('sage.groups.perm_gps.permgroup_element',
                sources = ['sage/groups/perm_gps/permgroup_element.pyx']),
-@@ -780,25 +780,25 @@ ext_modules = [
+@@ -771,25 +771,25 @@ ext_modules = [
          ##
          ################################
  

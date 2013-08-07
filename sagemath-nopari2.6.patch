@@ -1,6 +1,6 @@
-diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi.orig sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi
---- sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi.orig	2013-03-19 17:20:25.960864009 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi	2013-03-19 17:20:33.246864288 -0300
+diff -up sage-5.10/spkg/build/sage-5.10/sage/libs/pari/decl.pxi.orig sage-5.10/spkg/build/sage-5.10/sage/libs/pari/decl.pxi
+--- sage-5.10/spkg/build/sage-5.10/sage/libs/pari/decl.pxi.orig	2013-07-29 20:08:46.678086330 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/libs/pari/decl.pxi	2013-07-29 20:08:56.965086724 -0300
 @@ -595,7 +595,6 @@ cdef extern from 'pari/pari.h':
      GEN     polredabs0(GEN x, long flag)
      GEN     polredabs2(GEN x)
@@ -9,10 +9,10 @@ diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/pari/decl.pxi.orig sage-5.9/spkg
      GEN     qflll0(GEN x, long flag)
      GEN     qflllgram0(GEN x, long flag)
      GEN     smallpolred(GEN x)
-diff -up sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx.orig sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx
---- sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx.orig	2013-03-19 17:20:55.992865159 -0300
-+++ sage-5.9/spkg/build/sage-5.9/sage/libs/pari/gen.pyx	2013-03-19 17:21:02.118865393 -0300
-@@ -8011,10 +8011,6 @@ cdef class gen(sage.structure.element.Ri
+diff -up sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx.orig sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx
+--- sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx.orig	2013-07-29 20:08:37.060085961 -0300
++++ sage-5.10/spkg/build/sage-5.10/sage/libs/pari/gen.pyx	2013-07-29 20:08:56.971086724 -0300
+@@ -8029,10 +8029,6 @@ cdef class gen(sage.structure.element.Ri
          sig_on()
          return self.new_gen(polredabs0(self.g, flag))
  
