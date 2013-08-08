@@ -262,6 +262,7 @@ BuildRequires:	singular
 BuildRequires:	singular-devel
 BuildRequires:	symmetrica-devel
 BuildRequires:	texlive-dvipng
+BuildRequires:	zn_poly-devel
 
 Requires:	4ti2
 Requires:	cddlib-devel
