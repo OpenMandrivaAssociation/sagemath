@@ -1047,8 +1047,8 @@ ln -sf %{SAGE_SHARE} $SAGE_ROOT/share
 ln -sf src $SAGE_ROOT/devel
 
 # Install menu and icons
-pushd spkg/build/extcode-%{version}
-    install -p -m644 -D notebook/images/icon32x32.png %{buildroot}%{_datadir}/pixmaps/%{name}.png
+pushd spkg/build/%{sagenb_pkg}/src/sagenb/sagenb/data
+    install -p -m644 -D sage/images/icon32x32.png %{buildroot}%{_datadir}/pixmaps/%{name}.png
 popd
 mkdir -p %{buildroot}%{_datadir}/applications
 cat > %{buildroot}%{_datadir}/applications/%{name}.desktop << EOF
