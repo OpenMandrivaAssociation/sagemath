@@ -1,7 +1,7 @@
-diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/flask_version/base.py.orig sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/flask_version/base.py
---- sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/flask_version/base.py.orig	2012-10-20 11:29:36.315150735 -0300
-+++ sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/flask_version/base.py	2012-10-20 11:29:56.569151510 -0300
-@@ -27,7 +27,7 @@ class SageNBFlask(Flask):
+diff -up sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py.orig sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py
+--- sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py.orig	2013-10-16 11:57:47.963170699 -0300
++++ sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py	2013-10-16 11:58:10.515171562 -0300
+@@ -33,7 +33,7 @@ class SageNBFlask(Flask):
          self.add_static_path('/javascript', DATA)
          self.add_static_path('/static', DATA)
          self.add_static_path('/java', DATA)
@@ -10,10 +10,10 @@ diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/flask_version/base.py.ori
          import mimetypes
          mimetypes.add_type('text/plain','.jmol')
  
-diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/html/notebook/base.html
---- sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig	2012-10-20 11:31:17.315154602 -0300
-+++ sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/html/notebook/base.html	2012-10-20 11:31:41.764155539 -0300
-@@ -69,7 +69,7 @@ INPUT:
+diff -up sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html
+--- sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig	2013-10-16 11:58:21.871171997 -0300
++++ sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html	2013-10-16 11:59:05.075173651 -0300
+@@ -46,7 +46,7 @@ INPUT:
  <!-- Jmol - embedded 3D graphics -->
  <script type="text/javascript" src="/java/jmol/appletweb/Jmol.js"></script>
  <!-- This must stay in head -->
@@ -22,44 +22,9 @@ diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/html/not
  
  {% if JEDITABLE_TINYMCE and not worksheet.docbrowser() and not worksheet.is_published() %}
  <!-- TinyMCE and jEditable - in-place editing of text cells -->
-diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/cell.py.orig sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/cell.py
---- sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/cell.py.orig	2012-10-20 11:33:00.483158553 -0300
-+++ sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/cell.py	2012-10-20 11:33:17.700159212 -0300
-@@ -2367,7 +2367,7 @@ class Cell(Cell_generic):
-                     jmol_script = jmol_file.read()
-                     jmol_file.close()
- 
--                    jmol_script = jmol_script.replace('defaultdirectory "', 'defaultdirectory "' + self.url_to_self() + '/')
-+                    jmol_script = jmol_script.replace('defaultdirectory "', 'defaultdirectory "/home/' + self.worksheet_filename() + '/')
- 
-                     jmol_file = open(jmol_name, 'w')
-                     jmol_file.write(jmol_script)
-diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/run_notebook.py.orig sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/run_notebook.py
---- sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/run_notebook.py.orig	2012-10-20 11:31:55.106156049 -0300
-+++ sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/notebook/run_notebook.py	2012-10-20 11:32:51.460158207 -0300
-@@ -46,15 +46,14 @@ sagenb.notebook.misc.DIR = %(cwd)r #We s
- # Flask #
- #########
- import os, sys, random
--flask_dir = os.path.join(os.environ['SAGE_ROOT'], 'devel', 'sagenb', 'flask_version')
--sys.path.append(flask_dir)
--import base as flask_base
-+sagenb_dir = os.path.join(os.environ['SAGE_ROOT'], 'src', 'sagenb')
-+sys.path.append(sagenb_dir)
-+import flask_version.base as flask_base
- opts={}
- startup_token = '{0:x}'.format(random.randint(0, 2**128))
- if %(automatic_login)s:
-     opts['startup_token'] = startup_token
--flask_app = flask_base.create_app(%(notebook_opts)s, **opts)
--sys.path.remove(flask_dir)
-+flask_app = flask_base.create_app(%(notebook_opts)s, startup_token=startup_token)
- 
- def save_notebook(notebook):
-     print "Quitting all running worksheets..."
-diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/js/jmol_lib.js
---- sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig	2012-11-14 22:46:56.488853512 -0200
-+++ sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/js/jmol_lib.js	2012-11-14 22:49:02.772858348 -0200
+diff -up sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js
+--- sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig	2013-10-16 12:02:59.809182640 -0300
++++ sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js	2013-10-16 12:03:26.748183672 -0300
 @@ -256,9 +256,6 @@ function makeCntrlPanels(url, n, functio
      panelHTML +='<button title="Move to own window" onClick="javascript:void(jmol_popup(\''+n+'\'))">Move to own window</button> arbitrarily resizable.<hr/>';
      //static image to save
@@ -70,3 +35,35 @@ diff -up sage-5.10/spkg/build/sagenb-0.10.4/src/sagenb/sagenb/data/sage/js/jmol_
      //spin on
      panelHTML +='<input class="worksheet" type="checkbox" value="spin on" onchange="jmol_spin(this.checked,'+n+');" title="Enable/disable spin"/>Spin on';
      //antialaisdisplay (smoothing of objects)
+diff -up sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py.orig sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py
+--- sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py.orig	2013-10-16 11:59:18.079174149 -0300
++++ sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py	2013-10-16 11:59:41.357175041 -0300
+@@ -2369,7 +2369,7 @@ class Cell(Cell_generic):
+                     jmol_script = jmol_file.read()
+                     jmol_file.close()
+ 
+-                    jmol_script = jmol_script.replace('defaultdirectory "', 'defaultdirectory "' + self.url_to_self() + '/')
++                    jmol_script = jmol_script.replace('defaultdirectory "', 'defaultdirectory "/home/' + self.worksheet_filename() + '/')
+ 
+                     jmol_file = open(jmol_name, 'w')
+                     jmol_file.write(jmol_script)
+diff -up sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py.orig sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py
+--- sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py.orig	2013-10-16 11:59:58.863175711 -0300
++++ sage-5.12/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py	2013-10-16 12:02:45.172182080 -0300
+@@ -46,12 +46,14 @@ sagenb.notebook.misc.DIR = %(cwd)r #We s
+ # Flask #
+ #########
+ import os, sys, random
+-import sagenb.flask_version.base as flask_base
++sagenb_dir = os.path.join(os.environ['SAGE_ROOT'], 'src', 'sagenb')
++sys.path.append(sagenb_dir)
++import flask_version.base as flask_base
+ opts={}
+ startup_token = '{0:x}'.format(random.randint(0, 2**128))
+ if %(automatic_login)s:
+     opts['startup_token'] = startup_token
+-flask_app = flask_base.create_app(%(notebook_opts)s, **opts)
++flask_app = flask_base.create_app(%(notebook_opts)s, startup_token=startup_token)
+ 
+ def save_notebook(notebook):
+     print "Quitting all running worksheets..."

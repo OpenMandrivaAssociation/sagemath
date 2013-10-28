@@ -1,7 +1,7 @@
-diff -up sage-5.10/spkg/build/sage-5.10/sage/all.py.orig sage-5.10/spkg/build/sage-5.10/sage/all.py
---- sage-5.10/spkg/build/sage-5.10/sage/all.py.orig	2013-05-06 13:45:07.053737291 -0300
-+++ sage-5.10/spkg/build/sage-5.10/sage/all.py	2013-05-06 13:45:35.317738373 -0300
-@@ -307,11 +307,11 @@ def _write_started_file():
+diff -up sage-5.12/spkg/build/sage-5.12/sage/all.py.orig sage-5.12/spkg/build/sage-5.12/sage/all.py
+--- sage-5.12/spkg/build/sage-5.12/sage/all.py.orig	2013-10-16 12:04:06.447185192 -0300
++++ sage-5.12/spkg/build/sage-5.12/sage/all.py	2013-10-16 12:04:16.661185583 -0300
+@@ -311,11 +311,11 @@ def _write_started_file():
  
      Check that the file exists when Sage is running::
  

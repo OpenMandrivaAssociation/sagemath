@@ -1,6 +1,6 @@
-diff -up sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pxd.orig sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pxd
---- sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pxd.orig	2013-03-19 16:11:17.358705144 -0300
-+++ sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pxd	2013-03-19 16:11:27.719705541 -0300
+diff -up sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pxd.orig sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pxd
+--- sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pxd.orig	2013-03-19 16:11:17.358705144 -0300
++++ sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pxd	2013-03-19 16:11:27.719705541 -0300
 @@ -133,6 +133,7 @@ cdef extern from "ecl/ecl.h":
      cl_object ecl_read_from_cstring_safe(char *s, cl_object err)
      cl_object cl_write_to_string(cl_narg narg, cl_object o) 
@@ -9,9 +9,9 @@ diff -up sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pxd.orig sage-5.10/spkg/bu
      
      # S-expr evaluation and function calls
      
-diff -up sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pyx.orig sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pyx
---- sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pyx.orig	2013-03-19 16:11:07.489704766 -0300
-+++ sage-5.10/spkg/build/sage-5.10/sage/libs/ecl.pyx	2013-03-19 16:11:27.719705541 -0300
+diff -up sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pyx.orig sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pyx
+--- sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pyx.orig	2013-03-19 16:11:07.489704766 -0300
++++ sage-5.12/spkg/build/sage-5.12/sage/libs/ecl.pyx	2013-03-19 16:11:27.719705541 -0300
 @@ -238,17 +238,19 @@ cdef cl_object ecl_safe_eval(cl_object f
          ...
          RuntimeError: ECL says: Console interrupt.

@@ -32,10 +32,8 @@
 %global pexpect_pkg		pexpect-2.0.p5
 %global polytopes_db_pkg	polytopes_db-20120220
 %global rubiks_pkg		rubiks-20070912.p18
-%global	sagenb_pkg		sagenb-0.10.4
+%global	sagenb_pkg		sagenb-0.10.7.2
 %global sagetex_pkg		sagetex-2.3.4
-
-%global sagemath_share		%{_datadir}/%{name}
 
 %global SAGE_ROOT		%{_libdir}/sagemath
 %global SAGE_LOCAL		%{SAGE_ROOT}/local
@@ -48,8 +46,8 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.10
-Release:	2%{?dist}
+Version:	5.12
+Release:	1%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -81,12 +79,12 @@ Patch1:		%{name}-gmp.patch
 Patch2:		%{name}-scripts.patch
 
 # Adapt to ntl 6.0.0.
-Patch4:		%{name}-ntl6.patch
+Patch3:		%{name}-ntl6.patch
 
 # remove call to not implemented sagemath "is_package_installed" interfaces
 # need to package coin-or solver in fedora
 # remove check for non free solvers
-Patch5:		%{name}-extensions.patch
+Patch4:		%{name}-extensions.patch
 
 # helper to:
 #	o respect a DESTDIR environment variable
@@ -94,97 +92,85 @@ Patch5:		%{name}-extensions.patch
 #	o minor change to help in incremental builds by avoiding rebuilding
 #	  files
 #	o do not assume there is an installed sagemath
-Patch6:		%{name}-rpmbuild.patch
+Patch5:		%{name}-rpmbuild.patch
 
 # build documentation in buildroot environment
-Patch7:		%{name}-sagedoc.patch
+Patch6:		%{name}-sagedoc.patch
 
 # sage notebook rpm and system environment adjustments
-Patch8:		%{name}-sagenb.patch
+Patch7:		%{name}-sagenb.patch
 
 # do not attempt to create state files in system directories
-Patch9:		%{name}-readonly.patch
+Patch8:		%{name}-readonly.patch
 
 # force coercion of ecl t_string to ecl t_base_string
 # this is hackish and only required if ecl is built with unicode support
-Patch10:		%{name}-ecl-unicode.patch
+Patch9:		%{name}-ecl-unicode.patch
 
 # do not link explicitly to png12
-Patch11:	%{name}-png.patch
+Patch10:	%{name}-png.patch
 
 # work with all maxima-runtime lisp backend packages
-Patch12:	%{name}-maxima.patch
+Patch11:	%{name}-maxima.patch
 
 # execute 4ti2 programs in $PATH not in $SAGE_ROOT/local/bin
-Patch13:	%{name}-4ti2.patch
+Patch12:	%{name}-4ti2.patch
 
 # http://trac.sagemath.org/sage_trac/ticket/12992
 # http://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=1317
-Patch14:	%{name}-pari.patch
-
-# in fedora 18 it was updated to latest fplll
-Patch15:	%{name}-fplll.patch
+Patch13:	%{name}-pari.patch
 
 # Portuguese translations: http://trac.sagemath.org/sage_trac/ticket/12822
-Patch16:	trac_12502_pt_translation_of_a_tour_of_sage_rebase1.patch
-Patch17:	trac_12822_pt_translation_of_tutorial.patch
-Patch18:	trac_12822_pt_translation_of_tutorial_rev1.patch
+Patch14:	trac_12502_pt_translation_of_a_tour_of_sage_rebase1.patch
+Patch15:	trac_12822_pt_translation_of_tutorial.patch
+Patch16:	trac_12822_pt_translation_of_tutorial_rev1.patch
 
 # use jmol itself to export preview images
 # FIXME besides not using X and told so, fails if DISPLAY is not set
-Patch20:	%{name}-jmol.patch
-
-# adapt for maxima 5.29.1 package
-Patch21:	%{name}-maxima.system.patch
+Patch17:	%{name}-jmol.patch
 
 # only cremona mini database built and installed
 # FIXME add a package with the full cremona database
 # FIXME actually it should be already available in pari-elldata
-Patch22:	%{name}-cremona.patch
+Patch18:	%{name}-cremona.patch
 
 # lrslib is a requires
-Patch23:	%{name}-lrslib.patch
+Patch19:	%{name}-lrslib.patch
 
 # nauty cannot be packaged due to license restrictions
 # http://cs.anu.edu.au/~bdm/nauty/
 # http://pallini.di.uniroma1.it/
-Patch24:	%{name}-nauty.patch
+Patch20:	%{name}-nauty.patch
 
 # gap hap package not (yet) available
 # http://www-gap.mcs.st-and.ac.uk/Packages/hap.html
-Patch25:	%{name}-gap-hap.patch
+Patch21:	%{name}-gap-hap.patch
 
 # Patch to enable lrcalc once review request is done in Fedora
-Patch26:	%{name}-lrcalc.patch
+Patch22:	%{name}-lrcalc.patch
 
 # Patch to enable cbc once review requests are done in Fedora
-Patch27:	%{name}-cbc.patch
+Patch23:	%{name}-cbc.patch
 
 # Patch to enable libgap once review request is done in Fedora
-Patch28:	%{name}-libgap.patch
-
-# Patch to disable libgap because it is not optional by default
-Patch29:	%{name}-nolibgap.patch
+Patch24:	%{name}-libgap.patch
 
 # Patch to enable fes once review requests are done in Fedora
-Patch30:	%{name}-fes.patch
+Patch25:	%{name}-fes.patch
 
 # Get package to build with known problem if not yet updated to pari 2.6.
-Patch31:	%{name}-nopari2.6.patch
+Patch26:	%{name}-nopari2.6.patch
 
 # sagemath 5.8 (optionally) requires cryptominisat 2.9.6 (in rawhide)
 # and does not work with cryptominisat 2.9.5 (in f18)
-Patch32:	%{name}-cryptominisat.patch
+Patch27:	%{name}-cryptominisat.patch
 
-# Adapt to m4rie 20130416
-Patch33:	%{name}-m4rie.patch
-
-# Until cython is fixed for f18 and f19; just override wrong cython definition
-# https://bugzilla.redhat.com/show_bug.cgi?id=961372
-Patch34:	%{name}-rh_bz_961372.patch
+# Side effect of using distro packages
+# https://bugzilla.redhat.com/show_bug.cgi?id=974769
+Patch28:	%{name}-sympy.patch
 
 # Mandriva specific
-Patch35:	%{name}-underlink.patch
+Patch29:	%{name}-underlink.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
@@ -221,9 +207,7 @@ BuildRequires:	ipython
 BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libfac-devel
-%if %{have_libgap}
 BuildRequires:	libgap-devel
-%endif
 BuildRequires:	libmpc-devel
 BuildRequires:	libpari-devel
 BuildRequires:	linalg-linbox-devel
@@ -570,7 +554,7 @@ popd
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-
+%patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
@@ -581,58 +565,46 @@ popd
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
-%patch15 -p1
 
 pushd spkg/build/sage-%{version}
 mkdir -p doc/pt/a_tour_of_sage/
 cp -fa doc/en/a_tour_of_sage/*.png doc/pt/a_tour_of_sage/
-
+%patch14 -p1
+%patch15 -p1
 %patch16 -p1
-%patch17 -p1
-%patch18 -p1
 popd
 
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+
 %patch20 -p1
-
-# Not required for Mandriva
-%if 0
 %patch21 -p1
-%endif
-
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
 
 %if %{have_lrcalc}
-%patch26 -p1
+%patch22 -p1
 %endif
 
 # other coin-or packages are build requires or coin-or-Cbc
 %if %{have_coin_or_Cbc}
-%patch27 -p1
+%patch23 -p1
 %endif
 
-%if %{have_libgap}
-%patch28 -p1
-%else
-%patch29 -p1
-%endif
+%patch24 -p1
 
 %if %{have_fes}
-%patch30 -p1
+%patch25 -p1
 %endif
 
-%patch31 -p1
-%patch32 -p1
-# Not required for Mandriva
-%if 0
-%patch33 -p1
-%endif
-%patch34 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
 
-%patch35 -p1
+%patch29 -p1
+
+sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
+    -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
+    -i spkg/build/sage-%{version}/sage/env.py
 
 #------------------------------------------------------------------------
 # ensure proper/preferred libatlas is in linker path
@@ -654,7 +626,8 @@ export CFLAGS="%{optflags}"
 export CXXFLAGS="%{optflags}"
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
-export SAGE_SRC=%{buildroot}%{SAGE_SRC}
+# Avoid buildroot in gcc command line (use _builddir instead)
+export SAGE_SRC="$PWD/spkg/build/sage-%{version}"
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 export DESTDIR=%{buildroot}
@@ -663,14 +636,11 @@ export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
 # match system packages as sagemath packages
-export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
-export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
-export SAGE_SRC=%{buildroot}%{SAGE_SRC}
-mkdir -p $SAGE_ROOT $SAGE_LOCAL $SAGE_SRC
-ln -sf $PWD/spkg/build/sage-%{version}/sage $SAGE_SRC/sage
+mkdir -p $SAGE_ROOT $SAGE_LOCAL #%{buildroot}%{SAGE_SRC}
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 ln -sf %{_datadir} $SAGE_LOCAL/share
+#ln -sf $SAGE_SRC/sage %{buildroot}%{SAGE_SRC}/sage
 
 export PATH=%{buildroot}%{_bindir}:$PATH
 export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
@@ -940,7 +910,6 @@ export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
 export SYMPOW_DIR="\$DOT_SAGE/sympow"
 export LC_MESSAGES=C
 export LC_NUMERIC=C
-export SAGE_BROWSER=firefox
 MALLOC_CHECK_=1 $SAGE_LOCAL/bin/sage "\$@"
 EOF
 #------------------------------------------------------------------------
@@ -1081,36 +1050,23 @@ find %{buildroot}%{SAGE_DOC} -name .buildinfo -exec rm {} \;
 rm -fr %{buildroot}%{SAGE_DOC}/output/inventory
 find %{buildroot}%{SAGE_DOC} -type d -name _sources | xargs rm -fr
 
-rm %{buildroot}%{python_sitearch}/sagenb/data/mathjax/.gitignore \
-   %{buildroot}%{python_sitearch}/sagenb/data/mathjax/docs/.gitignore
-
 # remove bundles fonts
 rm -r %{buildroot}%{python_sitearch}/sagenb/data/mathjax/fonts
 
 # remove .po files
 rm %{buildroot}%{python_sitearch}/sagenb/translations/*/LC_MESSAGES/*.po
 
-# remove zero length files
-rm %{buildroot}%{python_sitearch}/sage/server/notebook/compress/all.py* \
-   %{buildroot}%{python_sitearch}/sage/misc/test_cpickle_sage.py*
-
 %if !%{with_sage3d}
 rm -r %{buildroot}%{python_sitearch}/sagenb/data/sage3d
 %endif
+
+# remove cache files
+rm -r %{buildroot}%{python_sitearch}/sagenb/data/.webassets-cache
 
 # last install command
 rm -fr $DOT_SAGE
 
 ########################################################################
-%pretrans
-# Temporary due to moving directory to symlink
-if [ ! -L %{SAGE_ROOT}/devel -a -d %{SAGE_ROOT}/devel ]; then
-    mkdir %{SAGE_SRC}
-    mv %{SAGE_ROOT}/devel/* %{SAGE_SRC}
-    rmdir %{SAGE_ROOT}/devel
-    ln -s src %{SAGE_ROOT}/devel
-fi
-
 # Use symlinks and a minor patch to the notebook to not bundle jmol
 %post		notebook
 ln -sf %{_javadir}/JmolApplet.jar %{python_sitearch}/sagenb/data/jmol/
@@ -1286,6 +1242,8 @@ exit 0
 %{python_sitearch}/sagenb/data/json
 # ASL 2.0
 %{python_sitearch}/sagenb/data/mathjax
+# Empty (do not run doctests flag file)
+%{python_sitearch}/sagenb/data/nodoctest.py*
 # BSD
 %{python_sitearch}/sagenb/data/openid-realselector
 # GPLv2+
@@ -1296,6 +1254,8 @@ exit 0
 %endif
 # LGPLv2+
 %{python_sitearch}/sagenb/data/tiny_mce
+# Auto generated files
+%{python_sitearch}/sagenb/data/webassets_generated
 # LGPLv2+
 %{python_sitearch}/sagenb/data/zorn
 # GPLv2+

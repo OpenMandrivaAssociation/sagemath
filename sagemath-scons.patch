@@ -1,6 +1,6 @@
-diff -up sage-5.10/spkg/build/sage-5.10/c_lib/SConstruct.orig sage-5.10/spkg/build/sage-5.10/c_lib/SConstruct
---- sage-5.10/spkg/build/sage-5.10/c_lib/SConstruct.orig	2013-02-23 12:55:48.382841120 -0300
-+++ sage-5.10/spkg/build/sage-5.10/c_lib/SConstruct	2013-02-23 12:56:25.037842523 -0300
+diff -up sage-5.12/spkg/build/sage-5.12/c_lib/SConstruct.orig sage-5.12/spkg/build/sage-5.12/c_lib/SConstruct
+--- sage-5.12/spkg/build/sage-5.12/c_lib/SConstruct.orig	2013-02-23 12:55:48.382841120 -0300
++++ sage-5.12/spkg/build/sage-5.12/c_lib/SConstruct	2013-02-23 12:56:25.037842523 -0300
 @@ -126,18 +126,31 @@ env['PYV']=platform.python_version().rsp
  # The SCons convenience function Split is the only strange thing 
  # to python programmers. It just makes a list by splitting on 

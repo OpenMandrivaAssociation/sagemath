@@ -1,7 +1,7 @@
-diff -up sage-5.10/spkg/build/sage-5.10/module_list.py.orig sage-5.10/spkg/build/sage-5.10/module_list.py
---- sage-5.10/spkg/build/sage-5.10/module_list.py.orig	2013-07-29 20:09:16.498087472 -0300
-+++ sage-5.10/spkg/build/sage-5.10/module_list.py	2013-07-29 20:09:30.624088013 -0300
-@@ -2017,7 +2017,7 @@ if 1:
+diff -up sage-5.12/spkg/build/sage-5.12/module_list.py.orig sage-5.12/spkg/build/sage-5.12/module_list.py
+--- sage-5.12/spkg/build/sage-5.12/module_list.py.orig	2013-10-16 12:39:05.925265588 -0300
++++ sage-5.12/spkg/build/sage-5.12/module_list.py	2013-10-16 12:39:14.072265900 -0300
+@@ -2084,7 +2084,7 @@ if is_package_installed('cbc'):
          )
  
  

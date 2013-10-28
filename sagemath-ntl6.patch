@@ -1,6 +1,6 @@
-diff -up sage-5.10/spkg/build/sage-5.10/c_lib/include/ntl_wrap.h.orig sage-5.10/spkg/build/sage-5.10/c_lib/include/ntl_wrap.h
---- sage-5.10/spkg/build/sage-5.10/c_lib/include/ntl_wrap.h.orig	2013-07-29 19:40:07.189020485 -0300
-+++ sage-5.10/spkg/build/sage-5.10/c_lib/include/ntl_wrap.h	2013-07-29 19:40:11.831020662 -0300
+diff -up sage-5.12/spkg/build/sage-5.12/c_lib/include/ntl_wrap.h.orig sage-5.12/spkg/build/sage-5.12/c_lib/include/ntl_wrap.h
+--- sage-5.12/spkg/build/sage-5.12/c_lib/include/ntl_wrap.h.orig	2013-07-29 19:40:07.189020485 -0300
++++ sage-5.12/spkg/build/sage-5.12/c_lib/include/ntl_wrap.h	2013-07-29 19:40:11.831020662 -0300
 @@ -40,91 +40,92 @@ EXTERN void setup_NTL_error_callback(voi
  ////////  ZZ //////////
  
@@ -451,9 +451,9 @@ diff -up sage-5.10/spkg/build/sage-5.10/c_lib/include/ntl_wrap.h.orig sage-5.10/
  
 -EXTERN void mat_GF2_setitem(struct mat_GF2* x, int i, int j, const struct GF2* z);
 +EXTERN void mat_GF2_setitem(mat_GF2* x, int i, int j, const GF2* z);
-diff -up sage-5.10/spkg/build/sage-5.10/c_lib/src/ntl_wrap.cpp.orig sage-5.10/spkg/build/sage-5.10/c_lib/src/ntl_wrap.cpp
---- sage-5.10/spkg/build/sage-5.10/c_lib/src/ntl_wrap.cpp.orig	2013-07-29 19:40:07.197020485 -0300
-+++ sage-5.10/spkg/build/sage-5.10/c_lib/src/ntl_wrap.cpp	2013-07-29 19:40:11.834020662 -0300
+diff -up sage-5.12/spkg/build/sage-5.12/c_lib/src/ntl_wrap.cpp.orig sage-5.12/spkg/build/sage-5.12/c_lib/src/ntl_wrap.cpp
+--- sage-5.12/spkg/build/sage-5.12/c_lib/src/ntl_wrap.cpp.orig	2013-07-29 19:40:07.197020485 -0300
++++ sage-5.12/spkg/build/sage-5.12/c_lib/src/ntl_wrap.cpp	2013-07-29 19:40:11.834020662 -0300
 @@ -29,7 +29,7 @@ int ZZ_to_int(const ZZ* x)
  
  /* Returns a *new* ZZ object.
@@ -1350,9 +1350,9 @@ diff -up sage-5.10/spkg/build/sage-5.10/c_lib/src/ntl_wrap.cpp.orig sage-5.10/sp
  {
      //int j;
      cpn.restore();
-diff -up sage-5.10/spkg/build/sage-5.10/sage/libs/ntl/decl.pxi.orig sage-5.10/spkg/build/sage-5.10/sage/libs/ntl/decl.pxi
---- sage-5.10/spkg/build/sage-5.10/sage/libs/ntl/decl.pxi.orig	2013-07-29 19:39:08.246018227 -0300
-+++ sage-5.10/spkg/build/sage-5.10/sage/libs/ntl/decl.pxi	2013-07-29 19:40:11.836020662 -0300
+diff -up sage-5.12/spkg/build/sage-5.12/sage/libs/ntl/decl.pxi.orig sage-5.12/spkg/build/sage-5.12/sage/libs/ntl/decl.pxi
+--- sage-5.12/spkg/build/sage-5.12/sage/libs/ntl/decl.pxi.orig	2013-07-29 19:39:08.246018227 -0300
++++ sage-5.12/spkg/build/sage-5.12/sage/libs/ntl/decl.pxi	2013-07-29 19:40:11.836020662 -0300
 @@ -22,7 +22,7 @@ from sage.libs.ntl.ntl_ZZ_pEX_decl cimpo
  
  cdef extern from "ntl_wrap.h":

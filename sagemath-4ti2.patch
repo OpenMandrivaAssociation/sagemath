@@ -1,6 +1,6 @@
-diff -up sage-5.10/spkg/build/sage-5.10/sage/sandpiles/sandpile.py.orig sage-5.10/spkg/build/sage-5.10/sage/sandpiles/sandpile.py
---- sage-5.10/spkg/build/sage-5.10/sage/sandpiles/sandpile.py.orig	2013-05-06 13:50:14.882749079 -0300
-+++ sage-5.10/spkg/build/sage-5.10/sage/sandpiles/sandpile.py	2013-05-06 13:50:34.526749831 -0300
+diff -up sage-5.12/spkg/build/sage-5.12/sage/sandpiles/sandpile.py.orig sage-5.12/spkg/build/sage-5.12/sage/sandpiles/sandpile.py
+--- sage-5.12/spkg/build/sage-5.12/sage/sandpiles/sandpile.py.orig	2013-05-06 13:50:14.882749079 -0300
++++ sage-5.12/spkg/build/sage-5.12/sage/sandpiles/sandpile.py	2013-05-06 13:50:34.526749831 -0300
 @@ -24,8 +24,6 @@ packages.  An alternative is to install
  following variable to the correct path.
  """
