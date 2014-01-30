@@ -1,11 +1,12 @@
---- sage-5.12/spkg/build/sage-5.12/c_lib/src/memory.c.orig	2012-07-10 11:46:54.516595967 -0400
-+++ sage-5.12/spkg/build/sage-5.12/c_lib/src/memory.c	2012-07-10 11:47:12.688596755 -0400
-@@ -17,7 +17,7 @@ AUTHORS:
-  *                  http://www.gnu.org/licenses/
+diff -up sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c.orig sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c
+--- sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c.orig	2014-01-28 15:45:05.920150182 -0200
++++ sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c	2014-01-28 15:45:14.225150500 -0200
+@@ -18,7 +18,7 @@ AUTHORS:
   ****************************************************************************/
  
+ #include <Python.h>
 -#include <mpir.h>
 +#include <gmp.h>
+ #include "interrupt.h"
  #include "memory.h"
  
- /* mpir memory functions */

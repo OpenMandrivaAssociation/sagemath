@@ -1,7 +1,7 @@
-diff -up sage-5.12/spkg/build/sage-5.12/module_list.py.orig sage-5.12/spkg/build/sage-5.12/module_list.py
---- sage-5.12/spkg/build/sage-5.12/module_list.py.orig	2013-10-16 12:13:30.643206797 -0300
-+++ sage-5.12/spkg/build/sage-5.12/module_list.py	2013-10-16 12:13:41.295207205 -0300
-@@ -2033,7 +2033,7 @@ ext_modules = [
+diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build/sage-5.13/module_list.py
+--- sage-5.13/spkg/build/sage-5.13/module_list.py.orig	2014-01-28 16:14:01.061216627 -0200
++++ sage-5.13/spkg/build/sage-5.13/module_list.py	2014-01-28 16:14:03.961216738 -0200
+@@ -2056,7 +2056,7 @@ ext_modules = [
  def is_package_installed(name):
      return False
  

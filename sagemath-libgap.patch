@@ -1,6 +1,6 @@
-diff -up sage-5.12/spkg/build/sage-5.12/sage/libs/gap/util.pyx.orig sage-5.12/spkg/build/sage-5.12/sage/libs/gap/util.pyx
---- sage-5.12/spkg/build/sage-5.12/sage/libs/gap/util.pyx.orig	2013-05-06 14:24:03.160826749 -0300
-+++ sage-5.12/spkg/build/sage-5.12/sage/libs/gap/util.pyx	2013-05-06 14:25:25.806829913 -0300
+diff -up sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx.orig sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx
+--- sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx.orig	2013-05-06 14:24:03.160826749 -0300
++++ sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx	2013-05-06 14:25:25.806829913 -0300
 @@ -155,18 +155,9 @@ def gap_root():
         
          sage: from sage.libs.gap.util import gap_root

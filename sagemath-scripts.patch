@@ -1,6 +1,6 @@
-diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
---- sage-5.12/spkg/bin/sage.orig	2013-10-16 11:43:15.464137288 -0300
-+++ sage-5.12/spkg/bin/sage	2013-10-16 11:51:01.675155140 -0300
+diff -up sage-5.13/spkg/bin/sage.orig sage-5.13/spkg/bin/sage
+--- sage-5.13/spkg/bin/sage.orig	2014-01-28 15:47:54.216156627 -0200
++++ sage-5.13/spkg/bin/sage	2014-01-28 15:55:18.058173623 -0200
 @@ -11,17 +11,14 @@ usage() {
      echo "  file.<sage|py|spyx> -- run given .sage, .py or .spyx files"
      echo "  -advanced           -- list all command line options"
@@ -64,7 +64,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
      echo "  -maxima [...]       -- run Sage's Maxima with given arguments"
      echo "  -mwrank [...]       -- run Sage's mwrank with given arguments"
      echo "  -python [...]       -- run the Python interpreter"
-@@ -109,79 +96,10 @@ usage_advanced() {
+@@ -109,83 +96,10 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
@@ -110,11 +110,15 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
 -    echo "  -btnew [...]        -- build and test modified files, options like -tnew"
 -    echo "  -clone [new branch] -- clone a new branch of the Sage library from the"
 -    echo "                         current branch"
--    echo "  -fixdoctests <file.py> -- create <file.py>.out that would pass the doctests"
--    echo "                            and output a patch"
--    echo "  -startuptime [module]  -- display how long each component of Sage takes to"
--    echo "                            start up; optionally specify a module to get more"
--    echo "                            details about that particular module"
+-    echo "  -fixdoctests <file.py> [output_file] [--long]"
+-    echo "                      -- writes a new version of file.py to output_file"
+-    echo "                         (defaults: to file.py.out) that will pass the doctests."
+-    echo "                         With the optional --long argument the long time tests"
+-    echo "                         are also checked."
+-    echo "                         A patch for the new file is printed to stdout."
+-    echo "  -startuptime [module] -- display how long each component of Sage takes to"
+-    echo "                         start up; optionally specify a module to get more"
+-    echo "                         details about that particular module"
 -    echo "  -t [options] <--all|files|dir>"
 -    echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
 -    echo "                         selected options:"
@@ -144,7 +148,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
      echo "  -search_src <string> -- search through all the Sage library code for string"
      echo "  -search_doc <string> -- search through the Sage documentation for string"
      echo "  -grep <string>      -- same as -search_src"
-@@ -201,19 +119,6 @@ usage_advanced() {
+@@ -205,19 +119,6 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
@@ -164,7 +168,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
      echo "Valgrind memory debugging:"
      echo "  -cachegrind         -- run Sage using Valgrind's cachegrind tool.  The log"
      echo "                         files are named sage-cachegrind.PID can be found in"
-@@ -227,9 +132,6 @@ usage_advanced() {
+@@ -231,9 +132,6 @@ usage_advanced() {
      echo "  -memcheck           -- run Sage using Valgrind's memcheck tool.  The log"
      echo "                         files are named sage-memcheck.PID can be found in"
      echo "                         $DOT_SAGE"
@@ -174,7 +178,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
      echo "  -valgrind           -- this is an alias for -memcheck"
      echo
      echo "You can also use -- before a long option, e.g., 'sage --optional'."
-@@ -249,15 +151,6 @@ if [ "$1" = '--nodotsage' ]; then
+@@ -253,15 +151,6 @@ if [ "$1" = '--nodotsage' ]; then
      exit $status
  fi
  
@@ -190,11 +194,8 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  if [ $# -gt 0 ]; then
    if [ "$1" = '-h' -o "$1" = '-?' -o "$1" = '-help' -o "$1" = '--help' ]; then
       usage
-@@ -267,28 +160,13 @@ if [ $# -gt 0 ]; then
-   fi
- fi
+@@ -274,25 +163,11 @@ fi
  
--
  # Prepare for running Sage, either interactively or non-interactively.
  sage_setup() {
 -    # Check that we're not in a source tarball which hasn't been built yet (#13561).
@@ -219,11 +220,10 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
      if [ ! -d "$IPYTHONDIR" ]; then
          # make sure that $DOT_SAGE exists so that ipython will happily
          # create its config directories there.  If DOT_SAGE doesn't
-@@ -298,21 +176,6 @@ sage_setup() {
-     sage-cleaner &>/dev/null &
+@@ -303,20 +178,6 @@ sage_setup() {
  }
  
--
+ 
 -# Check to see if the whole Sage install tree has moved.  If so,
 -# change various hardcoded paths.  Skip this if we don't have write
 -# access to $SAGE_LOCAL (e.g. when running as a different user) or
@@ -241,7 +241,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  # Start an interactive Sage session, this function never returns.
  interactive_sage() {
      sage_setup
-@@ -353,12 +216,6 @@ if [ "$1" = '-root'  -o "$1" = '--root'
+@@ -357,12 +218,6 @@ if [ "$1" = '-root'  -o "$1" = '--root'
      exit 0
  fi
  
@@ -254,7 +254,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  #####################################################################
  # Run Sage's versions of the standard Algebra/Geometry etc. software
  #####################################################################
-@@ -368,29 +225,24 @@ if [ "$1" = '-axiom' -o "$1" = '--axiom'
+@@ -372,29 +227,24 @@ if [ "$1" = '-axiom' -o "$1" = '--axiom'
      exec axiom "$@"
  fi
  
@@ -288,7 +288,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  fi
  
  if [ "$1" = '-sws2rst' -o "$1" = '--sws2rst' ]; then
-@@ -400,47 +252,37 @@ fi
+@@ -404,47 +254,37 @@ fi
  
  if [ "$1" = '-twistd' -o "$1" = '--twistd' ]; then
      shift
@@ -343,7 +343,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  fi
  
  if [ "$1" = '-python' -o "$1" = '--python' ]; then
-@@ -450,12 +292,12 @@ fi
+@@ -454,12 +294,12 @@ fi
  
  if [ "$1" = '-R' -o "$1" = '--R' ]; then
      shift
@@ -358,7 +358,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  fi
  
  if [ "$1" = '-sh' -o "$1" = '--sh' ]; then
-@@ -576,28 +418,6 @@ EOF
+@@ -580,28 +420,6 @@ EOF
      exit $status
  fi
  
@@ -387,7 +387,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  #####################################################################
  # File conversion
  #####################################################################
-@@ -613,36 +433,15 @@ if [ "$1" = '-rst2sws' -o "$1" = '--rst2
+@@ -617,36 +435,15 @@ if [ "$1" = '-rst2sws' -o "$1" = '--rst2
  fi
  
  #####################################################################
@@ -424,7 +424,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  if [ "$1" = "-inotebook" -o "$1" = '--inotebook' ]; then
      shift
      sage-cleaner &>/dev/null &
-@@ -661,79 +460,7 @@ if [ "$1" = '-grepdoc' -o "$1" = "--grep
+@@ -665,79 +462,7 @@ if [ "$1" = '-grepdoc' -o "$1" = "--grep
     exit 0
  fi
  
@@ -505,7 +505,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
      if [ ! -f  "$DOT_SAGE"/init.sage ]; then
          echo >&2 "init.sage does not exist ... creating"
          touch "$DOT_SAGE"/init.sage
-@@ -749,10 +476,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1"
+@@ -753,10 +478,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1"
      fi
  fi
  
@@ -517,7 +517,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
      shift
      SAGE_BANNER="no"
      sage_setup
-@@ -766,12 +490,6 @@ if [ "$1" = '-testall' -o "$1" = "--test
+@@ -770,12 +492,6 @@ if [ "$1" = '-testall' -o "$1" = "--test
      exec sage-runtests -a "$@"
  fi
  
@@ -530,7 +530,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  if [ "$1" = '-c' ]; then
      shift
      SAGE_BANNER="no"
-@@ -780,166 +498,6 @@ if [ "$1" = '-c' ]; then
+@@ -784,166 +500,6 @@ if [ "$1" = '-c' ]; then
      exec sage-eval "$@"
  fi
  
@@ -697,7 +697,7 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
      shift
      sage_setup
-@@ -988,12 +546,6 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
+@@ -992,12 +548,6 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
      exec sage-callgrind "$@"
  fi
  
@@ -710,9 +710,9 @@ diff -up sage-5.12/spkg/bin/sage.orig sage-5.12/spkg/bin/sage
  if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
      exec sage-startuptime.py "$@"
  fi
-diff -up sage-5.12/spkg/build/sage_scripts-5.12/sage-runtests.orig sage-5.12/spkg/build/sage_scripts-5.12/sage-runtests
---- sage-5.12/spkg/build/sage_scripts-5.12/sage-runtests.orig	2013-10-16 11:51:22.487155937 -0300
-+++ sage-5.12/spkg/build/sage_scripts-5.12/sage-runtests	2013-10-16 11:51:41.514156666 -0300
+diff -up sage-5.13/spkg/build/sage_scripts-5.13/sage-runtests.orig sage-5.13/spkg/build/sage_scripts-5.13/sage-runtests
+--- sage-5.13/spkg/build/sage_scripts-5.13/sage-runtests.orig	2014-01-28 15:46:59.796154543 -0200
++++ sage-5.13/spkg/build/sage_scripts-5.13/sage-runtests	2014-01-28 15:47:42.457156177 -0200
 @@ -54,10 +54,6 @@ if __name__ == "__main__":
                        help="run doctests using Valgrind's cachegrind tool.  The log "
                           "files are named sage-cachegrind.PID and can be found in " +
@@ -724,9 +724,9 @@ diff -up sage-5.12/spkg/build/sage_scripts-5.12/sage-runtests.orig sage-5.12/spk
  
      parser.add_option("-f", "--failed", action="store_true", default=False,
          help="doctest only those files that failed in the previous run")
-diff -up sage-5.12/spkg/build/sage_scripts-5.12/sage-valgrind.orig sage-5.12/spkg/build/sage_scripts-5.12/sage-valgrind
---- sage-5.12/spkg/build/sage_scripts-5.12/sage-valgrind.orig	2013-10-16 11:51:49.837156985 -0300
-+++ sage-5.12/spkg/build/sage_scripts-5.12/sage-valgrind	2013-10-16 11:52:03.594157511 -0300
+diff -up sage-5.13/spkg/build/sage_scripts-5.13/sage-valgrind.orig sage-5.13/spkg/build/sage_scripts-5.13/sage-valgrind
+--- sage-5.13/spkg/build/sage_scripts-5.13/sage-valgrind.orig	2014-01-28 15:46:59.800154543 -0200
++++ sage-5.13/spkg/build/sage_scripts-5.13/sage-valgrind	2014-01-28 15:47:20.081155320 -0200
 @@ -11,7 +11,7 @@ fi
  LOG="$DOT_SAGE"/valgrind/sage-memcheck.%p
  echo "Log file is $LOG"

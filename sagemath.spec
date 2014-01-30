@@ -12,8 +12,6 @@
 
 %global have_coin_or_Cbc	0
 
-%global have_libgap		0
-
 %ifarch x86_64
 %global have_fes		1
 %else
@@ -46,7 +44,7 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	5.12
+Version:	5.13
 Release:	2%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
@@ -194,6 +192,7 @@ BuildRequires:	fplll-devel
 BuildRequires:	gap
 BuildRequires:	GAPDoc
 BuildRequires:	gap-character-tables
+BuildRequires:	gap-libs
 BuildRequires:	gap-sonata
 BuildRequires:	gap-table-of-marks
 BuildRequires:	gc-devel
@@ -281,6 +280,7 @@ Requires:	python-flask-openid
 Requires:	python-flask-silk
 Requires:	python-matplotlib
 Requires:	python-networkx
+Requires:	python-scipy
 Requires:	python-sympy
 Requires:	python-twisted-web
 Requires:	python-twisted-web2
@@ -295,6 +295,7 @@ Requires:	singular
 Requires:	sympow
 Requires:	tachyon
 Requires:	texlive
+Requires:	vecmath
 
 %description
 Sage is a free open-source mathematics software system licensed
@@ -653,7 +654,7 @@ pushd spkg/build/sage-%{version}
 	sed -e 's|@@includedir@@|%{_includedir}|g' \
 	    -e 's|@@libdir@@|%{_libdir}|g' \
 	    -e 's|@@optflags@@|%{optflags}|g' \
-	    -e 's|@@ldflags@@|%{ldflags}|g' \
+	    -e 's|@@__global_ldflags@@|%{ldflags}|g' \
 	    -i SConstruct
 	CXX=g++ UNAME=Linux SAGE64=auto scons
 	ln -s libcsage.so.0 libcsage.so
@@ -714,10 +715,6 @@ pushd spkg/build/sage-%{version}
     python setup.py install --root=%{buildroot}
     cp -fa c_lib/libcsage.so.0 %{buildroot}%{_libdir}
     ln -sf libcsage.so.0 %{buildroot}%{_libdir}/libcsage.so
-    pushd sage
-	# install sage notebook templates
-	cp -fa server/notebook/templates %{buildroot}%{python_sitearch}/sage/server/notebook
-    popd
     # install documentation sources
     rm -fr $SAGE_DOC/{common,en,fr}
     cp -far doc/{common,de,en,fr,pt,ru,tr} $SAGE_DOC

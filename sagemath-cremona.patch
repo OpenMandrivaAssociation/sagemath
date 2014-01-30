@@ -1,6 +1,6 @@
-diff -up sage-5.12/spkg/build/sage-5.12/sage/databases/cremona.py.orig sage-5.12/spkg/build/sage-5.12/sage/databases/cremona.py
---- sage-5.12/spkg/build/sage-5.12/sage/databases/cremona.py.orig	2013-02-22 17:33:50.579875129 -0300
-+++ sage-5.12/spkg/build/sage-5.12/sage/databases/cremona.py	2013-02-22 17:34:05.051875683 -0300
+diff -up sage-5.13/spkg/build/sage-5.13/sage/databases/cremona.py.orig sage-5.13/spkg/build/sage-5.13/sage/databases/cremona.py
+--- sage-5.13/spkg/build/sage-5.13/sage/databases/cremona.py.orig	2013-02-22 17:33:50.579875129 -0300
++++ sage-5.13/spkg/build/sage-5.13/sage/databases/cremona.py	2013-02-22 17:34:05.051875683 -0300
 @@ -889,14 +889,9 @@ class MiniCremonaDatabase(SQLDatabase):
              if N < self.largest_conductor():
                  message = "There is no elliptic curve with label " + label \

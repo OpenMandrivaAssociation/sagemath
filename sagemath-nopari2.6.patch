@@ -1,7 +1,7 @@
-diff -up sage-5.12/spkg/build/sage-5.12/sage/libs/pari/decl.pxi.orig sage-5.12/spkg/build/sage-5.12/sage/libs/pari/decl.pxi
---- sage-5.12/spkg/build/sage-5.12/sage/libs/pari/decl.pxi.orig	2013-10-16 12:36:08.386258790 -0300
-+++ sage-5.12/spkg/build/sage-5.12/sage/libs/pari/decl.pxi	2013-10-16 12:36:42.853260110 -0300
-@@ -856,7 +856,6 @@ cdef extern from 'pari/pari.h':
+diff -up sage-5.13/spkg/build/sage-5.13/sage/libs/pari/decl.pxi.orig sage-5.13/spkg/build/sage-5.13/sage/libs/pari/decl.pxi
+--- sage-5.13/spkg/build/sage-5.13/sage/libs/pari/decl.pxi.orig	2014-01-28 16:15:59.591221166 -0200
++++ sage-5.13/spkg/build/sage-5.13/sage/libs/pari/decl.pxi	2014-01-28 16:16:06.331221424 -0200
+@@ -869,7 +869,6 @@ cdef extern from 'pari/pari.h':
      GEN     polredabs0(GEN x, long flag)
      GEN     polredabs2(GEN x)
      GEN     polredabsall(GEN x, long flun)
@@ -9,17 +9,17 @@ diff -up sage-5.12/spkg/build/sage-5.12/sage/libs/pari/decl.pxi.orig sage-5.12/s
      GEN     qflll0(GEN x, long flag)
      GEN     qflllgram0(GEN x, long flag)
      GEN     smallpolred(GEN x)
-diff -up sage-5.12/spkg/build/sage-5.12/sage/libs/pari/gen.pyx.orig sage-5.12/spkg/build/sage-5.12/sage/libs/pari/gen.pyx
---- sage-5.12/spkg/build/sage-5.12/sage/libs/pari/gen.pyx.orig	2013-10-16 12:36:50.848260416 -0300
-+++ sage-5.12/spkg/build/sage-5.12/sage/libs/pari/gen.pyx	2013-10-16 12:37:41.619262360 -0300
-@@ -8081,10 +8081,6 @@ cdef class gen(sage.structure.element.Ri
+diff -up sage-5.13/spkg/build/sage-5.13/sage/libs/pari/gen.pyx.orig sage-5.13/spkg/build/sage-5.13/sage/libs/pari/gen.pyx
+--- sage-5.13/spkg/build/sage-5.13/sage/libs/pari/gen.pyx.orig	2014-01-28 16:16:21.446222003 -0200
++++ sage-5.13/spkg/build/sage-5.13/sage/libs/pari/gen.pyx	2014-01-28 16:16:33.024222446 -0200
+@@ -8087,10 +8087,6 @@ cdef class gen(sage.structure.element.Ri
          pari_catch_sig_on()
-         return self.new_gen(polredabs0(self.g, flag))
+         return P.new_gen(polredabs0(self.g, flag))
  
 -    def polredbest(self, flag=0):
 -        pari_catch_sig_on()
--        return self.new_gen(polredbest(self.g, flag))
+-        return P.new_gen(polredbest(self.g, flag))
 -
      def polresultant(self, y, var=-1, flag=0):
-         t0GEN(y)
+         cdef gen t0 = objtogen(y)
          pari_catch_sig_on()

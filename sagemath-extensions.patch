@@ -1,7 +1,7 @@
-diff -up sage-5.12/spkg/build/sage-5.12/module_list.py.orig sage-5.12/spkg/build/sage-5.12/module_list.py
---- sage-5.12/spkg/build/sage-5.12/module_list.py.orig	2013-10-16 11:54:03.841162116 -0300
-+++ sage-5.12/spkg/build/sage-5.12/module_list.py	2013-10-16 11:54:14.330162518 -0300
-@@ -2029,7 +2029,8 @@ ext_modules = [
+diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build/sage-5.13/module_list.py
+--- sage-5.13/spkg/build/sage-5.13/module_list.py.orig	2014-01-28 15:56:04.699175409 -0200
++++ sage-5.13/spkg/build/sage-5.13/module_list.py	2014-01-28 15:56:14.210175773 -0200
+@@ -2052,7 +2052,8 @@ ext_modules = [
  # These extensions are to be compiled only if the
  # corresponding packages have been installed
  

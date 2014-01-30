@@ -5,18 +5,6 @@
 # Parent  05f00d34acbd7a4340a322d3752461edbae46fd0
 Trac 12502: Portuguese translation of "A Tour of Sage".
 
-diff --git a/MANIFEST.in b/MANIFEST.in
---- a/MANIFEST.in
-+++ b/MANIFEST.in
-@@ -31,6 +31,8 @@
- include doc/en/developer/sagenb/pull_button.png
- include doc/fr/a_tour_of_sage/eigen_plot.png
- include doc/fr/a_tour_of_sage/sin_plot.png
-+include doc/pt/a_tour_of_sage/eigen_plot.png
-+include doc/pt/a_tour_of_sage/sin_plot.png
- include doc/tr/a_tour_of_sage/eigen_plot.png
- include doc/tr/a_tour_of_sage/sin_plot.png
- graft   doc/en/reference/*/media
 diff --git a/doc/pt/a_tour_of_sage/conf.py b/doc/pt/a_tour_of_sage/conf.py
 new file mode 100644
 --- /dev/null

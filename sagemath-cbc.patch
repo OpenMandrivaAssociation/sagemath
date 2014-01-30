@@ -1,7 +1,7 @@
-diff -up sage-5.12/spkg/build/sage-5.12/module_list.py.orig sage-5.12/spkg/build/sage-5.12/module_list.py
---- sage-5.12/spkg/build/sage-5.12/module_list.py.orig	2013-10-16 12:11:43.002202675 -0300
-+++ sage-5.12/spkg/build/sage-5.12/module_list.py	2013-10-16 12:11:47.063202831 -0300
-@@ -2074,7 +2074,7 @@ if (os.path.isfile(SAGE_INC + "/cplex.h"
+diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build/sage-5.13/module_list.py
+--- sage-5.13/spkg/build/sage-5.13/module_list.py.orig	2014-01-28 16:12:52.010213983 -0200
++++ sage-5.13/spkg/build/sage-5.13/module_list.py	2014-01-28 16:13:00.749214317 -0200
+@@ -2097,7 +2097,7 @@ if (os.path.isfile(SAGE_INC + "/cplex.h"
                    libraries = ["csage", "stdc++", "cplex"]) 
          )
  
