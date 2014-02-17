@@ -1,7 +1,7 @@
-diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build/sage-5.13/module_list.py
---- sage-5.13/spkg/build/sage-5.13/module_list.py.orig	2014-01-28 16:12:03.635212130 -0200
-+++ sage-5.13/spkg/build/sage-5.13/module_list.py	2014-01-28 16:12:12.674212476 -0200
-@@ -2132,7 +2132,7 @@ if UNAME[0] == "Darwin" and not UNAME[2]
+diff -up src/module_list.py.orig src/module_list.py
+--- src/module_list.py.orig	2014-02-07 12:38:18.873842689 -0200
++++ src/module_list.py	2014-02-07 12:38:27.546843021 -0200
+@@ -2149,7 +2149,7 @@ if UNAME[0] == "Darwin" and not UNAME[2]
          )
  
  

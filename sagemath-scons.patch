@@ -1,9 +1,9 @@
-diff -up sage-5.13/spkg/build/sage-5.13/c_lib/SConstruct.orig sage-5.13/spkg/build/sage-5.13/c_lib/SConstruct
---- sage-5.13/spkg/build/sage-5.13/c_lib/SConstruct.orig	2013-02-23 12:55:48.382841120 -0300
-+++ sage-5.13/spkg/build/sage-5.13/c_lib/SConstruct	2013-02-23 12:56:25.037842523 -0300
-@@ -126,18 +126,31 @@ env['PYV']=platform.python_version().rsp
- # The SCons convenience function Split is the only strange thing 
- # to python programmers. It just makes a list by splitting on 
+diff -up src/c_lib/SConstruct.orig src/c_lib/SConstruct
+--- src/c_lib/SConstruct.orig	2014-02-07 10:59:45.462616244 -0200
++++ src/c_lib/SConstruct	2014-02-07 11:00:41.900618405 -0200
+@@ -126,8 +126,8 @@ env['PYV']=platform.python_version().rsp
+ # The SCons convenience function Split is the only strange thing
+ # to python programmers. It just makes a list by splitting on
  # whitespace without the syntax clutter of lists of strings.
 -includes = ['$SAGE_LOCAL/include/', '$SAGE_LOCAL/include/python$PYV/',
 -            '$SAGE_LOCAL/include/NTL/', 'include']
@@ -12,7 +12,9 @@ diff -up sage-5.13/spkg/build/sage-5.13/c_lib/SConstruct.orig sage-5.13/spkg/bui
  cFiles = Split( "convert.c  interrupt.c  memory.c  mpn_pylong.c  mpz_pylong.c") + \
           Split( "mpz_longlong.c stdsage.c  gmp_globals.c" )
  cppFiles = Split( "ZZ_pylong.cpp  ntl_wrap.cpp" )
- srcFiles = cFiles + cppFiles
+@@ -136,9 +136,22 @@ incFiles = Split( "ccobject.h  convert.h
+            Split( "interrupt.h  memory.h  mpn_pylong.h  mpz_longlong.h" ) + \
+            Split( "mpz_pylong.h  ntl_wrap.h  pb_wrap.h  stdsage.h  ZZ_pylong.h" )
  
 +env.Append(CFLAGS='@@optflags@@')
 +env.Append(CXXFLAGS='@@optflags@@')
@@ -26,14 +28,11 @@ diff -up sage-5.13/spkg/build/sage-5.13/c_lib/SConstruct.orig sage-5.13/spkg/bui
 +shlink_flags += [ '-Wl,-Bsymbolic', '-Wl,-soname=%s' % soname ]
 +
  lib = env.SharedLibrary( "csage", [ "src/" + x for x in srcFiles ],
-                          LIBS=['ntl', 'pari', 'gmp', 'python$PYV'], 
+                          LIBS=['ntl', 'pari', 'gmp', 'python$PYV'],
 -                         LIBPATH=['$SAGE_LOCAL/lib','$SAGE_LOCAL/lib/python$PYV/config/'],
 +                         LIBPATH=['@@libdir@@','@@libdir@@/python$PYV/config/'],
 +                         SHLIBSUFFIX=shlib_suffix,
 +                         SHLINKFLAGS=shlink_flags,
                           CPPPATH=includes )
--env.Install("$SAGE_LOCAL/lib", lib)
-+env.Install("@@libdir@@", lib)
- 
- #Here we only copy the files over if we are on Cygwin.  Otherwise, the
- #library will be handled by the symlinks created in
+ env.Install("$SAGE_LOCAL/lib", lib)
+ env.Install("$SAGE_LOCAL/include/csage", [ os.path.join('include',x) for x in incFiles ])

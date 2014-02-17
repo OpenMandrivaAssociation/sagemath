@@ -1,6 +1,6 @@
-diff -up sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c.orig sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c
---- sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c.orig	2014-01-28 15:45:05.920150182 -0200
-+++ sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c	2014-01-28 15:45:14.225150500 -0200
+diff -up src/c_lib/src/memory.c.orig src/c_lib/src/memory.c
+--- src/c_lib/src/memory.c.orig	2014-02-07 11:01:49.674621000 -0200
++++ src/c_lib/src/memory.c	2014-02-07 11:02:02.046621474 -0200
 @@ -18,7 +18,7 @@ AUTHORS:
   ****************************************************************************/
  
@@ -10,3 +10,22 @@ diff -up sage-5.13/spkg/build/sage-5.13/c_lib/src/memory.c.orig sage-5.13/spkg/b
  #include "interrupt.h"
  #include "memory.h"
  
+diff -up src/sage/modular/arithgroup/farey.cpp.orig src/sage/modular/arithgroup/farey.cpp
+--- src/sage/modular/arithgroup/farey.cpp.orig	2014-02-07 16:44:24.474408115 -0200
++++ src/sage/modular/arithgroup/farey.cpp	2014-02-07 16:44:33.100408446 -0200
+@@ -141,6 +141,7 @@ operator*(const SL2Z& M, const vector<mp
+   return result;
+ }
+ 
++#if 0
+ inline 
+ mpz_class 
+ floor(const mpq_class r) {
+@@ -151,6 +152,7 @@ floor(const mpq_class r) {
+     return result - 1;
+   }
+ }
++#endif
+ 
+ inline
+ mpz_class lcm(const mpz_class& a, const mpz_class& b) {

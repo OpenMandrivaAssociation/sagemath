@@ -1,7 +1,24 @@
-diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py.orig sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py
---- sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py.orig	2013-10-16 11:57:47.963170699 -0300
-+++ sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py	2013-10-16 11:58:10.515171562 -0300
-@@ -33,7 +33,7 @@ class SageNBFlask(Flask):
+diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/flask_version/base.py.orig build/pkgs/sagenb/src/sagenb-0.10.8.2/flask_version/base.py
+--- build/pkgs/sagenb/src/sagenb-0.10.8.2/flask_version/base.py.orig	2014-02-11 18:13:34.453086409 -0200
++++ build/pkgs/sagenb/src/sagenb-0.10.8.2/flask_version/base.py	2014-02-11 18:14:30.976088573 -0200
+@@ -4,8 +4,6 @@ from functools import partial
+ from flask import Flask, Module, url_for, render_template, request, session, redirect, g, make_response, current_app
+ from decorators import login_required, guest_or_login_required, with_lock
+ from decorators import global_lock
+-# Make flask use the old session foo from <=flask-0.9
+-from flask_oldsessions import OldSecureCookieSessionInterface
+ 
+ from flask.ext.autoindex import AutoIndex
+ try:
+@@ -25,7 +23,6 @@ class SageNBFlask(Flask):
+     def __init__(self, *args, **kwds):
+         self.startup_token = kwds.pop('startup_token', None)
+         Flask.__init__(self, *args, **kwds)
+-        self.session_interface = OldSecureCookieSessionInterface()
+ 
+         self.config['SESSION_COOKIE_HTTPONLY'] = False
+ 
+@@ -36,7 +33,7 @@ class SageNBFlask(Flask):
          self.add_static_path('/javascript', DATA)
          self.add_static_path('/static', DATA)
          self.add_static_path('/java', DATA)
@@ -10,9 +27,9 @@ diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/flask_version/base.py.o
          import mimetypes
          mimetypes.add_type('text/plain','.jmol')
  
-diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html
---- sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html.orig	2013-10-16 11:58:21.871171997 -0300
-+++ sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/notebook/base.html	2013-10-16 11:59:05.075173651 -0300
+diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/html/notebook/base.html.orig build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/html/notebook/base.html
+--- build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/html/notebook/base.html.orig	2014-02-11 18:13:34.468086409 -0200
++++ build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/html/notebook/base.html	2014-02-11 18:13:51.591087065 -0200
 @@ -46,7 +46,7 @@ INPUT:
  <!-- Jmol - embedded 3D graphics -->
  <script type="text/javascript" src="/java/jmol/appletweb/Jmol.js"></script>
@@ -22,9 +39,9 @@ diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/html/n
  
  {% if JEDITABLE_TINYMCE and not worksheet.docbrowser() and not worksheet.is_published() %}
  <!-- TinyMCE and jEditable - in-place editing of text cells -->
-diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js
---- sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js.orig	2013-10-16 12:02:59.809182640 -0300
-+++ sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmol_lib.js	2013-10-16 12:03:26.748183672 -0300
+diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/js/jmol_lib.js.orig build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/js/jmol_lib.js
+--- build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/js/jmol_lib.js.orig	2014-02-11 18:13:34.422086407 -0200
++++ build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/js/jmol_lib.js	2014-02-11 18:13:51.576087064 -0200
 @@ -256,9 +256,6 @@ function makeCntrlPanels(url, n, functio
      panelHTML +='<button title="Move to own window" onClick="javascript:void(jmol_popup(\''+n+'\'))">Move to own window</button> arbitrarily resizable.<hr/>';
      //static image to save
@@ -35,9 +52,38 @@ diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/data/sage/js/jmo
      //spin on
      panelHTML +='<input class="worksheet" type="checkbox" value="spin on" onchange="jmol_spin(this.checked,'+n+');" title="Enable/disable spin"/>Spin on';
      //antialaisdisplay (smoothing of objects)
-diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py.orig sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py
---- sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py.orig	2013-10-16 11:59:18.079174149 -0300
-+++ sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py	2013-10-16 11:59:41.357175041 -0300
+diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/flask_version/base.py.orig build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/flask_version/base.py
+--- build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/flask_version/base.py.orig	2014-02-11 18:13:34.459086409 -0200
++++ build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/flask_version/base.py	2014-02-11 18:13:51.590087065 -0200
+@@ -4,8 +4,6 @@ from functools import partial
+ from flask import Flask, Module, url_for, render_template, request, session, redirect, g, make_response, current_app
+ from decorators import login_required, guest_or_login_required, with_lock
+ from decorators import global_lock
+-# Make flask use the old session foo from <=flask-0.9
+-from flask_oldsessions import OldSecureCookieSessionInterface
+ 
+ from flask.ext.autoindex import AutoIndex
+ try:
+@@ -25,7 +23,6 @@ class SageNBFlask(Flask):
+     def __init__(self, *args, **kwds):
+         self.startup_token = kwds.pop('startup_token', None)
+         Flask.__init__(self, *args, **kwds)
+-        self.session_interface = OldSecureCookieSessionInterface()
+ 
+         self.config['SESSION_COOKIE_HTTPONLY'] = False
+ 
+@@ -36,7 +33,7 @@ class SageNBFlask(Flask):
+         self.add_static_path('/javascript', DATA)
+         self.add_static_path('/static', DATA)
+         self.add_static_path('/java', DATA)
+-        self.add_static_path('/java/jmol', os.path.join(os.environ["SAGE_ROOT"],"local","share","jmol"))
++        self.add_static_path('/java/jmol', os.path.join(DATA, "jmol"))
+         import mimetypes
+         mimetypes.add_type('text/plain','.jmol')
+ 
+diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/cell.py.orig build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/cell.py
+--- build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/cell.py.orig	2014-02-11 18:13:34.441086408 -0200
++++ build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/cell.py	2014-02-11 18:13:51.583087065 -0200
 @@ -2369,7 +2369,7 @@ class Cell(Cell_generic):
                      jmol_script = jmol_file.read()
                      jmol_file.close()
@@ -47,9 +93,9 @@ diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/cell.py
  
                      jmol_file = open(jmol_name, 'w')
                      jmol_file.write(jmol_script)
-diff -up sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py.orig sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py
---- sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py.orig	2013-10-16 11:59:58.863175711 -0300
-+++ sage-5.13/spkg/build/sagenb-0.10.7.2/src/sagenb/sagenb/notebook/run_notebook.py	2013-10-16 12:02:45.172182080 -0300
+diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/run_notebook.py.orig build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/run_notebook.py
+--- build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/run_notebook.py.orig	2014-02-11 18:13:34.447086408 -0200
++++ build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/run_notebook.py	2014-02-11 18:13:51.586087065 -0200
 @@ -46,12 +46,14 @@ sagenb.notebook.misc.DIR = %(cwd)r #We s
  # Flask #
  #########

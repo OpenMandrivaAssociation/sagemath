@@ -1,22 +1,6 @@
-diff -up sage-5.13/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig sage-5.13/spkg/build/conway_polynomials-0.4.p0/spkg-install
---- sage-5.13/spkg/build/conway_polynomials-0.4.p0/spkg-install.orig	2014-01-28 15:57:09.773177901 -0200
-+++ sage-5.13/spkg/build/conway_polynomials-0.4.p0/spkg-install	2014-01-28 15:57:15.720178129 -0200
-@@ -2,9 +2,10 @@
- 
- import os
- from sage.all import save
--from sage.misc.misc import SAGE_SHARE
-+if 'SAGE_SHARE' not in os.environ:
-+    raise RuntimeError("SAGE_SHARE undefined, maybe run `sage -sh`?")
- 
--install_root = os.path.join(SAGE_SHARE, 'conway_polynomials')
-+install_root = os.path.join(os.environ['SAGE_SHARE'], 'conway_polynomials')
- 
- def create_db():
-     db = {}
-diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build/sage-5.13/module_list.py
---- sage-5.13/spkg/build/sage-5.13/module_list.py.orig	2014-01-28 15:56:51.221177191 -0200
-+++ sage-5.13/spkg/build/sage-5.13/module_list.py	2014-01-28 15:57:15.722178129 -0200
+diff -up src/module_list.py.orig src/module_list.py
+--- src/module_list.py.orig	2014-02-07 11:31:05.355688232 -0200
++++ src/module_list.py	2014-02-07 11:32:21.239691137 -0200
 @@ -5,7 +5,7 @@ from distutils.core import setup
  from distutils.extension import Extension
  from sage.env import *
@@ -40,7 +24,7 @@ diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build
  
  flint_depends = [SAGE_INC + '/flint/flint.h']
  singular_depends = [SAGE_INC + '/libsingular.h', SAGE_INC + '/givaro/givconfig.h']
-@@ -71,7 +72,7 @@ givaro_extra_compile_args =['-D__STDC_LI
+@@ -70,7 +71,7 @@ givaro_extra_compile_args =['-D__STDC_LI
  ### PolyBoRi settings
  #########################################################
  
@@ -49,7 +33,7 @@ diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build
  polybori_major_version = '0.8'
  
  
-@@ -675,7 +676,7 @@ ext_modules = [
+@@ -702,7 +703,7 @@ ext_modules = [
                sources = ['sage/libs/lcalc/lcalc_Lfunction.pyx'],
                libraries = ['m', 'ntl', 'mpfr', 'gmp', 'gmpxx',
                             'Lfunction', 'stdc++'],
@@ -57,29 +41,16 @@ diff -up sage-5.13/spkg/build/sage-5.13/module_list.py.orig sage-5.13/spkg/build
 +              include_dirs = [SAGE_INC + "/Lfunction"],
                extra_compile_args=["-O3", "-ffast-math"],
                language = 'c++'),
-      
-diff -up sage-5.13/spkg/build/sage-5.13/setup.py.orig sage-5.13/spkg/build/sage-5.13/setup.py
---- sage-5.13/spkg/build/sage-5.13/setup.py.orig	2014-01-28 15:57:09.788177902 -0200
-+++ sage-5.13/spkg/build/sage-5.13/setup.py	2014-01-28 15:57:15.723178129 -0200
-@@ -36,23 +36,13 @@ except KeyError:
+ 
+diff -up src/setup.py.orig src/setup.py
+--- src/setup.py.orig	2014-02-07 11:32:35.278691675 -0200
++++ src/setup.py	2014-02-07 11:34:40.589696474 -0200
+@@ -36,11 +36,11 @@ except KeyError:
      compile_result_dir = None
      keep_going = False
  
 -SAGE_INC = os.path.join(SAGE_LOCAL,'include')
 +SAGE_INC = '/usr/include'
- 
--SITE_PACKAGES = '%s/lib/python%s/site-packages/'%(SAGE_LOCAL,platform.python_version().rsplit('.', 1)[0])
--if not os.path.exists(SITE_PACKAGES):
--    raise RuntimeError, "Unable to find site-packages directory (see setup.py file in sage python code)."
--
--if not os.path.exists('build/sage'):
--    os.makedirs('build/sage')
--
--sage_link = SITE_PACKAGES + '/sage'
--if not os.path.islink(sage_link) or not os.path.exists(sage_link):
--    os.system('rm -rf "%s"'%sage_link)
--    os.system('cd %s; ln -sf ../../../../devel/sage/build/sage .'%SITE_PACKAGES)
-+SITE_PACKAGES = '%s/lib/python%s/site-packages'%(SAGE_LOCAL,platform.python_version().rsplit('.', 1)[0])
  
  # search for dependencies and add to gcc -I<path>
  include_dirs = [SAGE_INC,
@@ -88,16 +59,7 @@ diff -up sage-5.13/spkg/build/sage-5.13/setup.py.orig sage-5.13/spkg/build/sage-
                  SAGE_SRC,
                  os.path.join(SAGE_SRC, 'sage', 'ext')]
  
-@@ -77,7 +67,7 @@ if DEVEL:
- # compiler flag -Og is used. See also
- # * http://trac.sagemath.org/sage_trac/ticket/14460
- # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56982
--if subprocess.call("""$CC --version | grep -i 'gcc.* 4[.][89]' >/dev/null """, shell=True) == 0:
-+if subprocess.call("""gcc --version | grep -i 'gcc.* 4[.][89]' >/dev/null """, shell=True) == 0:
-     extra_compile_args.append('-fno-tree-dominator-opts')
- 
- # Generate interpreters
-@@ -171,11 +161,11 @@ for m in ext_modules:
+@@ -161,11 +161,11 @@ for m in ext_modules:
  
      # FIMXE: Do NOT link the following libraries to each and
      #        every module (regardless of the language btw.):

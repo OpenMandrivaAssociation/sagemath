@@ -1,6 +1,6 @@
-diff -up sage-5.13/spkg/build/sage-5.13/sage/groups/perm_gps/permgroup.py.orig sage-5.13/spkg/build/sage-5.13/sage/groups/perm_gps/permgroup.py
---- sage-5.13/spkg/build/sage-5.13/sage/groups/perm_gps/permgroup.py.orig	2013-10-16 12:10:08.670199063 -0300
-+++ sage-5.13/spkg/build/sage-5.13/sage/groups/perm_gps/permgroup.py	2013-10-16 12:10:21.342199548 -0300
+diff -up src/sage/groups/perm_gps/permgroup.py.orig src/sage/groups/perm_gps/permgroup.py
+--- src/sage/groups/perm_gps/permgroup.py.orig	2014-02-07 12:37:33.523840952 -0200
++++ src/sage/groups/perm_gps/permgroup.py	2014-02-07 12:37:42.905841312 -0200
 @@ -180,8 +180,7 @@ def hap_decorator(f):
      """
      @wraps(f)
@@ -11,7 +11,7 @@ diff -up sage-5.13/spkg/build/sage-5.13/sage/groups/perm_gps/permgroup.py.orig s
          load_hap()
          from sage.rings.arith import is_prime
          if not (p == 0 or is_prime(p)):
-@@ -3865,8 +3864,7 @@ class PermutationGroup_generic(group.Gro
+@@ -3934,8 +3933,7 @@ class PermutationGroup_generic(group.Gro
  
          - David Joyner and Graham Ellis
          """

@@ -1,7 +1,7 @@
-diff -up sage-5.13/spkg/build/sage-5.13/sage/interfaces/jmoldata.py.orig sage-5.13/spkg/build/sage-5.13/sage/interfaces/jmoldata.py
---- sage-5.13/spkg/build/sage-5.13/sage/interfaces/jmoldata.py.orig	2012-11-10 12:03:07.742817945 -0200
-+++ sage-5.13/spkg/build/sage-5.13/sage/interfaces/jmoldata.py	2012-11-10 12:03:34.499818970 -0200
-@@ -86,7 +86,7 @@ class JmolData(SageObject):
+diff -up src/sage/interfaces/jmoldata.py.orig src/sage/interfaces/jmoldata.py
+--- src/sage/interfaces/jmoldata.py.orig	2014-02-07 12:31:50.599827821 -0200
++++ src/sage/interfaces/jmoldata.py	2014-02-07 12:34:31.334833976 -0200
+@@ -64,7 +64,7 @@ class JmolData(SageObject):
              sage_makedirs(jmolscratch)
          scratchout = os.path.join(jmolscratch,"jmolout.txt")
          jout=open(scratchout,'w')
@@ -10,21 +10,24 @@ diff -up sage-5.13/spkg/build/sage-5.13/sage/interfaces/jmoldata.py.orig sage-5.
          result = subprocess.call([testjavapath],stdout=jout)
          jout.close()
          if (result == 0):
-@@ -167,8 +167,6 @@ class JmolData(SageObject):
+@@ -144,8 +144,6 @@ class JmolData(SageObject):
+             True
  
-          """
-         if (self.is_jvm_available()):
--            # Set up paths, file names and scripts
--            jmolpath = os.path.join(SAGE_LOCAL, "share", "jmol", "JmolData.jar")
-             launchscript = ""
-             if (datafile_cmd!='script'):
-                 launchscript = "load "
-@@ -185,7 +183,7 @@ class JmolData(SageObject):
-             scratchout = os.path.join(jmolscratch,"jmolout.txt")
-             jout=open(scratchout,'w')
-             #now call the java application and write the file.
--            result = subprocess.call(["java","-Xmx512m","-Djava.awt.headless=true","-jar",jmolpath,"-iox","-g",sizeStr,"-J",launchscript,"-j",imagescript],stdout=jout)
-+            result = subprocess.call(["jmol","-n","-g",sizeStr,"-J",launchscript,"-j",imagescript],stdout=jout)
-             jout.close()
-         else:
-             errStr = "Java Virtual Machine not available.\n"
+         """
+-        # Set up paths, file names and scripts
+-        jmolpath = os.path.join(SAGE_LOCAL, "share", "jmol", "JmolData.jar")
+         launchscript = ""
+         if (datafile_cmd!='script'):
+             launchscript = "load "
+@@ -157,9 +155,8 @@ class JmolData(SageObject):
+         scratchout = tmp_filename(ext=".txt")
+         with open(scratchout, 'w') as jout:
+             # Now call the java application and write the file.
+-            subprocess.call(["java", "-Xmx512m", "-Djava.awt.headless=true",
+-                "-jar", jmolpath, "-iox", "-g", sizeStr,
+-                "-J", launchscript, "-j", imagescript], stdout=jout, stderr=jout)
++            subprocess.call(["jmol","-n","-g",sizeStr,
++                "-J",launchscript,"-j",imagescript],stdout=jout)
+         if not os.path.isfile(targetfile):
+             raise RuntimeError("Jmol failed to create file %s, see %s for details"%(repr(targetfile), repr(scratchout)))
+         os.unlink(scratchout)

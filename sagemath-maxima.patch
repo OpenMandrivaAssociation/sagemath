@@ -1,28 +1,6 @@
-diff -up sage-5.13/spkg/build/sage-5.13/sage/interfaces/maxima.py.orig sage-5.13/spkg/build/sage-5.13/sage/interfaces/maxima.py
---- sage-5.13/spkg/build/sage-5.13/sage/interfaces/maxima.py.orig	2013-07-29 19:54:04.395052544 -0300
-+++ sage-5.13/spkg/build/sage-5.13/sage/interfaces/maxima.py	2013-07-29 19:55:18.259055373 -0300
-@@ -544,7 +544,7 @@ class Maxima(MaximaAbstract, Expect):
-         Expect.__init__(self,
-                         name = 'maxima',
-                         prompt = '\(\%i[0-9]+\)',
--                        command = 'maxima --userdir="%s" -p "%s"'%(SAGE_MAXIMA_DIR,STARTUP), 
-+                        command = 'maxima --disable-readline --userdir="%s" -p "%s"'%(SAGE_MAXIMA_DIR,STARTUP), 
-                         maxread = 10000,
-                         script_subdirectory = script_subdirectory,
-                         restart_on_ctrlc = False,
-@@ -591,7 +591,8 @@ class Maxima(MaximaAbstract, Expect):
- 
-         # Remove limit on the max heapsize (since otherwise it defaults
-         # to 256MB with ECL).
--        self._sendline(":lisp (ext:set-limit 'ext:heap-size 0)")
-+        self._sendline(":lisp #+ecl (ext:set-limit 'ext:heap-size 0) #-ecl 0")
-+        self._sendline(':lisp #+gcl (progn (si:readline-off) (setf *error-output* (open "/dev/stderr" :direction :output)  *standard-input* (open "/dev/stdin" :direction :input)  *standard-output* (open "/dev/stdout" :direction :output))) #-gcl t')
-         self._eval_line('0;')
- 
-     def __reduce__(self):
-diff -up sage-5.13/spkg/build/sage_scripts-5.13/sage-maxima.lisp.orig sage-5.13/spkg/build/sage_scripts-5.13/sage-maxima.lisp
---- sage-5.13/spkg/build/sage_scripts-5.13/sage-maxima.lisp.orig	2013-07-29 19:54:04.402052544 -0300
-+++ sage-5.13/spkg/build/sage_scripts-5.13/sage-maxima.lisp	2013-07-29 19:55:33.867055970 -0300
+diff -up src/bin/sage-maxima.lisp.orig src/bin/sage-maxima.lisp
+--- src/bin/sage-maxima.lisp.orig	2014-02-07 11:52:01.751736343 -0200
++++ src/bin/sage-maxima.lisp	2014-02-07 11:52:17.429736944 -0200
 @@ -3,4 +3,8 @@
  ;(setf *general-display-prefix* "<sage-display>")
  
@@ -33,3 +11,25 @@ diff -up sage-5.13/spkg/build/sage_scripts-5.13/sage-maxima.lisp.orig sage-5.13/
 +  *error-output* (open "/dev/stderr" :direction :output)
 +  *standard-input* (open "/dev/stdin" :direction :input)
 +  *standard-output* (open "/dev/stdout" :direction :output))
+diff -up src/sage/interfaces/maxima.py.orig src/sage/interfaces/maxima.py
+--- src/sage/interfaces/maxima.py.orig	2014-02-07 11:50:56.989733863 -0200
++++ src/sage/interfaces/maxima.py	2014-02-07 11:51:45.174735709 -0200
+@@ -544,7 +544,7 @@ class Maxima(MaximaAbstract, Expect):
+         Expect.__init__(self,
+                         name = 'maxima',
+                         prompt = '\(\%i[0-9]+\) ',
+-                        command = 'maxima --userdir="%s" -p "%s"'%(SAGE_MAXIMA_DIR,STARTUP),
++                        command = 'maxima --disable-readline --userdir="%s" -p "%s"'%(SAGE_MAXIMA_DIR,STARTUP), 
+                         maxread = 10000,
+                         script_subdirectory = script_subdirectory,
+                         restart_on_ctrlc = False,
+@@ -593,7 +593,8 @@ class Maxima(MaximaAbstract, Expect):
+ 
+         # Remove limit on the max heapsize (since otherwise it defaults
+         # to 256MB with ECL).
+-        self._sendline(":lisp (ext:set-limit 'ext:heap-size 0)")
++        self._sendline(":lisp #+ecl (ext:set-limit 'ext:heap-size 0) #-ecl 0")
++        self._sendline(':lisp #+gcl (progn (si:readline-off) (setf *error-output* (open "/dev/stderr" :direction :output)  *standard-input* (open "/dev/stdin" :direction :input)  *standard-output* (open "/dev/stdout" :direction :output))) #-gcl t')
+         self._eval_line('0;')
+ 
+     def __reduce__(self):

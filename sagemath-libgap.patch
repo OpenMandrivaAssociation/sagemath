@@ -1,8 +1,8 @@
-diff -up sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx.orig sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx
---- sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx.orig	2013-05-06 14:24:03.160826749 -0300
-+++ sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx	2013-05-06 14:25:25.806829913 -0300
+diff -up src/sage/libs/gap/util.pyx.orig src/sage/libs/gap/util.pyx
+--- src/sage/libs/gap/util.pyx.orig	2014-02-07 12:44:48.769857619 -0200
++++ src/sage/libs/gap/util.pyx	2014-02-07 12:45:27.743859112 -0200
 @@ -155,18 +155,9 @@ def gap_root():
-        
+ 
          sage: from sage.libs.gap.util import gap_root
          sage: gap_root()   # random output
 -        '/home/vbraun/opt/sage-5.3.rc0/local/gap/latest'
@@ -19,6 +19,6 @@ diff -up sage-5.13/spkg/build/sage-5.13/sage/libs/gap/util.pyx.orig sage-5.13/sp
 -    gapdir = gapdir.replace('$SAGE_LOCAL', SAGE_LOCAL)
 -    return gapdir
 +    return '/usr/lib/gap'
-    
+ 
  
  cdef initialize():
