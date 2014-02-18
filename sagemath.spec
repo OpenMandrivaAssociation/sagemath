@@ -1,4 +1,5 @@
 #%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
+%define __noautoreq		'pythonegg(flask-oldsessions).*'
 
 # not functional due to missing jar dependencies
 %global with_sage3d		0
@@ -42,7 +43,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	6.1.1
-Release:	2%{?dist}
+Release:	3%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
