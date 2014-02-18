@@ -43,7 +43,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	6.1.1
-Release:	4%{?dist}
+Release:	5%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -636,6 +636,10 @@ popd
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
     -i src/sage/env.py
+
+sed -e "s|, 'flask-oldsessions>=0.10'||" \
+    -e "s|'http://github.com/mitsuhiko/flask-oldsessions/tarball/master#egg=flask-oldsessions-0.10'||" \
+    -i build/pkgs/sagenb/src/%{sagenb_pkg}/setup.py
 
 #------------------------------------------------------------------------
 # ensure proper/preferred libatlas is in linker path
