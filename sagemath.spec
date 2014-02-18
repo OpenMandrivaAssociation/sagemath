@@ -1,5 +1,5 @@
 #%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
-%define __noautoreq		'pythonegg(flask-oldsessions).*'
+%define __noautoreq		'pythonegg\(flask-oldsessions\).*'
 
 # not functional due to missing jar dependencies
 %global with_sage3d		0
