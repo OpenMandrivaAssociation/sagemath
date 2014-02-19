@@ -43,7 +43,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	6.1.1
-Release:	5%{?dist}
+Release:	6%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -1089,6 +1089,7 @@ rm -fr $DOT_SAGE
 # Use symlinks and a minor patch to the notebook to not bundle jmol
 %post		notebook
 ln -sf %{_javadir}/JmolApplet.jar %{python_sitearch}/sagenb/data/jmol/
+ln -sf %{_javadir}/Jmol.jar %{python_sitearch}/sagenb/data/jmol/
 ln -sf %{_javadir}/vecmath.jar %{python_sitearch}/sagenb/data/jmol/
 exit 0
 

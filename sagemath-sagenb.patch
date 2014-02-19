@@ -35,7 +35,7 @@ diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/data/sage/html/notebook/ba
  <script type="text/javascript" src="/java/jmol/appletweb/Jmol.js"></script>
  <!-- This must stay in head -->
 -<script>jmolInitialize("/java/jmol");jmolSetCallback("menuFile","/java/jmol/appletweb/SageMenu.mnu");</script>
-+<script>jmolInitialize("/java/jmol", "JmolApplet.jar,vecmath.jar");</script>
++<script>jmolInitialize("/java/jmol", "JmolApplet.jar,Jmol.jar,vecmath.jar");</script>
  
  {% if JEDITABLE_TINYMCE and not worksheet.docbrowser() and not worksheet.is_published() %}
  <!-- TinyMCE and jEditable - in-place editing of text cells -->
@@ -113,3 +113,15 @@ diff -up build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/notebook/run_notebook.py.o
  
  def save_notebook(notebook):
      print "Quitting all running worksheets..."
+--- build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/misc/misc.py.orig	2014-02-19 12:22:25.360997774 -0300
++++ build/pkgs/sagenb/src/sagenb-0.10.8.2/sagenb/misc/misc.py	2014-02-19 12:26:01.260011849 -0300
+@@ -174,7 +174,8 @@ def pad_zeros(s, size=3):
+ 
+ SAGENB_ROOT = os.path.split(resource_filename(__name__, ''))[0]
+ 
+-DATA = os.path.join(SAGENB_ROOT, 'data')
++from sage.misc.misc import SAGE_SRC
++DATA = os.path.join(SAGE_SRC, 'sagenb', 'data')
+ 
+ if os.environ.has_key('DOT_SAGENB'):
+     DOT_SAGENB = os.environ['DOT_SAGENB']
