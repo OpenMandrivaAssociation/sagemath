@@ -43,7 +43,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	6.1.1
-Release:	6%{?dist}
+Release:	7%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -278,6 +278,7 @@ Requires:	python-flask-openid
 Requires:	python-flask-silk
 Requires:	python-matplotlib
 Requires:	python-networkx
+Requires:	python-parsing
 Requires:	python-scipy
 Requires:	python-sympy
 Requires:	python-twisted-web
