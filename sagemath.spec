@@ -43,7 +43,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	6.1.1
-Release:	7%{?dist}
+Release:	8%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -660,8 +660,8 @@ rm -r build/pkgs/sagenb/src/%{sagenb_pkg}/sagenb.egg-info
 ########################################################################
 %build
 export CC=%{__cc}
-export CFLAGS="%{optflags}"
-export CXXFLAGS="%{optflags}"
+export CFLAGS="%{optflags} -fuse-ld=bfd"
+export CXXFLAGS="%{optflags} -fuse-ld=bfd"
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 # Avoid buildroot in gcc command line (use _builddir instead)
@@ -679,7 +679,8 @@ ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 ln -sf %{_datadir} $SAGE_LOCAL/share
 
-export PATH=%{buildroot}%{_bindir}:$PATH
+mkdir bin; pushd bin; ln -s /usr/bin/ld.bfd ld; popd
+export PATH=$PWD/bin:%{buildroot}%{_bindir}:$PATH
 export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
 
 #------------------------------------------------------------------------
@@ -721,6 +722,8 @@ rm -fr $DOT_SAGE
 ########################################################################
 %install
 export CC=%{__cc}
+export CFLAGS="%{optflags} -fuse-ld=bfd"
+export CXXFLAGS="%{optflags} -fuse-ld=bfd"
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 export SAGE_SRC=%{buildroot}%{SAGE_SRC}
@@ -733,7 +736,7 @@ export DESTDIR=%{buildroot}
 export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
-export PATH=%{buildroot}%{_bindir}:$PATH
+export PATH=$PWD/bin:%{buildroot}%{_bindir}:$PATH
 export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
 
 #------------------------------------------------------------------------
