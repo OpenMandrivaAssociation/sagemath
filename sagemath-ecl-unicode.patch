@@ -1,6 +1,6 @@
 diff -up src/sage/libs/ecl.pxd.orig src/sage/libs/ecl.pxd
---- src/sage/libs/ecl.pxd.orig	2014-02-07 11:44:51.152719854 -0200
-+++ src/sage/libs/ecl.pxd	2014-02-07 11:45:08.969720536 -0200
+--- src/sage/libs/ecl.pxd.orig	2014-03-12 13:06:42.944532214 -0300
++++ src/sage/libs/ecl.pxd	2014-03-12 13:06:45.560532100 -0300
 @@ -134,6 +134,7 @@ cdef extern from "ecl/ecl.h":
      cl_object ecl_read_from_cstring_safe(char *s, cl_object err)
      cl_object cl_write_to_string(cl_narg narg, cl_object o)
@@ -10,8 +10,8 @@ diff -up src/sage/libs/ecl.pxd.orig src/sage/libs/ecl.pxd
      # S-expr evaluation and function calls
  
 diff -up src/sage/libs/ecl.pyx.orig src/sage/libs/ecl.pyx
---- src/sage/libs/ecl.pyx.orig	2014-02-07 11:45:20.327720971 -0200
-+++ src/sage/libs/ecl.pyx	2014-02-07 11:48:28.278728169 -0200
+--- src/sage/libs/ecl.pyx.orig	2014-03-12 13:06:42.949532214 -0300
++++ src/sage/libs/ecl.pyx	2014-03-12 13:07:55.483529040 -0300
 @@ -329,17 +329,19 @@ cdef cl_object ecl_safe_eval(cl_object f
          ...
          RuntimeError: ECL says: Console interrupt.
@@ -89,3 +89,12 @@ diff -up src/sage/libs/ecl.pyx.orig src/sage/libs/ecl.pyx
  
  #Maxima's BFLOAT multiprecision float type can be read with:
  #def bfloat_to_python(e):
+@@ -735,7 +743,7 @@ cdef class EclObject:
+ 
+         """
+         cdef cl_object s
+-        s = cl_write_to_string(1,self.obj)
++        s = si_coerce_to_base_string(cl_write_to_string(1,self.obj))
+         return ecl_base_string_pointer_safe(s)
+ 
+     def __hash__(self):

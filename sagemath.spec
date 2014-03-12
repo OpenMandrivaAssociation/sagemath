@@ -43,7 +43,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	6.1.1
-Release:	8%{?dist}
+Release:	9%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -709,7 +709,7 @@ popd
 
 #------------------------------------------------------------------------
 pushd build/pkgs/flintqs/src
-    make %{?_smpflags} CPP="g++ %{optflags} -fPIC"
+    make %{?_smp_mflags} CPP="g++ %{optflags} -fPIC"
 popd
 
 pushd build/pkgs/rubiks/src
