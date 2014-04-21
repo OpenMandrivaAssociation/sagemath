@@ -168,6 +168,8 @@ Patch28:	%{name}-sympy.patch
 # Mandriva specific
 Patch29:	%{name}-underlink.patch
 
+Patch30:	%{name}-pari2.7.patch
+
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
 BuildRequires:	boost-devel
@@ -633,6 +635,7 @@ popd
 %patch27
 %patch28
 %patch29
+%patch30
 
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \

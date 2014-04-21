@@ -1,0 +1,16 @@
+--- src/sage/libs/pari/gen.pyx.orig	2014-04-20 21:13:45.990848860 -0300
++++ src/sage/libs/pari/gen.pyx	2014-04-20 21:14:56.465845890 -0300
+@@ -6932,11 +6932,11 @@ cdef class gen(sage.structure.element.Ri
+         cdef GEN disc
+         if not fa:
+             pari_catch_sig_on()
+-            B = P.new_gen_noclear(nfbasis(self.g, &disc, flag, NULL))
++            B = P.new_gen_noclear(nfbasis(self.g, &disc, NULL))
+         else:
+             t0 = objtogen(fa)
+             pari_catch_sig_on()
+-            B = P.new_gen_noclear(nfbasis(self.g, &disc, flag, t0.g))
++            B = P.new_gen_noclear(nfbasis(self.g, &disc, t0.g))
+         D = P.new_gen(disc)
+         return B, D
+ 
