@@ -14,3 +14,14 @@
          D = P.new_gen(disc)
          return B, D
  
+--- src/sage/libs/pari/decl.pxi.orig	2014-04-20 22:28:36.551659642 -0300
++++ src/sage/libs/pari/decl.pxi	2014-04-20 22:28:47.624659175 -0300
+@@ -724,7 +724,7 @@ cdef extern from 'pari/pari.h':
+     long    idealval(GEN nf,GEN ix,GEN vp)
+     GEN     idealprodprime(GEN nf, GEN L)
+     GEN     indexpartial(GEN P, GEN DP)
+-    GEN     nfbasis(GEN x, GEN *y,long flag,GEN p)
++    GEN     nfbasis(GEN x, GEN *y,GEN p)
+     GEN     nfbasis0(GEN x,long flag,GEN p)
+     GEN     nfdisc0(GEN x,long flag, GEN p)
+     GEN     nfreducemodpr(GEN nf, GEN x, GEN modpr)
