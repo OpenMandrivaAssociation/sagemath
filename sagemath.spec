@@ -279,6 +279,7 @@ Requires:	pari-data
 Requires:	python-pycrypto
 Requires:	python-cvxopt
 BuildRequires:	python-cython
+BuildRequires:	python-docutils
 Requires:	python-flask-autoindex
 Requires:	python-flask-babel
 Requires:	python-flask-openid
