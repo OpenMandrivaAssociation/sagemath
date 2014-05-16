@@ -175,11 +175,6 @@ Patch29:	%{name}-underlink.patch
 # Edited latest version from http://trac.sagemath.org/ticket/15767
 Patch30:	%{name}-pari2.7.patch
 
-# Allow building documentation with sphinx-1.2.2
-# Note that this only removes the SEEALSO notes that apparently
-# have incorrect information/link, instead of fixing them.
-Patch31:	%{name}-sphinx-1.2.2.patch
-
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
 BuildRequires:	boost-devel
@@ -638,8 +633,6 @@ popd
 %patch29
 
 %patch30 -p1
-
-%patch31
 
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
