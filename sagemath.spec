@@ -208,6 +208,7 @@ BuildRequires:	gnutls-devel
 BuildRequires:	gsl-devel
 BuildRequires:	iml-devel
 BuildRequires:	ipython
+BuildRequires:	lapack-devel
 BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
 BuildRequires:	libfac-devel
