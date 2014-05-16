@@ -1,7 +1,6 @@
-diff -up src/module_list.py.orig src/module_list.py
---- src/module_list.py.orig	2014-02-07 11:27:41.862680439 -0200
-+++ src/module_list.py	2014-02-07 11:27:58.536681078 -0200
-@@ -2069,7 +2069,8 @@ ext_modules = [
+--- src/module_list.py.orig	2014-05-10 15:32:07.746257332 -0300
++++ src/module_list.py	2014-05-10 15:36:31.142238439 -0300
+@@ -2070,7 +2070,8 @@ ext_modules = [
  # These extensions are to be compiled only if the
  # corresponding packages have been installed
  

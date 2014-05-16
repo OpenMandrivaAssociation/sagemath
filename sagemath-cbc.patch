@@ -1,8 +1,7 @@
-diff -up src/module_list.py.orig src/module_list.py
---- src/module_list.py.orig	2014-02-07 12:39:09.255844618 -0200
-+++ src/module_list.py	2014-02-07 12:39:20.005845030 -0200
-@@ -2114,7 +2114,7 @@ if (os.path.isfile(SAGE_INC + "/cplex.h"
-                   libraries = ["csage", "stdc++", "cplex"])
+--- src/module_list.py.orig	2014-05-10 16:02:43.371125667 -0300
++++ src/module_list.py	2014-05-10 16:02:58.362124591 -0300
+@@ -2115,7 +2115,7 @@ if (os.path.isfile(SAGE_INC + "/cplex.h"
+                   libraries = ["stdc++", "cplex"])
          )
  
 -if is_package_installed('cbc'):

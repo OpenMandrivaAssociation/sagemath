@@ -1,6 +1,5 @@
-diff -up src/module_list.py.orig src/module_list.py
---- src/module_list.py.orig	2014-02-07 11:31:05.355688232 -0200
-+++ src/module_list.py	2014-02-07 11:32:21.239691137 -0200
+--- src/module_list.py.orig	2014-05-10 15:38:39.635229222 -0300
++++ src/module_list.py	2014-05-10 15:40:06.410222998 -0300
 @@ -5,7 +5,7 @@ from distutils.core import setup
  from distutils.extension import Extension
  from sage.env import *
@@ -36,15 +35,14 @@ diff -up src/module_list.py.orig src/module_list.py
 @@ -702,7 +703,7 @@ ext_modules = [
                sources = ['sage/libs/lcalc/lcalc_Lfunction.pyx'],
                libraries = ['m', 'ntl', 'mpfr', 'gmp', 'gmpxx',
-                            'Lfunction', 'stdc++'],
+                            'Lfunction'],
 -              include_dirs = [SAGE_INC + "/libLfunction"],
 +              include_dirs = [SAGE_INC + "/Lfunction"],
                extra_compile_args=["-O3", "-ffast-math"],
                language = 'c++'),
  
-diff -up src/setup.py.orig src/setup.py
---- src/setup.py.orig	2014-02-07 11:32:35.278691675 -0200
-+++ src/setup.py	2014-02-07 11:34:40.589696474 -0200
+--- src/setup.py.orig	2014-05-10 15:40:24.650221690 -0300
++++ src/setup.py	2014-05-10 15:43:52.993206746 -0300
 @@ -36,11 +36,11 @@ except KeyError:
      compile_result_dir = None
      keep_going = False
@@ -59,17 +57,17 @@ diff -up src/setup.py.orig src/setup.py
                  SAGE_SRC,
                  os.path.join(SAGE_SRC, 'sage', 'ext')]
  
-@@ -161,11 +161,11 @@ for m in ext_modules:
+@@ -171,10 +171,12 @@ for m in ext_modules:
+     m.libraries = ['csage'] + m.libraries
+     if m.language == 'c++':
+         m.libraries.append('stdc++')
++        m.libraries.append('ntl')
++    m.libraries = m.libraries + ['gmp', 'm', 'dl']
  
-     # FIMXE: Do NOT link the following libraries to each and
-     #        every module (regardless of the language btw.):
--    m.libraries = ['csage'] + m.libraries + ['stdc++', 'ntl']
-+    m.libraries = ['csage'] + m.libraries + ['stdc++', 'ntl', 'gmp', 'm', 'dl']
- 
-     m.extra_compile_args += extra_compile_args
-     m.extra_link_args += extra_link_args
--    m.library_dirs += ['%s/lib' % SAGE_LOCAL]
+     m.extra_compile_args = m.extra_compile_args + extra_compile_args
+     m.extra_link_args = m.extra_link_args + extra_link_args
+-    m.library_dirs = m.library_dirs + [os.path.join(SAGE_LOCAL, "lib")]
 +    m.library_dirs += ['c_lib', '%s/lib' % SAGE_LOCAL]
  
  
- 
+ #############################################

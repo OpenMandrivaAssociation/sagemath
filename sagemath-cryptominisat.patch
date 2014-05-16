@@ -1,7 +1,6 @@
-diff -up src/module_list.py.orig src/module_list.py
---- src/module_list.py.orig	2014-02-07 12:47:06.312862886 -0200
-+++ src/module_list.py	2014-02-07 12:49:07.920867543 -0200
-@@ -2124,7 +2124,7 @@ if is_package_installed('cbc'):
+--- src/module_list.py.orig	2014-05-10 15:59:50.979138032 -0300
++++ src/module_list.py	2014-05-10 16:00:00.142137375 -0300
+@@ -2125,7 +2125,7 @@ if is_package_installed('cbc'):
          )
  
  

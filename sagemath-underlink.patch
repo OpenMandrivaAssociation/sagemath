@@ -1,6 +1,6 @@
---- src/module_list.py.orig	2013-07-29 18:06:26.053833138 -0300
-+++ src/module_list.py	2013-07-29 18:06:44.380832801 -0300
-@@ -1761,7 +1761,7 @@ ext_modules = [
+--- src/module_list.py.orig	2014-05-10 16:00:52.758133601 -0300
++++ src/module_list.py	2014-05-10 16:01:04.088132788 -0300
+@@ -1860,7 +1860,7 @@ ext_modules = [
      Extension('sage.rings.polynomial.pbori',
                sources = ['sage/rings/polynomial/pbori.pyx'],
                libraries=['polybori-' + polybori_major_version,

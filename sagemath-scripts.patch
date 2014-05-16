@@ -1,7 +1,30 @@
-diff -up src/bin/sage.orig src/bin/sage
---- src/bin/sage.orig	2014-02-07 11:02:57.653623604 -0200
-+++ src/bin/sage	2014-02-07 11:08:54.765637279 -0200
-@@ -11,17 +11,14 @@ usage() {
+--- src/bin/sage-runtests.orig	2014-05-10 15:03:46.332379370 -0300
++++ src/bin/sage-runtests	2014-05-10 15:04:06.036377957 -0300
+@@ -54,10 +54,6 @@ if __name__ == "__main__":
+                       help="run doctests using Valgrind's cachegrind tool.  The log "
+                          "files are named sage-cachegrind.PID and can be found in " +
+                          os.path.join(os.environ["DOT_SAGE"], "valgrind"))
+-    parser.add_option("--omega", action="store_true", default=False,
+-                      help="run doctests using Valgrind's omega tool.  The log "
+-                         "files are named sage-omega.PID and can be found in " +
+-                         os.path.join(os.environ["DOT_SAGE"], "valgrind"))
+ 
+     parser.add_option("-f", "--failed", action="store_true", default=False,
+         help="doctest only those files that failed in the previous run")
+--- src/bin/sage-valgrind.orig	2014-05-10 15:03:46.336379370 -0300
++++ src/bin/sage-valgrind	2014-05-10 15:04:06.037377957 -0300
+@@ -11,7 +11,7 @@ fi
+ LOG="$DOT_SAGE"/valgrind/sage-memcheck.%p
+ echo "Log file is $LOG"
+ 
+-MEMCHECK_FLAGS="--leak-resolution=high --log-file=$LOG --leak-check=full --num-callers=25 --suppressions=$SAGE_LOCAL/lib/valgrind/sage.supp "; export MEMCHECK_FLAGS
++MEMCHECK_FLAGS="--leak-resolution=high --log-file=$LOG --leak-check=full --num-callers=25 "; export MEMCHECK_FLAGS
+ if [ "$SAGE_MEMCHECK_FLAGS" ]; then
+     echo "Overwriting memcheck flags with:"
+     echo $SAGE_MEMCHECK_FLAGS
+--- src/bin/sage.orig	2014-05-10 15:02:59.350382740 -0300
++++ src/bin/sage	2014-05-10 15:04:06.036377957 -0300
+@@ -13,17 +13,14 @@ usage() {
      echo "  file.<sage|py|spyx> -- run given .sage, .py or .spyx files"
      echo "  -advanced           -- list all command line options"
      echo "  -c <cmd>            -- Evaluates cmd as sage code"
@@ -19,7 +42,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -python [...]       -- run the Python interpreter"
      echo "  -R [...]            -- run Sage's R with given arguments"
      echo "  -singular [...]     -- run Sage's singular with given arguments"
-@@ -37,10 +34,6 @@ usage() {
+@@ -39,10 +36,6 @@ usage() {
      echo "                           --optional - controls which optional tests are run"
      echo "                           --sagenb - test all sagenb files"
      echo "                           --help - show all testing options"
@@ -30,7 +53,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -v, -version        -- print the Sage version"
      exit 0
  }
-@@ -64,14 +57,14 @@ usage_advanced() {
+@@ -63,14 +56,14 @@ usage_advanced() {
      echo "  -root               -- print the Sage root directory"
      echo "  -gthread, -qthread, -q4thread, -wthread, -pylab"
      echo "                      -- pass the option through to ipython"
@@ -47,7 +70,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -inotebook [...]    -- start the *insecure* Sage notebook"
      echo "  -n, -notebook [...] -- start the Sage notebook (options are the same"
      echo "                         as for the notebook command in Sage)"
-@@ -88,13 +81,9 @@ usage_advanced() {
+@@ -87,13 +80,9 @@ usage_advanced() {
      echo "  -gp [...]           -- run Sage's PARI/GP calculator with given arguments"
      echo "  -ipython [...]      -- run Sage's IPython using the default environment (not"
      echo "                         Sage), passing additional options to IPython"
@@ -61,7 +84,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -maxima [...]       -- run Sage's Maxima with given arguments"
      echo "  -mwrank [...]       -- run Sage's mwrank with given arguments"
      echo "  -python [...]       -- run the Python interpreter"
-@@ -108,80 +97,10 @@ usage_advanced() {
+@@ -107,80 +96,10 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
@@ -142,7 +165,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -search_src <string> -- search through all the Sage library code for string"
      echo "  -search_doc <string> -- search through the Sage documentation for string"
      echo "  -grep <string>      -- same as -search_src"
-@@ -201,17 +120,6 @@ usage_advanced() {
+@@ -200,17 +119,6 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
@@ -160,7 +183,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "Valgrind memory debugging:"
      echo "  -cachegrind         -- run Sage using Valgrind's cachegrind tool.  The log"
      echo "                         files are named sage-cachegrind.PID can be found in"
-@@ -225,9 +133,6 @@ usage_advanced() {
+@@ -224,9 +132,6 @@ usage_advanced() {
      echo "  -memcheck           -- run Sage using Valgrind's memcheck tool.  The log"
      echo "                         files are named sage-memcheck.PID can be found in"
      echo "                         $DOT_SAGE"
@@ -170,7 +193,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -valgrind           -- this is an alias for -memcheck"
      echo
      echo "You can also use -- before a long option, e.g., 'sage --optional'."
-@@ -256,17 +161,6 @@ if [ "$1" = '-upgrade' -o "$1" = "--upgr
+@@ -255,17 +160,6 @@ if [ "$1" = '-upgrade' -o "$1" = "--upgr
  fi
  
  
@@ -188,7 +211,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ $# -gt 0 ]; then
    if [ "$1" = '-h' -o "$1" = '-?' -o "$1" = '-help' -o "$1" = '--help' ]; then
       usage
-@@ -279,25 +173,11 @@ fi
+@@ -278,25 +172,11 @@ fi
  
  # Prepare for running Sage, either interactively or non-interactively.
  sage_setup() {
@@ -214,7 +237,7 @@ diff -up src/bin/sage.orig src/bin/sage
      if [ ! -d "$IPYTHONDIR" ]; then
          # make sure that $DOT_SAGE exists so that ipython will happily
          # create its config directories there.  If DOT_SAGE doesn't
-@@ -308,20 +188,6 @@ sage_setup() {
+@@ -307,20 +187,6 @@ sage_setup() {
  }
  
  
@@ -235,7 +258,7 @@ diff -up src/bin/sage.orig src/bin/sage
  # Start an interactive Sage session, this function never returns.
  interactive_sage() {
      sage_setup
-@@ -371,11 +237,6 @@ if [ "$1" = '-axiom' -o "$1" = '--axiom'
+@@ -370,11 +236,6 @@ if [ "$1" = '-axiom' -o "$1" = '--axiom'
      exec axiom "$@"
  fi
  
@@ -247,7 +270,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = '-gap' -o "$1" = '--gap' ]; then
      shift
      exec gap "$@"
-@@ -388,7 +249,7 @@ fi
+@@ -387,7 +248,7 @@ fi
  
  if [ "$1" = '-singular' -o "$1" = '--singular' ]; then
      shift
@@ -256,7 +279,7 @@ diff -up src/bin/sage.orig src/bin/sage
  fi
  
  if [ "$1" = '-sqlite3' -o "$1" = '--sqlite3' ]; then
-@@ -416,16 +277,6 @@ if [ "$1" = '-lisp' -o "$1" = '--lisp' ]
+@@ -415,16 +276,6 @@ if [ "$1" = '-lisp' -o "$1" = '--lisp' ]
      exec ecl "$@"
  fi
  
@@ -273,7 +296,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = '-maxima' -o "$1" = '--maxima' ]; then
      shift
      exec maxima "$@"
-@@ -585,20 +436,6 @@ EOF
+@@ -584,20 +435,6 @@ EOF
  fi
  
  #####################################################################
@@ -294,7 +317,7 @@ diff -up src/bin/sage.orig src/bin/sage
  # File conversion
  #####################################################################
  
-@@ -613,36 +450,15 @@ if [ "$1" = '-rst2sws' -o "$1" = '--rst2
+@@ -612,36 +449,15 @@ if [ "$1" = '-rst2sws' -o "$1" = '--rst2
  fi
  
  #####################################################################
@@ -331,7 +354,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = "-inotebook" -o "$1" = '--inotebook' ]; then
      shift
      sage-cleaner &>/dev/null &
-@@ -661,58 +477,12 @@ if [ "$1" = '-grepdoc' -o "$1" = "--grep
+@@ -660,58 +476,12 @@ if [ "$1" = '-grepdoc' -o "$1" = "--grep
     exit 0
  fi
  
@@ -391,7 +414,7 @@ diff -up src/bin/sage.orig src/bin/sage
      if [ ! -f  "$DOT_SAGE"/init.sage ]; then
          echo >&2 "init.sage does not exist ... creating"
          touch "$DOT_SAGE"/init.sage
-@@ -728,10 +498,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1"
+@@ -727,10 +497,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1"
      fi
  fi
  
@@ -403,7 +426,7 @@ diff -up src/bin/sage.orig src/bin/sage
      shift
      SAGE_BANNER="no"
      sage_setup
-@@ -745,12 +512,6 @@ if [ "$1" = '-testall' -o "$1" = "--test
+@@ -744,12 +511,6 @@ if [ "$1" = '-testall' -o "$1" = "--test
      exec sage-runtests -a "$@"
  fi
  
@@ -416,7 +439,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = '-c' ]; then
      shift
      SAGE_BANNER="no"
-@@ -759,124 +520,6 @@ if [ "$1" = '-c' ]; then
+@@ -758,124 +519,6 @@ if [ "$1" = '-c' ]; then
      exec sage-eval "$@"
  fi
  
@@ -541,7 +564,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
      shift
      sage_setup
-@@ -925,12 +568,6 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
+@@ -924,12 +567,6 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
      exec sage-callgrind "$@"
  fi
  
@@ -554,29 +577,3 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
      exec sage-startuptime.py "$@"
  fi
-diff -up src/bin/sage-runtests.orig src/bin/sage-runtests
---- src/bin/sage-runtests.orig	2014-02-07 11:09:24.776638428 -0200
-+++ src/bin/sage-runtests	2014-02-07 11:09:41.780639079 -0200
-@@ -54,10 +54,6 @@ if __name__ == "__main__":
-                       help="run doctests using Valgrind's cachegrind tool.  The log "
-                          "files are named sage-cachegrind.PID and can be found in " +
-                          os.path.join(os.environ["DOT_SAGE"], "valgrind"))
--    parser.add_option("--omega", action="store_true", default=False,
--                      help="run doctests using Valgrind's omega tool.  The log "
--                         "files are named sage-omega.PID and can be found in " +
--                         os.path.join(os.environ["DOT_SAGE"], "valgrind"))
- 
-     parser.add_option("-f", "--failed", action="store_true", default=False,
-         help="doctest only those files that failed in the previous run")
-diff -up src/bin/sage-valgrind.orig src/bin/sage-valgrind
---- src/bin/sage-valgrind.orig	2014-02-07 11:09:56.469639641 -0200
-+++ src/bin/sage-valgrind	2014-02-07 11:10:06.804640037 -0200
-@@ -11,7 +11,7 @@ fi
- LOG="$DOT_SAGE"/valgrind/sage-memcheck.%p
- echo "Log file is $LOG"
- 
--MEMCHECK_FLAGS="--leak-resolution=high --log-file=$LOG --leak-check=full --num-callers=25 --suppressions=$SAGE_LOCAL/lib/valgrind/sage.supp "; export MEMCHECK_FLAGS
-+MEMCHECK_FLAGS="--leak-resolution=high --log-file=$LOG --leak-check=full --num-callers=25 "; export MEMCHECK_FLAGS
- if [ "$SAGE_MEMCHECK_FLAGS" ]; then
-     echo "Overwriting memcheck flags with:"
-     echo $SAGE_MEMCHECK_FLAGS

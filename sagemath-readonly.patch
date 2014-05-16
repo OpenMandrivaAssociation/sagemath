@@ -1,7 +1,6 @@
-diff -up src/sage/all.py.orig src/sage/all.py
---- src/sage/all.py.orig	2014-02-07 12:43:35.244854804 -0200
-+++ src/sage/all.py	2014-02-07 12:44:11.798856204 -0200
-@@ -325,11 +325,11 @@ def _write_started_file():
+--- src/sage/all.py.orig	2014-05-10 15:45:46.934198573 -0300
++++ src/sage/all.py	2014-05-10 15:45:58.395197751 -0300
+@@ -327,11 +327,11 @@ def _write_started_file():
  
      Check that the file exists when Sage is running::
  

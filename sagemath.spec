@@ -1,6 +1,9 @@
 #%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
 %define __noautoreq		'pythonegg\(flask-oldsessions\).*'
 
+# use prebuilt documentation? useful if distro sphinx cannot rebuild docs
+%global build_doc		0
+
 # not functional due to missing jar dependencies
 %global with_sage3d		0
 
@@ -8,7 +11,7 @@
 
 %global have_lrcalc		1
 
-%global have_coin_or_Cbc	0
+%global have_coin_or_Cbc	1
 
 %ifarch x86_64
 %global have_fes		1
@@ -42,8 +45,8 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	6.1.1
-Release:	10%{?dist}
+Version:	6.2
+Release:	1%{?dist}
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -58,6 +61,15 @@ Source4:	JmolHelp.html
 # from jmol-12.3.27.p2 spkg
 Source5:	testjava.sh
 Source6:	%{name}.rpmlintrc
+# wget http://boxen.math.washington.edu/home/sagemath/sage-mirror/linux/64bit/sage-6.2-x86_64-Linux-Fedora_20_x86_64.tar.lzma
+# tar Jxf sage-6.2-x86_64-Linux-Fedora_20_x86_64.tar.lzma
+# cd sage-6.2-x86_64-Linux/src/doc
+# cp -fpar output ~/rpmbuild
+# cd ~/rpmbuild/output
+# rm -fr doctrees inventory latex pdf
+# cd ..
+# tar jcf output.tar.bz2 output
+Source10:	output.tar.bz2
 
 # 1. scons ignores most environment variables
 # 2. scons 2.2* does not have soname support (expected for scons 2.3*)
@@ -116,11 +128,6 @@ Patch12:	%{name}-4ti2.patch
 # http://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=1317
 Patch13:	%{name}-pari.patch
 
-# Portuguese translations: http://trac.sagemath.org/sage_trac/ticket/12822
-Patch14:	trac_12502_pt_translation_of_a_tour_of_sage_rebase1.patch
-Patch15:	trac_12822_pt_translation_of_tutorial.patch
-Patch16:	trac_12822_pt_translation_of_tutorial_rev1.patch
-
 # use jmol itself to export preview images
 # FIXME besides not using X and told so, fails if DISPLAY is not set
 Patch17:	%{name}-jmol.patch
@@ -154,9 +161,6 @@ Patch24:	%{name}-libgap.patch
 # Patch to enable fes once review requests are done in Fedora
 Patch25:	%{name}-fes.patch
 
-# Get package to build with known problem if not yet updated to pari 2.6.
-Patch26:	%{name}-nopari2.6.patch
-
 # sagemath 5.8 (optionally) requires cryptominisat 2.9.6 (in rawhide)
 # and does not work with cryptominisat 2.9.5 (in f18)
 Patch27:	%{name}-cryptominisat.patch
@@ -168,7 +172,13 @@ Patch28:	%{name}-sympy.patch
 # Mandriva specific
 Patch29:	%{name}-underlink.patch
 
+# Edited latest version from http://trac.sagemath.org/ticket/15767
 Patch30:	%{name}-pari2.7.patch
+
+# Allow building documentation with sphinx-1.2.2
+# Note that this only removes the SEEALSO notes that apparently
+# have incorrect information/link, instead of fixing them.
+Patch31:	%{name}-sphinx-1.2.2.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
@@ -601,14 +611,6 @@ popd
 %patch12
 %patch13
 
-pushd src
-mkdir -p doc/pt/a_tour_of_sage/
-cp -fa doc/en/a_tour_of_sage/*.png doc/pt/a_tour_of_sage/
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-popd
-
 %patch17
 %patch18
 %patch19
@@ -631,11 +633,13 @@ popd
 %patch25
 %endif
 
-%patch26
 %patch27
 %patch28
 %patch29
-%patch30
+
+%patch30 -p1
+
+%patch31
 
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
@@ -871,6 +875,12 @@ popd
 
 #------------------------------------------------------------------------
 pushd build/pkgs/elliptic_curves
+    # --short-circuit -bi debug build helper
+    if [ ! -e src/ellcurves ]; then
+	rm -fr src
+	tar jxf ../../../upstream/%{elliptic_curves_pkg}.tar.bz2
+	mv %{elliptic_curves_pkg} src
+    fi
     python ./spkg-install
 popd
 
@@ -933,15 +943,16 @@ export SAGE_SHARE="$SAGE_SHARE"
 export SAGE_ETC="$SAGE_ETC"
 export SAGE_SRC="$SAGE_SRC"
 ##export SAGE_DOC="$SAGE_DOC"
-export PATH=$SAGE_LOCAL/bin:%{_libdir}/4ti2/bin:\$PATH
+module load 4ti2-%{_arch}
+%if %{have_lrcalc}
+module load lrcalc-%{_arch}
+%endif
+module load surf-%{_arch}
+export PATH=$SAGE_LOCAL/bin:\$PATH
 export SINGULARPATH=%{_libdir}/Singular/LIB
 export SINGULAR_BIN_DIR=%{_libdir}/Singular
 ##export PYTHONPATH="$SAGE_PYTHONPATH:\$SAGE_LOCAL/bin"
-%if 0%{?fedora}
 export SAGE_CBLAS=blas
-%else
-export SAGE_CBLAS=cblas
-%endif
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
 export SYMPOW_DIR="\$DOT_SAGE/sympow"
@@ -979,6 +990,7 @@ pushd src
 popd
 
 #------------------------------------------------------------------------
+%if %{build_doc}
     cp -f $SAGE_PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{python_sitearch}
 
 # Build documentation, using %#{buildroot} environment
@@ -998,7 +1010,7 @@ pushd src/doc
 
     # there we go
     ln -sf %{buildroot}%{SAGE_DOC} $SAGE_SRC/doc
-    python common/builder.py all html
+    SAGE_NUM_THREADS=1 python common/builder.py all html
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
     cp -far output $SAGE_DOC
 
@@ -1020,14 +1032,26 @@ sed -i 's|%{buildroot}||g' $SAGE_DOC/test.log
 %if %{with_sphinx_hack}
     rm -fr %{buildroot}%{python_sitearch}/sphinx
 %endif
+%else
+pushd src/doc
+    tar jxf %{SOURCE10}
+    export SAGE_DOC=%{buildroot}%{SAGE_DOC}
+    cp -far output $SAGE_DOC
+
+    # should not be required and encodes buildroot
+    rm -fr $SAGE_DOC/output/doctrees
+popd
+%endif
 
 # Script was used to build documentation 
 perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
+%if %{build_doc}
 # More wrong buildroot references
 perl -pi -e 's|%{buildroot}||g;' \
 	 -e "s|$PWD/src/doc|%{SAGE_DOC}|g;" \
     %{buildroot}%{SAGE_DOC}/output/html/en/reference/todolist.html
+%endif
 
 #------------------------------------------------------------------------
 # Fix links
@@ -1103,6 +1127,7 @@ exit 0
 %postun		notebook
 if [ $1 -eq 0 ] ; then
     rm -f %{python_sitearch}/sagenb/data/jmol/JmolApplet.jar
+    rm -f %{python_sitearch}/sagenb/data/jmol/Jmol.jar
     rm -f %{python_sitearch}/sagenb/data/jmol/vecmath.jar
     rmdir %{python_sitearch}/sagenb/data/jmol &&
 	rmdir %{python_sitearch}/sagenb/data &&

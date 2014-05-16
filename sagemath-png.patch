@@ -1,7 +1,6 @@
-diff -up src/module_list.py.orig src/module_list.py
---- src/module_list.py.orig	2014-02-07 11:50:03.665731821 -0200
-+++ src/module_list.py	2014-02-07 11:50:13.454732196 -0200
-@@ -1066,7 +1066,7 @@ ext_modules = [
+--- src/module_list.py.orig	2014-05-10 15:46:32.570195300 -0300
++++ src/module_list.py	2014-05-10 15:46:44.964194411 -0300
+@@ -1058,7 +1058,7 @@ ext_modules = [
  
      Extension('sage.matrix.matrix_mod2_dense',
                sources = ['sage/matrix/matrix_mod2_dense.pyx'],
@@ -10,7 +9,7 @@ diff -up src/module_list.py.orig src/module_list.py
                extra_compile_args = m4ri_extra_compile_args,
                depends = [SAGE_INC + "/png.h", SAGE_INC + "/m4ri/m4ri.h"]),
  
-@@ -1369,7 +1369,7 @@ ext_modules = [
+@@ -1354,7 +1354,7 @@ ext_modules = [
  
      Extension('sage.modules.vector_mod2_dense',
                sources = ['sage/modules/vector_mod2_dense.pyx'],
@@ -19,7 +18,7 @@ diff -up src/module_list.py.orig src/module_list.py
                extra_compile_args = m4ri_extra_compile_args,
                depends = [SAGE_INC + "/png.h", SAGE_INC + "/m4ri/m4ri.h"]),
  
-@@ -1859,7 +1859,7 @@ ext_modules = [
+@@ -1860,7 +1860,7 @@ ext_modules = [
      Extension('sage.rings.polynomial.pbori',
                sources = ['sage/rings/polynomial/pbori.pyx'],
                libraries=['polybori-' + polybori_major_version,

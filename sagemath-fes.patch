@@ -1,7 +1,6 @@
-diff -up src/module_list.py.orig src/module_list.py
---- src/module_list.py.orig	2014-02-07 12:46:14.237860892 -0200
-+++ src/module_list.py	2014-02-07 12:46:18.226861045 -0200
-@@ -2073,7 +2073,7 @@ ext_modules = [
+--- src/module_list.py.orig	2014-05-10 15:58:00.155145981 -0300
++++ src/module_list.py	2014-05-10 15:58:09.742145293 -0300
+@@ -2074,7 +2074,7 @@ ext_modules = [
  def is_package_installed(name):
      return False
  

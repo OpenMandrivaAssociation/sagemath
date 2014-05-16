@@ -1,6 +1,5 @@
-diff -up src/doc/common/builder.py.orig src/doc/common/builder.py
---- src/doc/common/builder.py.orig	2014-02-07 11:35:55.574699345 -0200
-+++ src/doc/common/builder.py	2014-02-07 11:35:58.192699445 -0200
+--- src/doc/common/builder.py.orig	2014-05-10 15:44:39.046203443 -0300
++++ src/doc/common/builder.py	2014-05-10 15:45:03.225201708 -0300
 @@ -32,7 +32,7 @@ from sage.env import SAGE_DOC, SAGE_SRC
  #     SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT,
  #     PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS
@@ -9,10 +8,9 @@ diff -up src/doc/common/builder.py.orig src/doc/common/builder.py
 +execfile(os.path.join(os.getenv('SAGE_ROOT'), 'src', 'doc', 'common' , 'build_options.py'))
  
  
- ##########################################
-diff -up src/doc/common/conf.py.orig src/doc/common/conf.py
---- src/doc/common/conf.py.orig	2014-02-07 11:35:55.584699345 -0200
-+++ src/doc/common/conf.py	2014-02-07 11:35:58.194699445 -0200
+ def print_build_error():
+--- src/doc/common/conf.py.orig	2014-05-10 15:44:59.936201944 -0300
++++ src/doc/common/conf.py	2014-05-10 15:45:03.229201708 -0300
 @@ -1,5 +1,5 @@
  import sys, os, sphinx
 -from sage.env import SAGE_DOC
@@ -30,9 +28,8 @@ diff -up src/doc/common/conf.py.orig src/doc/common/conf.py
      mathjax_relative = os.path.join('sagenb','data','mathjax')
  
      # It would be really nice if sphinx would copy the entire mathjax directory,
-diff -up src/sage/doctest/control.py.orig src/sage/doctest/control.py
---- src/sage/doctest/control.py.orig	2014-02-07 11:35:29.138698333 -0200
-+++ src/sage/doctest/control.py	2014-02-07 11:35:58.196699445 -0200
+--- src/sage/doctest/control.py.orig	2014-05-10 15:44:59.940201944 -0300
++++ src/sage/doctest/control.py	2014-05-10 15:45:03.230201708 -0300
 @@ -89,7 +89,6 @@ class DocTestDefaults(SageObject):
          self.valgrind = False
          self.massif = False
@@ -77,9 +74,8 @@ diff -up src/sage/doctest/control.py.orig src/sage/doctest/control.py
                  return 2
              return self.run_val_gdb()
          else:
-diff -up src/sage/interfaces/singular.py.orig src/sage/interfaces/singular.py
---- src/sage/interfaces/singular.py.orig	2014-02-07 11:35:55.605699346 -0200
-+++ src/sage/interfaces/singular.py	2014-02-07 11:35:58.198699446 -0200
+--- src/sage/interfaces/singular.py.orig	2014-05-10 15:44:59.940201944 -0300
++++ src/sage/interfaces/singular.py	2014-05-10 15:45:03.230201708 -0300
 @@ -2149,7 +2149,7 @@ def generate_docstring_dictionary():
      nodes.clear()
      node_names.clear()
@@ -89,9 +85,8 @@ diff -up src/sage/interfaces/singular.py.orig src/sage/interfaces/singular.py
  
      new_node = re.compile("File: singular\.hlp,  Node: ([^,]*),.*")
      new_lookup = re.compile("\* ([^:]*):*([^.]*)\..*")
-diff -up src/sage/misc/latex_macros.py.orig src/sage/misc/latex_macros.py
---- src/sage/misc/latex_macros.py.orig	2014-02-07 11:35:55.614699347 -0200
-+++ src/sage/misc/latex_macros.py	2014-02-07 11:35:58.199699446 -0200
+--- src/sage/misc/latex_macros.py.orig	2014-05-10 15:44:59.940201944 -0300
++++ src/sage/misc/latex_macros.py	2014-05-10 15:45:03.232201708 -0300
 @@ -142,7 +142,7 @@ def convert_latex_macro_to_mathjax(macro
          return name + ': ["' + defn + '",' + str(num_args) + ']'
  

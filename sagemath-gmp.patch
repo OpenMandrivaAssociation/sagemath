@@ -1,15 +1,3 @@
-diff -up src/c_lib/src/memory.c.orig src/c_lib/src/memory.c
---- src/c_lib/src/memory.c.orig	2014-02-07 11:01:49.674621000 -0200
-+++ src/c_lib/src/memory.c	2014-02-07 11:02:02.046621474 -0200
-@@ -18,7 +18,7 @@ AUTHORS:
-  ****************************************************************************/
- 
- #include <Python.h>
--#include <mpir.h>
-+#include <gmp.h>
- #include "interrupt.h"
- #include "memory.h"
- 
 diff -up src/sage/modular/arithgroup/farey.cpp.orig src/sage/modular/arithgroup/farey.cpp
 --- src/sage/modular/arithgroup/farey.cpp.orig	2014-02-07 16:44:24.474408115 -0200
 +++ src/sage/modular/arithgroup/farey.cpp	2014-02-07 16:44:33.100408446 -0200

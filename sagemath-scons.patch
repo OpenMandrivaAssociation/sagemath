@@ -1,6 +1,5 @@
-diff -up src/c_lib/SConstruct.orig src/c_lib/SConstruct
---- src/c_lib/SConstruct.orig	2014-02-07 10:59:45.462616244 -0200
-+++ src/c_lib/SConstruct	2014-02-07 11:00:41.900618405 -0200
+--- src/c_lib/SConstruct.orig	2014-05-10 14:58:29.897402067 -0300
++++ src/c_lib/SConstruct	2014-05-10 14:58:47.481400806 -0300
 @@ -126,8 +126,8 @@ env['PYV']=platform.python_version().rsp
  # The SCons convenience function Split is the only strange thing
  # to python programmers. It just makes a list by splitting on
@@ -14,7 +13,7 @@ diff -up src/c_lib/SConstruct.orig src/c_lib/SConstruct
  cppFiles = Split( "ZZ_pylong.cpp  ntl_wrap.cpp" )
 @@ -136,9 +136,22 @@ incFiles = Split( "ccobject.h  convert.h
             Split( "interrupt.h  memory.h  mpn_pylong.h  mpz_longlong.h" ) + \
-            Split( "mpz_pylong.h  ntl_wrap.h  pb_wrap.h  stdsage.h  ZZ_pylong.h" )
+            Split( "mpz_pylong.h  ntl_wrap.h  stdsage.h  ZZ_pylong.h" )
  
 +env.Append(CFLAGS='@@optflags@@')
 +env.Append(CXXFLAGS='@@optflags@@')

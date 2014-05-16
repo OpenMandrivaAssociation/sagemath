@@ -1,6 +1,5 @@
-diff -up src/c_lib/include/ntl_wrap.h.orig src/c_lib/include/ntl_wrap.h
---- src/c_lib/include/ntl_wrap.h.orig	2014-02-07 15:20:57.081216365 -0200
-+++ src/c_lib/include/ntl_wrap.h	2014-02-07 15:21:04.225216638 -0200
+--- src/c_lib/include/ntl_wrap.h.orig	2014-05-13 16:22:05.526912185 -0300
++++ src/c_lib/include/ntl_wrap.h	2014-05-13 16:26:37.997931724 -0300
 @@ -40,91 +40,92 @@ EXTERN void setup_NTL_error_callback(voi
  ////////  ZZ //////////
  
@@ -303,7 +302,7 @@ diff -up src/c_lib/include/ntl_wrap.h.orig src/c_lib/include/ntl_wrap.h
  #endif
  
  #define NTL_zz_pX_DOUBLE_EQUALS( obj1, obj2 )\
-@@ -225,64 +227,63 @@ struct zz_pX;
+@@ -225,104 +227,107 @@ struct zz_pX;
  //////// ZZ_pEContext ///////////////
  
  #ifndef __cplusplus
@@ -336,32 +335,28 @@ diff -up src/c_lib/include/ntl_wrap.h.orig src/c_lib/include/ntl_wrap.h
  #endif
  
  //////// mat_ZZ //////////
--
+ 
  #ifndef __cplusplus
--struct mat_ZZ;
+-typedef struct {} mat_ZZ;
 +typedef struct mat_ZZ mat_ZZ;
  #endif
  
--EXTERN void mat_ZZ_SetDims(struct mat_ZZ* mZZ, long nrows, long ncols);
--EXTERN struct mat_ZZ* mat_ZZ_pow(const struct mat_ZZ* x, long e);
--EXTERN long mat_ZZ_nrows(const struct mat_ZZ* x);
--EXTERN long mat_ZZ_ncols(const struct mat_ZZ* x);
--EXTERN void mat_ZZ_setitem(struct mat_ZZ* x, int i, int j, const struct ZZ* z);
--EXTERN struct ZZ* mat_ZZ_getitem(const struct mat_ZZ* x, int i, int j);
--EXTERN struct ZZ* mat_ZZ_determinant(const struct mat_ZZ* x, long deterministic);
--EXTERN struct mat_ZZ* mat_ZZ_HNF(const struct mat_ZZ* A, const struct ZZ* D);
--EXTERN struct ZZX* mat_ZZ_charpoly(const struct mat_ZZ* A);
--EXTERN long mat_ZZ_LLL(struct ZZ **det, struct mat_ZZ *x, long a, long b, long verbose);
--EXTERN long mat_ZZ_LLL_U(struct ZZ **det, struct mat_ZZ *x, struct mat_ZZ *U, long a, long b, long verbose);
-+EXTERN void mat_ZZ_SetDims(mat_ZZ* mZZ, long nrows, long ncols);
-+EXTERN mat_ZZ* mat_ZZ_pow(const mat_ZZ* x, long e);
-+EXTERN long mat_ZZ_nrows(const mat_ZZ* x);
-+EXTERN long mat_ZZ_ncols(const mat_ZZ* x);
+ EXTERN void mat_ZZ_SetDims(mat_ZZ* mZZ, long nrows, long ncols);
+ EXTERN mat_ZZ* mat_ZZ_pow(const mat_ZZ* x, long e);
+ EXTERN long mat_ZZ_nrows(const mat_ZZ* x);
+ EXTERN long mat_ZZ_ncols(const mat_ZZ* x);
+-EXTERN void mat_ZZ_setitem(mat_ZZ* x, int i, int j, const struct ZZ* z);
+-EXTERN struct ZZ* mat_ZZ_getitem(const mat_ZZ* x, int i, int j);
+-EXTERN struct ZZ* mat_ZZ_determinant(const mat_ZZ* x, long deterministic);
+-EXTERN mat_ZZ* mat_ZZ_HNF(const mat_ZZ* A, const struct ZZ* D);
+-EXTERN struct ZZX* mat_ZZ_charpoly(const mat_ZZ* A);
+-EXTERN long mat_ZZ_LLL(struct ZZ **det, mat_ZZ *x, long a, long b, long verbose);
+-EXTERN long mat_ZZ_LLL_U(struct ZZ **det, mat_ZZ *x, mat_ZZ *U, long a, long b, long verbose);
 +EXTERN void mat_ZZ_setitem(mat_ZZ* x, int i, int j, const ZZ* z);
 +EXTERN ZZ* mat_ZZ_getitem(const mat_ZZ* x, int i, int j);
 +EXTERN ZZ* mat_ZZ_determinant(const mat_ZZ* x, long deterministic);
 +EXTERN mat_ZZ* mat_ZZ_HNF(const mat_ZZ* A, const ZZ* D);
-+EXTERN ZZX* mat_ZZ_charpoly(const mat_ZZ* A);
++EXTERN  ZZX* mat_ZZ_charpoly(const mat_ZZ* A);
 +EXTERN long mat_ZZ_LLL(ZZ **det, mat_ZZ *x, long a, long b, long verbose);
 +EXTERN long mat_ZZ_LLL_U(ZZ **det, mat_ZZ *x, mat_ZZ *U, long a, long b, long verbose);
  
@@ -397,8 +392,11 @@ diff -up src/c_lib/include/ntl_wrap.h.orig src/c_lib/include/ntl_wrap.h
 +typedef struct ZZ_pE ZZ_pE;
  #endif
  
- // EXTERN struct ZZ_pE* new_ZZ_pE
-@@ -292,37 +293,40 @@ struct ZZ_pE;
+-// EXTERN struct ZZ_pE* new_ZZ_pE
++// EXTERN ZZ_pE* new_ZZ_pE
+ 
+ 
+ 
  //////// ZZ_pEX //////////
  
  //#ifndef __cplusplus
@@ -432,70 +430,791 @@ diff -up src/c_lib/include/ntl_wrap.h.orig src/c_lib/include/ntl_wrap.h
  //////// mat_GF2E //////////
  
  #ifndef __cplusplus
--struct mat_GF2E;
+-typedef struct {} mat_GF2E;
 +typedef struct mat_GF2E mat_GF2E;
  #endif
  
--EXTERN void mat_GF2E_setitem(struct mat_GF2E* x, int i, int j, const struct GF2E* z);
+-EXTERN void mat_GF2E_setitem(mat_GF2E* x, int i, int j, const struct GF2E* z);
 +EXTERN void mat_GF2E_setitem(mat_GF2E* x, int i, int j, const GF2E* z);
  
  //////// mat_GF2 //////////
  
  #ifndef __cplusplus
--struct mat_GF2;
+-typedef struct {} mat_GF2;
 +typedef struct GF2 GF2;
 +typedef struct mat_GF2 mat_GF2;
  #endif
  
--EXTERN void mat_GF2_setitem(struct mat_GF2* x, int i, int j, const struct GF2* z);
+-EXTERN void mat_GF2_setitem(mat_GF2* x, int i, int j, const struct GF2* z);
 +EXTERN void mat_GF2_setitem(mat_GF2* x, int i, int j, const GF2* z);
-diff -up src/c_lib/src/ntl_wrap.cpp.orig src/c_lib/src/ntl_wrap.cpp
---- src/c_lib/src/ntl_wrap.cpp.orig	2014-02-07 15:20:57.085216365 -0200
-+++ src/c_lib/src/ntl_wrap.cpp	2014-02-07 15:21:07.322216757 -0200
-@@ -845,67 +845,67 @@ struct ZZ_pX ZZ_pE_to_ZZ_pX(struct ZZ_pE
+--- src/c_lib/src/ntl_wrap.cpp.orig	2014-05-13 16:22:05.531912186 -0300
++++ src/c_lib/src/ntl_wrap.cpp	2014-05-13 16:22:11.181912591 -0300
+@@ -29,7 +29,7 @@ int ZZ_to_int(const ZZ* x)
  
- //////// mat_ZZ //////////
- 
--void mat_ZZ_SetDims(struct mat_ZZ* mZZ, long nrows, long ncols){
-+void mat_ZZ_SetDims(mat_ZZ* mZZ, long nrows, long ncols){
-     mZZ->SetDims(nrows, ncols);
+ /* Returns a *new* ZZ object.
+    AUTHOR: David Harvey (2008-06-08) */
+-struct ZZ* int_to_ZZ(int value)
++ZZ* int_to_ZZ(int value)
+ {
+     ZZ* output = new ZZ();
+     conv(*output, value);
+@@ -40,7 +40,7 @@ struct ZZ* int_to_ZZ(int value)
+    Assumes output has been mpz_init'd.
+    AUTHOR: David Harvey
+            Joel B. Mohler moved the ZZX_getitem_as_mpz code out to this function (2007-03-13) */
+-void ZZ_to_mpz(mpz_t* output, const struct ZZ* x)
++void ZZ_to_mpz(mpz_t* output, const ZZ* x)
+ {
+     unsigned char stack_bytes[4096];
+     int use_heap;
+@@ -62,7 +62,7 @@ void ZZ_to_mpz(mpz_t* output, const stru
+ /* Copies the mpz_t into the ZZ
+    AUTHOR: Joel B. Mohler (2007-03-15) */
+ // This should be changed to an mpz_t not an mpz_t*
+-void mpz_to_ZZ(struct ZZ* output, const mpz_t *x)
++void mpz_to_ZZ(ZZ* output, const mpz_t *x)
+ {
+     unsigned char stack_bytes[4096];
+     int use_heap;
+@@ -86,7 +86,7 @@ void ZZ_set_from_int(ZZ* x, int value)
+     conv(*x, value);
  }
  
--struct mat_ZZ* mat_ZZ_pow(const struct mat_ZZ* x, long e)
-+mat_ZZ* mat_ZZ_pow(const mat_ZZ* x, long e)
+-long ZZ_remove(struct ZZ &dest, const struct ZZ &src, const struct ZZ &f)
++long ZZ_remove(ZZ &dest, const ZZ &src, const ZZ &f)
  {
-     mat_ZZ *z = new mat_ZZ();
+     // Based on the code for mpz_remove
+     ZZ fpow[40];            // inexaustible...until year 2020 or so
+@@ -172,12 +172,12 @@ void ZZ_p_set_from_int(ZZ_p* x, int valu
+     conv(*x, value);
+ }
+ 
+-void ZZ_p_modulus(struct ZZ* mod, const struct ZZ_p* x)
++void ZZ_p_modulus(ZZ* mod, const ZZ_p* x)
+ {
+     (*mod) = x->modulus();
+ }
+ 
+-struct ZZ_p* ZZ_p_pow(const struct ZZ_p* x, long e)
++ZZ_p* ZZ_p_pow(const ZZ_p* x, long e)
+ {
+     ZZ_p *z = new ZZ_p();
      power(*z, *x, e);
+@@ -203,7 +203,7 @@ ZZ_p* ZZ_p_random(void)
      return z;
  }
  
--long mat_ZZ_nrows(const struct mat_ZZ* x)
-+long mat_ZZ_nrows(const mat_ZZ* x)
+-struct ZZ_p* ZZ_p_neg(struct ZZ_p* x)
++ZZ_p* ZZ_p_neg(ZZ_p* x)
  {
-     return x->NumRows();
+     return new ZZ_p(-(*x));
+ }
+@@ -214,7 +214,7 @@ struct ZZ_p* ZZ_p_neg(struct ZZ_p* x)
+ //////// ZZX //////////
+ ///////////////////////////////////////////////
+ 
+-char* ZZX_repr(struct ZZX* x)
++char* ZZX_repr(ZZX* x)
+ {
+     ostringstream instore;
+     instore << (*x);
+@@ -224,13 +224,13 @@ char* ZZX_repr(struct ZZX* x)
+     return buf;
+ }
+ 
+-struct ZZX* ZZX_copy(struct ZZX* x) {
++ZZX* ZZX_copy(ZZX* x) {
+     return new ZZX(*x);
+ }
+ 
+ /* Sets ith coefficient of x to value.
+    AUTHOR: David Harvey (2006-06-08) */
+-void ZZX_setitem_from_int(struct ZZX* x, long i, int value)
++void ZZX_setitem_from_int(ZZX* x, long i, int value)
+ {
+     SetCoeff(*x, i, value);
+ }
+@@ -238,7 +238,7 @@ void ZZX_setitem_from_int(struct ZZX* x,
+ /* Returns ith coefficient of x.
+    Return value is only valid if the result should fit into an int.
+    AUTHOR: David Harvey (2006-06-08) */
+-int ZZX_getitem_as_int(struct ZZX* x, long i)
++int ZZX_getitem_as_int(ZZX* x, long i)
+ {
+     return ZZ_to_int(&coeff(*x, i));
+ }
+@@ -246,75 +246,75 @@ int ZZX_getitem_as_int(struct ZZX* x, lo
+ /* Copies ith coefficient of x to output.
+    Assumes output has been mpz_init'd.
+    AUTHOR: David Harvey (2007-02) */
+-void ZZX_getitem_as_mpz(mpz_t* output, struct ZZX* x, long i)
++void ZZX_getitem_as_mpz(mpz_t* output, ZZX* x, long i)
+ {
+     const ZZ& z = coeff(*x, i);
+     ZZ_to_mpz(output, &z);
+ }
+ 
+-struct ZZX* ZZX_div(struct ZZX* x, struct ZZX* y, int* divisible)
++ZZX* ZZX_div(ZZX* x, ZZX* y, int* divisible)
+ {
+-    struct ZZX* z = new ZZX();
++    ZZX* z = new ZZX();
+     *divisible = divide(*z, *x, *y);
+     return z;
  }
  
  
--long mat_ZZ_ncols(const struct mat_ZZ* x)
-+long mat_ZZ_ncols(const mat_ZZ* x)
+ 
+-void ZZX_quo_rem(struct ZZX* x, struct ZZX* other, struct ZZX** r, struct ZZX** q)
++void ZZX_quo_rem(ZZX* x, ZZX* other, ZZX** r, ZZX** q)
  {
+-    struct ZZX *qq = new ZZX(), *rr = new ZZX();
++    ZZX *qq = new ZZX(), *rr = new ZZX();
+     DivRem(*qq, *rr, *x, *other);
+     *r = rr; *q = qq;
+ }
+ 
+ 
+-struct ZZX* ZZX_square(struct ZZX* x)
++ZZX* ZZX_square(ZZX* x)
+ {
+-    struct ZZX* s = new ZZX();
++    ZZX* s = new ZZX();
+     sqr(*s, *x);
+     return s;
+ }
+ 
+ 
+-int ZZX_is_monic(struct ZZX* x)
++int ZZX_is_monic(ZZX* x)
+ {
+     return IsOne(LeadCoeff(*x));
+ }
+ 
+ 
+-struct ZZX* ZZX_neg(struct ZZX* x)
++ZZX* ZZX_neg(ZZX* x)
+ {
+-    struct ZZX* y = new ZZX();
++    ZZX* y = new ZZX();
+     *y = -*x;
+     return y;
+ }
+ 
+ 
+-struct ZZX* ZZX_left_shift(struct ZZX* x, long n)
++ZZX* ZZX_left_shift(ZZX* x, long n)
+ {
+-    struct ZZX* y = new ZZX();
++    ZZX* y = new ZZX();
+     LeftShift(*y, *x, n);
+     return y;
+ }
+ 
+ 
+-struct ZZX* ZZX_right_shift(struct ZZX* x, long n)
++ZZX* ZZX_right_shift(ZZX* x, long n)
+ {
+-    struct ZZX* y = new ZZX();
++    ZZX* y = new ZZX();
+     RightShift(*y, *x, n);
+     return y;
+ }
+ 
+-struct ZZX* ZZX_primitive_part(struct ZZX* x)
++ZZX* ZZX_primitive_part(ZZX* x)
+ {
+-    struct ZZX* p = new ZZX();
++    ZZX* p = new ZZX();
+     PrimitivePart(*p, *x);
+     return p;
+ }
+ 
+ 
+-void ZZX_pseudo_quo_rem(struct ZZX* x, struct ZZX* y, struct ZZX** r, struct ZZX** q)
++void ZZX_pseudo_quo_rem(ZZX* x, ZZX* y, ZZX** r, ZZX** q)
+ {
+     *r = new ZZX();
+     *q = new ZZX();
+@@ -322,16 +322,16 @@ void ZZX_pseudo_quo_rem(struct ZZX* x, s
+ }
+ 
+ 
+-struct ZZX* ZZX_gcd(struct ZZX* x, struct ZZX* y)
++ZZX* ZZX_gcd(ZZX* x, ZZX* y)
+ {
+-    struct ZZX* g = new ZZX();
++    ZZX* g = new ZZX();
+     GCD(*g, *x, *y);
+     return g;
+ }
+ 
+ 
+-void ZZX_xgcd(struct ZZX* x, struct ZZX* y, struct ZZ** r, struct ZZX** s,
+-          struct ZZX** t, int proof)
++void ZZX_xgcd(ZZX* x, ZZX* y, ZZ** r, ZZX** s,
++          ZZX** t, int proof)
+ {
+     *r = new ZZ();
+     *s = new ZZX();
+@@ -340,24 +340,24 @@ void ZZX_xgcd(struct ZZX* x, struct ZZX*
+ }
+ 
+ 
+-long ZZX_degree(struct ZZX* x)
++long ZZX_degree(ZZX* x)
+ {
+     return deg(*x);
+ }
+ 
+-void ZZX_set_x(struct ZZX* x)
++void ZZX_set_x(ZZX* x)
+ {
+     SetX(*x);
+ }
+ 
+ 
+-int ZZX_is_x(struct ZZX* x)
++int ZZX_is_x(ZZX* x)
+ {
+     return IsX(*x);
+ }
+ 
+ 
+-struct ZZX* ZZX_derivative(struct ZZX* x)
++ZZX* ZZX_derivative(ZZX* x)
+ {
+     ZZX* d = new ZZX();
+     diff(*d, *x);
+@@ -365,14 +365,14 @@ struct ZZX* ZZX_derivative(struct ZZX* x
+ }
+ 
+ 
+-struct ZZX* ZZX_reverse(struct ZZX* x)
++ZZX* ZZX_reverse(ZZX* x)
+ {
+     ZZX* r = new ZZX();
+     reverse(*r, *x);
+     return r;
+ }
+ 
+-struct ZZX* ZZX_reverse_hi(struct ZZX* x, int hi)
++ZZX* ZZX_reverse_hi(ZZX* x, int hi)
+ {
+     ZZX* r = new ZZX();
+     reverse(*r, *x, hi);
+@@ -380,7 +380,7 @@ struct ZZX* ZZX_reverse_hi(struct ZZX* x
+ }
+ 
+ 
+-struct ZZX* ZZX_truncate(struct ZZX* x, long m)
++ZZX* ZZX_truncate(ZZX* x, long m)
+ {
+     ZZX* t = new ZZX();
+     trunc(*t, *x, m);
+@@ -388,7 +388,7 @@ struct ZZX* ZZX_truncate(struct ZZX* x,
+ }
+ 
+ 
+-struct ZZX* ZZX_multiply_and_truncate(struct ZZX* x, struct ZZX* y, long m)
++ZZX* ZZX_multiply_and_truncate(ZZX* x, ZZX* y, long m)
+ {
+     ZZX* t = new ZZX();
+     MulTrunc(*t, *x, *y, m);
+@@ -396,7 +396,7 @@ struct ZZX* ZZX_multiply_and_truncate(st
+ }
+ 
+ 
+-struct ZZX* ZZX_square_and_truncate(struct ZZX* x, long m)
++ZZX* ZZX_square_and_truncate(ZZX* x, long m)
+ {
+     ZZX* t = new ZZX();
+     SqrTrunc(*t, *x, m);
+@@ -404,7 +404,7 @@ struct ZZX* ZZX_square_and_truncate(stru
+ }
+ 
+ 
+-struct ZZX* ZZX_invert_and_truncate(struct ZZX* x, long m)
++ZZX* ZZX_invert_and_truncate(ZZX* x, long m)
+ {
+     ZZX* t = new ZZX();
+     InvTrunc(*t, *x, m);
+@@ -412,7 +412,7 @@ struct ZZX* ZZX_invert_and_truncate(stru
+ }
+ 
+ 
+-struct ZZX* ZZX_multiply_mod(struct ZZX* x, struct ZZX* y,  struct ZZX* modulus)
++ZZX* ZZX_multiply_mod(ZZX* x, ZZX* y,  ZZX* modulus)
+ {
+     ZZX* p = new ZZX();
+     MulMod(*p, *x, *y, *modulus);
+@@ -420,7 +420,7 @@ struct ZZX* ZZX_multiply_mod(struct ZZX*
+ }
+ 
+ 
+-struct ZZ* ZZX_trace_mod(struct ZZX* x, struct ZZX* y)
++ZZ* ZZX_trace_mod(ZZX* x, ZZX* y)
+ {
+     ZZ* p = new ZZ();
+     TraceMod(*p, *x, *y);
+@@ -428,7 +428,7 @@ struct ZZ* ZZX_trace_mod(struct ZZX* x,
+ }
+ 
+ 
+-char* ZZX_trace_list(struct ZZX* x)
++char* ZZX_trace_list(ZZX* x)
+ {
+     vec_ZZ v;
+     TraceVec(v, *x);
+@@ -441,7 +441,7 @@ char* ZZX_trace_list(struct ZZX* x)
+ }
+ 
+ 
+-struct ZZ* ZZX_resultant(struct ZZX* x, struct ZZX* y, int proof)
++ZZ* ZZX_resultant(ZZX* x, ZZX* y, int proof)
+ {
+     ZZ* res = new ZZ();
+     resultant(*res, *x, *y, proof);
+@@ -449,7 +449,7 @@ struct ZZ* ZZX_resultant(struct ZZX* x,
+ }
+ 
+ 
+-struct ZZ* ZZX_norm_mod(struct ZZX* x, struct ZZX* y, int proof)
++ZZ* ZZX_norm_mod(ZZX* x, ZZX* y, int proof)
+ {
+     ZZ* res = new ZZ();
+     NormMod(*res, *x, *y, proof);
+@@ -457,7 +457,7 @@ struct ZZ* ZZX_norm_mod(struct ZZX* x, s
+ }
+ 
+ 
+-struct ZZ* ZZX_discriminant(struct ZZX* x, int proof)
++ZZ* ZZX_discriminant(ZZX* x, int proof)
+ {
+     ZZ* d = new ZZ();
+     discriminant(*d, *x, proof);
+@@ -465,7 +465,7 @@ struct ZZ* ZZX_discriminant(struct ZZX*
+ }
+ 
+ 
+-struct ZZX* ZZX_charpoly_mod(struct ZZX* x, struct ZZX* y, int proof)
++ZZX* ZZX_charpoly_mod(ZZX* x, ZZX* y, int proof)
+ {
+     ZZX* f = new ZZX();
+     CharPolyMod(*f, *x, *y, proof);
+@@ -473,7 +473,7 @@ struct ZZX* ZZX_charpoly_mod(struct ZZX*
+ }
+ 
+ 
+-struct ZZX* ZZX_minpoly_mod(struct ZZX* x, struct ZZX* y)
++ZZX* ZZX_minpoly_mod(ZZX* x, ZZX* y)
+ {
+     ZZX* f = new ZZX();
+     MinPolyMod(*f, *x, *y);
+@@ -481,19 +481,19 @@ struct ZZX* ZZX_minpoly_mod(struct ZZX*
+ }
+ 
+ 
+-void ZZX_clear(struct ZZX* x)
++void ZZX_clear(ZZX* x)
+ {
+     clear(*x);
+ }
+ 
+ 
+-void ZZX_preallocate_space(struct ZZX* x, long n)
++void ZZX_preallocate_space(ZZX* x, long n)
+ {
+     x->SetMaxLength(n);
+ }
+ 
+ /*
+-EXTERN struct ZZ* ZZX_polyeval(struct ZZX* f, struct ZZ* a)
++EXTERN ZZ* ZZX_polyeval(ZZX* f, ZZ* a)
+ {
+     ZZ* b = new ZZ();
+     *b = PolyEval(*f, *a);
+@@ -501,7 +501,7 @@ EXTERN struct ZZ* ZZX_polyeval(struct ZZ
+ }
+ */
+ 
+-void ZZX_squarefree_decomposition(struct ZZX*** v, long** e, long* n, struct ZZX* x)
++void ZZX_squarefree_decomposition(ZZX*** v, long** e, long* n, ZZX* x)
+ {
+     vec_pair_ZZX_long factors;
+     SquareFreeDecomp(factors, *x);
+@@ -518,7 +518,7 @@ void ZZX_squarefree_decomposition(struct
+ //////// ZZ_pX //////////
+ ///////////////////////////////////////////////
+ 
+-// char* ZZ_pX_repr(struct ZZ_pX* x)
++// char* ZZ_pX_repr(ZZ_pX* x)
+ // {
+ //   ostringstream instore;
+ //   instore << (*x);
+@@ -528,17 +528,17 @@ void ZZX_squarefree_decomposition(struct
+ //   return buf;
+ // }
+ 
+-// void ZZ_pX_dealloc(struct ZZ_pX* x) {
++// void ZZ_pX_dealloc(ZZ_pX* x) {
+ //   delete x;
+ // }
+ 
+-// struct ZZ_pX* ZZ_pX_copy(struct ZZ_pX* x) {
++// ZZ_pX* ZZ_pX_copy(ZZ_pX* x) {
+ //   return new ZZ_pX(*x);
+ // }
+ 
+ // /* Sets ith coefficient of x to value.
+ //    AUTHOR: David Harvey (2008-06-08) */
+-// void ZZ_pX_setitem_from_int(struct ZZ_pX* x, long i, int value)
++// void ZZ_pX_setitem_from_int(ZZ_pX* x, long i, int value)
+ // {
+ //   SetCoeff(*x, i, value);
+ // }
+@@ -546,26 +546,26 @@ void ZZX_squarefree_decomposition(struct
+ // /* Returns ith coefficient of x.
+ //    Return value is only valid if the result should fit into an int.
+ //    AUTHOR: David Harvey (2008-06-08) */
+-// int ZZ_pX_getitem_as_int(struct ZZ_pX* x, long i)
++// int ZZ_pX_getitem_as_int(ZZ_pX* x, long i)
+ // {
+ //     return ZZ_to_int(&rep(coeff(*x, i)));
+ // }
+ 
+-// struct ZZ_pX* ZZ_pX_add(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_pX* ZZ_pX_add(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_pX *z = new ZZ_pX();
+ //   add(*z, *x, *y);
+ //   return z;
+ // }
+ 
+-// struct ZZ_pX* ZZ_pX_sub(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_pX* ZZ_pX_sub(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_pX *z = new ZZ_pX();
+ //   sub(*z, *x, *y);
+ //   return z;
+ // }
+ 
+-// struct ZZ_pX* ZZ_pX_mul(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_pX* ZZ_pX_mul(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_pX *z = new ZZ_pX();
+ //   mul(*z, *x, *y);
+@@ -573,24 +573,24 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_div(struct ZZ_pX* x, struct ZZ_pX* y, int* divisible)
++// ZZ_pX* ZZ_pX_div(ZZ_pX* x, ZZ_pX* y, int* divisible)
+ // {
+-//   struct ZZ_pX* z = new ZZ_pX();
++//   ZZ_pX* z = new ZZ_pX();
+ //   *divisible = divide(*z, *x, *y);
+ //   return z;
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_mod(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_pX* ZZ_pX_mod(ZZ_pX* x, ZZ_pX* y)
+ // {
+-//   struct ZZ_pX* z = new ZZ_pX();
++//   ZZ_pX* z = new ZZ_pX();
+ //   rem(*z, *x, *y);
+ //   return z;
+ // }
+ 
+ 
+ 
+-// void ZZ_pX_quo_rem(struct ZZ_pX* x, struct ZZ_pX* y, struct ZZ_pX** r, struct ZZ_pX** q)
++// void ZZ_pX_quo_rem(ZZ_pX* x, ZZ_pX* y, ZZ_pX** r, ZZ_pX** q)
+ // {
+ //   *r = new ZZ_pX();
+ //   *q = new ZZ_pX();
+@@ -598,55 +598,55 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_square(struct ZZ_pX* x)
++// ZZ_pX* ZZ_pX_square(ZZ_pX* x)
+ // {
+-//   struct ZZ_pX* s = new ZZ_pX();
++//   ZZ_pX* s = new ZZ_pX();
+ //   sqr(*s, *x);
+ //   return s;
+ // }
+ 
+ 
+ 
+-// int ZZ_pX_is_monic(struct ZZ_pX* x)
++// int ZZ_pX_is_monic(ZZ_pX* x)
+ // {
+ //   IsOne(LeadCoeff(*x));
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_neg(struct ZZ_pX* x)
++// ZZ_pX* ZZ_pX_neg(ZZ_pX* x)
+ // {
+-//   struct ZZ_pX* y = new ZZ_pX();
++//   ZZ_pX* y = new ZZ_pX();
+ //   *y = -*x;
+ //   return y;
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_left_shift(struct ZZ_pX* x, long n)
++// ZZ_pX* ZZ_pX_left_shift(ZZ_pX* x, long n)
+ // {
+-//   struct ZZ_pX* y = new ZZ_pX();
++//   ZZ_pX* y = new ZZ_pX();
+ //   LeftShift(*y, *x, n);
+ //   return y;
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_right_shift(struct ZZ_pX* x, long n)
++// ZZ_pX* ZZ_pX_right_shift(ZZ_pX* x, long n)
+ // {
+-//   struct ZZ_pX* y = new ZZ_pX();
++//   ZZ_pX* y = new ZZ_pX();
+ //   RightShift(*y, *x, n);
+ //   return y;
+ // }
+ 
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_gcd(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_pX* ZZ_pX_gcd(ZZ_pX* x, ZZ_pX* y)
+ // {
+-//   struct ZZ_pX* g = new ZZ_pX();
++//   ZZ_pX* g = new ZZ_pX();
+ //   GCD(*g, *x, *y);
+ //   return g;
+ // }
+ 
+ 
+-// void ZZ_pX_xgcd(struct ZZ_pX** d, struct ZZ_pX** s, struct ZZ_pX** t, struct ZZ_pX* a, struct ZZ_pX* b)
++// void ZZ_pX_xgcd(ZZ_pX** d, ZZ_pX** s, ZZ_pX** t, ZZ_pX* a, ZZ_pX* b)
+ // {
+ //   *d = new ZZ_pX();
+ //   *s = new ZZ_pX();
+@@ -654,7 +654,7 @@ void ZZX_squarefree_decomposition(struct
+ //   XGCD(**d, **s, **t, *a, *b);
+ // }
+ 
+-// void ZZ_pX_plain_xgcd(struct ZZ_pX** d, struct ZZ_pX** s, struct ZZ_pX** t, struct ZZ_pX* a, struct ZZ_pX* b)
++// void ZZ_pX_plain_xgcd(ZZ_pX** d, ZZ_pX** s, ZZ_pX** t, ZZ_pX* a, ZZ_pX* b)
+ // {
+ //   *d = new ZZ_pX();
+ //   *s = new ZZ_pX();
+@@ -662,25 +662,25 @@ void ZZX_squarefree_decomposition(struct
+ //   PlainXGCD(**d, **s, **t, *a, *b);
+ // }
+ 
+-// ZZ_p* ZZ_pX_leading_coefficient(struct ZZ_pX* x)
++// ZZ_p* ZZ_pX_leading_coefficient(ZZ_pX* x)
+ // {
+ //   return new ZZ_p(LeadCoeff(*x));
+ // }
+ 
+ 
+-// void ZZ_pX_set_x(struct ZZ_pX* x)
++// void ZZ_pX_set_x(ZZ_pX* x)
+ // {
+ //   SetX(*x);
+ // }
+ 
+ 
+-// int ZZ_pX_is_x(struct ZZ_pX* x)
++// int ZZ_pX_is_x(ZZ_pX* x)
+ // {
+ //   return IsX(*x);
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_derivative(struct ZZ_pX* x)
++// ZZ_pX* ZZ_pX_derivative(ZZ_pX* x)
+ // {
+ //   ZZ_pX* d = new ZZ_pX();
+ //   diff(*d, *x);
+@@ -688,14 +688,14 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_reverse(struct ZZ_pX* x)
++// ZZ_pX* ZZ_pX_reverse(ZZ_pX* x)
+ // {
+ //   ZZ_pX* r = new ZZ_pX();
+ //   reverse(*r, *x);
+ //   return r;
+ // }
+ 
+-// struct ZZ_pX* ZZ_pX_reverse_hi(struct ZZ_pX* x, int hi)
++// ZZ_pX* ZZ_pX_reverse_hi(ZZ_pX* x, int hi)
+ // {
+ //   ZZ_pX* r = new ZZ_pX();
+ //   reverse(*r, *x, hi);
+@@ -703,7 +703,7 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_truncate(struct ZZ_pX* x, long m)
++// ZZ_pX* ZZ_pX_truncate(ZZ_pX* x, long m)
+ // {
+ //   ZZ_pX* t = new ZZ_pX();
+ //   trunc(*t, *x, m);
+@@ -711,7 +711,7 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_multiply_and_truncate(struct ZZ_pX* x, struct ZZ_pX* y, long m)
++// ZZ_pX* ZZ_pX_multiply_and_truncate(ZZ_pX* x, ZZ_pX* y, long m)
+ // {
+ //   ZZ_pX* t = new ZZ_pX();
+ //   MulTrunc(*t, *x, *y, m);
+@@ -719,7 +719,7 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_square_and_truncate(struct ZZ_pX* x, long m)
++// ZZ_pX* ZZ_pX_square_and_truncate(ZZ_pX* x, long m)
+ // {
+ //   ZZ_pX* t = new ZZ_pX();
+ //   SqrTrunc(*t, *x, m);
+@@ -727,7 +727,7 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_invert_and_truncate(struct ZZ_pX* x, long m)
++// ZZ_pX* ZZ_pX_invert_and_truncate(ZZ_pX* x, long m)
+ // {
+ //   ZZ_pX* t = new ZZ_pX();
+ //   InvTrunc(*t, *x, m);
+@@ -735,7 +735,7 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_multiply_mod(struct ZZ_pX* x, struct ZZ_pX* y,  struct ZZ_pX* modulus)
++// ZZ_pX* ZZ_pX_multiply_mod(ZZ_pX* x, ZZ_pX* y,  ZZ_pX* modulus)
+ // {
+ //   ZZ_pX* p = new ZZ_pX();
+ //   MulMod(*p, *x, *y, *modulus);
+@@ -743,7 +743,7 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-// struct ZZ_p* ZZ_pX_trace_mod(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_p* ZZ_pX_trace_mod(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_p* p = new ZZ_p();
+ //   TraceMod(*p, *x, *y);
+@@ -751,7 +751,7 @@ void ZZX_squarefree_decomposition(struct
+ // }
+ 
+ 
+-char* ZZ_pX_trace_list(struct ZZ_pX* x)
++char* ZZ_pX_trace_list(ZZ_pX* x)
+ {
+     vec_ZZ_p v;
+     TraceVec(v, *x);
+@@ -764,7 +764,7 @@ char* ZZ_pX_trace_list(struct ZZ_pX* x)
+ }
+ 
+ 
+-// struct ZZ_p* ZZ_pX_resultant(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_p* ZZ_pX_resultant(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_p* res = new ZZ_p();
+ //   resultant(*res, *x, *y);
+@@ -772,7 +772,7 @@ char* ZZ_pX_trace_list(struct ZZ_pX* x)
+ // }
+ 
+ 
+-// struct ZZ_p* ZZ_pX_norm_mod(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_p* ZZ_pX_norm_mod(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_p* res = new ZZ_p();
+ //   NormMod(*res, *x, *y);
+@@ -781,7 +781,7 @@ char* ZZ_pX_trace_list(struct ZZ_pX* x)
+ 
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_charpoly_mod(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_pX* ZZ_pX_charpoly_mod(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_pX* f = new ZZ_pX();
+ //   CharPolyMod(*f, *x, *y);
+@@ -789,7 +789,7 @@ char* ZZ_pX_trace_list(struct ZZ_pX* x)
+ // }
+ 
+ 
+-// struct ZZ_pX* ZZ_pX_minpoly_mod(struct ZZ_pX* x, struct ZZ_pX* y)
++// ZZ_pX* ZZ_pX_minpoly_mod(ZZ_pX* x, ZZ_pX* y)
+ // {
+ //   ZZ_pX* f = new ZZ_pX();
+ //   MinPolyMod(*f, *x, *y);
+@@ -797,18 +797,18 @@ char* ZZ_pX_trace_list(struct ZZ_pX* x)
+ // }
+ 
+ 
+-// void ZZ_pX_clear(struct ZZ_pX* x)
++// void ZZ_pX_clear(ZZ_pX* x)
+ // {
+ //   clear(*x);
+ // }
+ 
+ 
+-// void ZZ_pX_preallocate_space(struct ZZ_pX* x, long n)
++// void ZZ_pX_preallocate_space(ZZ_pX* x, long n)
+ // {
+ //   x->SetMaxLength(n);
+ // }
+ 
+-void ZZ_pX_factor(struct ZZ_pX*** v, long** e, long* n, struct ZZ_pX* x, long verbose)
++void ZZ_pX_factor(ZZ_pX*** v, long** e, long* n, ZZ_pX* x, long verbose)
+ {
+     long i;
+     vec_pair_ZZ_pX_long factors;
+@@ -822,7 +822,7 @@ void ZZ_pX_factor(struct ZZ_pX*** v, lon
+     }
+ }
+ 
+-void ZZ_pX_linear_roots(struct ZZ_p*** v, long* n, struct ZZ_pX* f)
++void ZZ_pX_linear_roots(ZZ_p*** v, long* n, ZZ_pX* f)
+ {
+     long i;
+     vec_ZZ_p w;
+@@ -836,7 +836,7 @@ void ZZ_pX_linear_roots(struct ZZ_p*** v
+ 
+ /////////// ZZ_pE //////////////
+ 
+-struct ZZ_pX ZZ_pE_to_ZZ_pX(struct ZZ_pE x)
++ZZ_pX ZZ_pE_to_ZZ_pX(ZZ_pE x)
+ {
+     return ZZ_pX(rep(x));
+ }
+@@ -867,45 +867,45 @@ long mat_ZZ_ncols(const mat_ZZ* x)
      return x->NumCols();
  }
  
--void mat_ZZ_setitem(struct mat_ZZ* x, int i, int j, const struct ZZ* z)
+-void mat_ZZ_setitem(mat_ZZ* x, int i, int j, const struct ZZ* z)
 +void mat_ZZ_setitem(mat_ZZ* x, int i, int j, const ZZ* z)
  {
      (*x)[i][j] = *z;
  
  }
  
--struct ZZ* mat_ZZ_getitem(const struct mat_ZZ* x, int i, int j)
+-struct ZZ* mat_ZZ_getitem(const mat_ZZ* x, int i, int j)
 +ZZ* mat_ZZ_getitem(const mat_ZZ* x, int i, int j)
  {
      return new ZZ((*x)(i,j));
  }
  
--struct ZZ* mat_ZZ_determinant(const struct mat_ZZ* x, long deterministic)
+-struct ZZ* mat_ZZ_determinant(const mat_ZZ* x, long deterministic)
 +ZZ* mat_ZZ_determinant(const mat_ZZ* x, long deterministic)
  {
      ZZ* d = new ZZ();
@@ -503,23 +1222,22 @@ diff -up src/c_lib/src/ntl_wrap.cpp.orig src/c_lib/src/ntl_wrap.cpp
      return d;
  }
  
--struct mat_ZZ* mat_ZZ_HNF(const struct mat_ZZ* A, const struct ZZ* D)
+-mat_ZZ* mat_ZZ_HNF(const mat_ZZ* A, const struct ZZ* D)
 +mat_ZZ* mat_ZZ_HNF(const mat_ZZ* A, const ZZ* D)
  {
--    struct mat_ZZ* W = new mat_ZZ();
-+    mat_ZZ* W = new mat_ZZ();
+     mat_ZZ* W = new mat_ZZ();
      HNF(*W, *A, *D);
      return W;
  }
  
--long mat_ZZ_LLL(struct ZZ **det, struct mat_ZZ *x, long a, long b, long verbose)
+-long mat_ZZ_LLL(struct ZZ **det, mat_ZZ *x, long a, long b, long verbose)
 +long mat_ZZ_LLL(ZZ **det, mat_ZZ *x, long a, long b, long verbose)
  {
      *det = new ZZ();
      return LLL(**det,*x,a,b,verbose);
  }
  
--long mat_ZZ_LLL_U(struct ZZ **det, struct mat_ZZ *x, struct mat_ZZ *U, long a, long b, long verbose)
+-long mat_ZZ_LLL_U(struct ZZ **det, mat_ZZ *x, mat_ZZ *U, long a, long b, long verbose)
 +long mat_ZZ_LLL_U(ZZ **det, mat_ZZ *x, mat_ZZ *U, long a, long b, long verbose)
  {
      *det = new ZZ();
@@ -527,7 +1245,7 @@ diff -up src/c_lib/src/ntl_wrap.cpp.orig src/c_lib/src/ntl_wrap.cpp
  }
  
  
--struct ZZX* mat_ZZ_charpoly(const struct mat_ZZ* A)
+-struct ZZX* mat_ZZ_charpoly(const mat_ZZ* A)
 +ZZX* mat_ZZ_charpoly(const mat_ZZ* A)
  {
      ZZX* f = new ZZX();
@@ -536,13 +1254,13 @@ diff -up src/c_lib/src/ntl_wrap.cpp.orig src/c_lib/src/ntl_wrap.cpp
  }
  
  
--void mat_GF2E_setitem(struct mat_GF2E* x, int i, int j, const struct GF2E* z)
+-void mat_GF2E_setitem(mat_GF2E* x, int i, int j, const struct GF2E* z)
 +void mat_GF2E_setitem(mat_GF2E* x, int i, int j, const GF2E* z)
  {
      (*x)[i][j] = *z;
  }
  
--void mat_GF2_setitem(struct mat_GF2* x, int i, int j, const struct GF2* z)
+-void mat_GF2_setitem(mat_GF2* x, int i, int j, const struct GF2* z)
 +void mat_GF2_setitem(mat_GF2* x, int i, int j, const GF2* z)
  {
      (*x)[i][j] = *z;
@@ -601,14 +1319,13 @@ diff -up src/c_lib/src/ntl_wrap.cpp.orig src/c_lib/src/ntl_wrap.cpp
  {
      //int j;
      cpn.restore();
-diff -up src/sage/libs/ntl/decl.pxi.orig src/sage/libs/ntl/decl.pxi
---- src/sage/libs/ntl/decl.pxi.orig	2014-02-07 15:20:57.090216365 -0200
-+++ src/sage/libs/ntl/decl.pxi	2014-02-07 15:21:00.833216508 -0200
+--- src/sage/libs/ntl/decl.pxi.orig	2014-05-13 16:22:05.531912186 -0300
++++ src/sage/libs/ntl/decl.pxi	2014-05-13 16:29:45.226945150 -0300
 @@ -22,7 +22,7 @@ from sage.libs.ntl.ntl_ZZ_pEX_decl cimpo
  
  cdef extern from "ntl_wrap.h":
      #### mat_ZZ_c
--    ctypedef struct mat_ZZ_c "struct mat_ZZ":
+-    cdef cppclass mat_ZZ_c "mat_ZZ":
 +    ctypedef struct mat_ZZ_c "mat_ZZ":
          pass
  
@@ -680,7 +1397,7 @@ diff -up src/sage/libs/ntl/decl.pxi.orig src/sage/libs/ntl/decl.pxi
      object vec_GF2E_to_PyString "_to_PyString<vec_GF2E>"(vec_GF2E_c *x)
  
      #### mat_GF2E_c
--    ctypedef struct mat_GF2E_c "struct mat_GF2E":
+-    cdef cppclass mat_GF2E_c "mat_GF2E":
 +    ctypedef struct mat_GF2E_c "mat_GF2E":
          void (*SetDims)(long nrows, long ncols)
          long (*NumRows)()
@@ -698,7 +1415,7 @@ diff -up src/sage/libs/ntl/decl.pxi.orig src/sage/libs/ntl/decl.pxi
  
  
      #### mat_GF2_c
--    ctypedef struct mat_GF2_c "struct mat_GF2":
+-    cdef cppclass mat_GF2_c "mat_GF2":
 +    ctypedef struct mat_GF2_c "mat_GF2":
          void (*SetDims)(long nrows, long ncols)
          long (*NumRows)()

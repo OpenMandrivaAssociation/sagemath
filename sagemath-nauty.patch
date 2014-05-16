@@ -1,7 +1,6 @@
-diff -up src/sage/graphs/graph_generators.py.orig src/sage/graphs/graph_generators.py
---- src/sage/graphs/graph_generators.py.orig	2014-02-07 12:36:49.882839281 -0200
-+++ src/sage/graphs/graph_generators.py	2014-02-07 12:37:01.793839737 -0200
-@@ -823,7 +823,7 @@ class GraphGenerators():
+--- src/sage/graphs/graph_generators.py.orig	2014-05-10 15:51:24.250174378 -0300
++++ src/sage/graphs/graph_generators.py	2014-05-10 15:51:36.224173519 -0300
+@@ -824,7 +824,7 @@ class GraphGenerators():
          """
          import subprocess
          from sage.misc.package import is_package_installed

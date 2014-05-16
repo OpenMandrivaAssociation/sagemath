@@ -1,7 +1,6 @@
-diff -up src/module_list.py.orig src/module_list.py
---- src/module_list.py.orig	2014-02-07 12:38:18.873842689 -0200
-+++ src/module_list.py	2014-02-07 12:38:27.546843021 -0200
-@@ -2149,7 +2149,7 @@ if UNAME[0] == "Darwin" and not UNAME[2]
+--- src/module_list.py.orig	2014-05-10 15:57:18.343148980 -0300
++++ src/module_list.py	2014-05-10 15:57:28.082148282 -0300
+@@ -2150,7 +2150,7 @@ if UNAME[0] == "Darwin" and not UNAME[2]
          )
  
  

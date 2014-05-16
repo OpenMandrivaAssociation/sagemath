@@ -1,23 +1,22 @@
-diff -up src/sage/groups/perm_gps/permgroup.py.orig src/sage/groups/perm_gps/permgroup.py
---- src/sage/groups/perm_gps/permgroup.py.orig	2014-02-07 12:37:33.523840952 -0200
-+++ src/sage/groups/perm_gps/permgroup.py	2014-02-07 12:37:42.905841312 -0200
+--- src/sage/groups/perm_gps/permgroup.py.orig	2014-05-10 15:53:23.284165840 -0300
++++ src/sage/groups/perm_gps/permgroup.py	2014-05-10 15:54:59.829158915 -0300
 @@ -180,8 +180,7 @@ def hap_decorator(f):
      """
      @wraps(f)
      def wrapped(self, n, p=0):
 -        if not is_package_installed('gap_packages'):
--            raise RuntimeError, "You must install the optional gap_packages package."
-+        raise RuntimeError, "gap-hap package not available."
+-            raise RuntimeError("You must install the optional gap_packages package.")
++        raise RuntimeError("gap-hap package not available.")
          load_hap()
          from sage.rings.arith import is_prime
          if not (p == 0 or is_prime(p)):
-@@ -3934,8 +3933,7 @@ class PermutationGroup_generic(group.Gro
+@@ -3933,8 +3932,7 @@ class PermutationGroup_generic(group.Gro
  
          - David Joyner and Graham Ellis
          """
 -        if not is_package_installed('gap_packages'):
--            raise RuntimeError, "You must install the optional gap_packages package."
-+        raise RuntimeError, "gap-hap package not available."
+-            raise RuntimeError("You must install the optional gap_packages package.")
++        raise RuntimeError("gap-hap package not available.")
          load_hap()
          from sage.rings.arith import is_prime
          if not (p == 0 or is_prime(p)):
