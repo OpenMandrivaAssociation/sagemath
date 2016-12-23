@@ -1,23 +1,30 @@
 diff -up src/sage/databases/cremona.py.orig src/sage/databases/cremona.py
---- src/sage/databases/cremona.py.orig	2014-02-07 12:35:15.971835685 -0200
-+++ src/sage/databases/cremona.py	2014-02-07 12:35:25.242836040 -0200
-@@ -886,14 +886,9 @@ class MiniCremonaDatabase(SQLDatabase):
+--- src/sage/databases/cremona.py.orig	2016-08-08 13:36:38.575536768 -0400
++++ src/sage/databases/cremona.py	2016-08-08 13:37:49.994539502 -0400
+@@ -53,7 +53,6 @@ from sage.misc.prandom import randint
+ 
+ import sage.schemes.elliptic_curves.constructor as elliptic
+ from .sql_db import SQLDatabase, verify_column
+-from sage.misc.package import is_package_installed
+ from sage.env import SAGE_SHARE
+ from sage.misc.all import walltime
+ 
+@@ -828,14 +827,6 @@ class MiniCremonaDatabase(SQLDatabase):
              if N < self.largest_conductor():
                  message = "There is no elliptic curve with label " + label \
                      + " in the database"
 -            elif is_package_installed('database_cremona_ellcurve'):
 -                message = "There is no elliptic curve with label " + label \
 -                    + " in the currently available databases"
-             else:
-                 message = "There is no elliptic curve with label " \
+-            else:
+-                message = "There is no elliptic curve with label " \
 -                    + label + " in the default database; try installing " \
 -                    + "the optional package database_cremona_ellcurve which " \
 -                    + "contains the complete Cremona database"
-+                    + label + " in the default database"
              raise ValueError(message)
- 
-     def iter(self, conductors):
-@@ -1591,10 +1586,12 @@ def CremonaDatabase(name=None,mini=None,
+         ainvs = eval(c[0])
+         data = {'cremona_label': label,
+@@ -1677,10 +1668,12 @@ def CremonaDatabase(name=None,mini=None,
      if name is None and not set_global:
          return _db
      if set_global and name is None:

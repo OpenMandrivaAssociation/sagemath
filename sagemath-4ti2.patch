@@ -1,16 +1,17 @@
 diff -up src/sage/sandpiles/sandpile.py.orig src/sage/sandpiles/sandpile.py
---- src/sage/sandpiles/sandpile.py.orig	2014-01-28 16:01:55.841188856 -0200
-+++ src/sage/sandpiles/sandpile.py	2014-01-28 16:02:07.914189318 -0200
-@@ -24,8 +24,6 @@ packages.  An alternative is to install
- following variable to the correct path.
- """
+--- src/sage/sandpiles/sandpile.py.orig	2016-08-08 13:33:09.209528750 -0400
++++ src/sage/sandpiles/sandpile.py	2016-08-08 13:33:36.251529786 -0400
+@@ -346,9 +346,6 @@ from sage.arith.all import falling_facto
+ from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
+ from sage.symbolic.all import I, pi
  
+-# TODO: remove the following line once 4ti2 functions are removed
 -path_to_zsolve = os.path.join(SAGE_LOCAL,'bin','zsolve')
 -
- r"""
- Sage Sandpiles
- 
-@@ -4097,7 +4095,7 @@ class SandpileDivisor(dict):
+ class Sandpile(DiGraph):
+     """
+     Class for Dhar's abelian sandpile model.
+@@ -5229,7 +5226,7 @@ class SandpileDivisor(dict):
          sign_file.close()
          # compute
          try:

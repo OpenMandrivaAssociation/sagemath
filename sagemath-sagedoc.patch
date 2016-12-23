@@ -1,36 +1,19 @@
---- src/doc/common/builder.py.orig	2014-05-10 15:44:39.046203443 -0300
-+++ src/doc/common/builder.py	2014-05-10 15:45:03.225201708 -0300
-@@ -32,7 +32,7 @@ from sage.env import SAGE_DOC, SAGE_SRC
- #     SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT,
- #     PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS
- # from build_options.py.
--execfile(os.path.join(SAGE_DOC, 'common' , 'build_options.py'))
-+execfile(os.path.join(os.getenv('SAGE_ROOT'), 'src', 'doc', 'common' , 'build_options.py'))
- 
- 
- def print_build_error():
---- src/doc/common/conf.py.orig	2014-05-10 15:44:59.936201944 -0300
-+++ src/doc/common/conf.py	2014-05-10 15:45:03.229201708 -0300
-@@ -1,5 +1,5 @@
- import sys, os, sphinx
--from sage.env import SAGE_DOC
-+from sage.env import SAGE_DOC, SAGE_SRC
- 
- def get_doc_abspath(path):
-     """
-@@ -202,8 +202,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', '
-     from sage.misc.latex_macros import sage_mathjax_macros
+diff -up src/doc/common/conf.py.orig src/doc/common/conf.py
+--- src/doc/common/conf.py.orig	2016-08-08 13:21:49.624502727 -0400
++++ src/doc/common/conf.py	2016-08-08 13:22:19.945503888 -0400
+@@ -218,7 +218,7 @@ if (os.environ.get('SAGE_DOC_MATHJAX', '
      html_theme_options['mathjax_macros'] = sage_mathjax_macros()
  
--    from pkg_resources import Requirement, working_set
+     from pkg_resources import Requirement, working_set
 -    sagenb_path = working_set.find(Requirement.parse('sagenb')).location
 +    sagenb_path = SAGE_SRC
      mathjax_relative = os.path.join('sagenb','data','mathjax')
  
      # It would be really nice if sphinx would copy the entire mathjax directory,
---- src/sage/doctest/control.py.orig	2014-05-10 15:44:59.940201944 -0300
-+++ src/sage/doctest/control.py	2014-05-10 15:45:03.230201708 -0300
-@@ -89,7 +89,6 @@ class DocTestDefaults(SageObject):
+diff -up src/sage/doctest/control.py.orig src/sage/doctest/control.py
+--- src/sage/doctest/control.py.orig	2016-08-08 13:22:48.247504971 -0400
++++ src/sage/doctest/control.py	2016-08-08 13:23:38.842506909 -0400
+@@ -95,7 +95,6 @@ class DocTestDefaults(SageObject):
          self.valgrind = False
          self.massif = False
          self.cachegrind = False
@@ -38,7 +21,7 @@
          self.failed = False
          self.new = False
          self.show_skipped = False
-@@ -211,7 +210,7 @@ class DocTestController(SageObject):
+@@ -270,7 +269,7 @@ class DocTestController(SageObject):
              if options.gdb or options.debug:
                  # Interactive debuggers: "infinite" timeout
                  options.timeout = 0
@@ -47,7 +30,15 @@
                  # Non-interactive debuggers: 48 hours
                  options.timeout = int(os.getenv('SAGE_TIMEOUT_VALGRIND', 48 * 60 * 60))
              elif options.long:
-@@ -821,13 +820,8 @@ class DocTestController(SageObject):
+@@ -636,7 +635,6 @@ class DocTestController(SageObject):
+         from sage.env import SAGE_SRC, SAGE_DOC_SRC, SAGE_ROOT
+         def all_files():
+             self.files.append(opj(SAGE_SRC, 'sage'))
+-            self.files.append(opj(SAGE_SRC, 'sage_setup'))
+             self.files.append(SAGE_DOC_SRC)
+             self.options.sagenb = True
+         DOT_GIT= opj(SAGE_ROOT, '.git')
+@@ -1031,13 +1029,8 @@ class DocTestController(SageObject):
              elif opt.cachegrind:
                  toolname = "cachegrind"
                  flags = os.getenv("SAGE_CACHEGRIND_FLAGS", "")
@@ -61,7 +52,7 @@
              if "%s" in flags:
                  flags %= toolname + ".%p" # replace %s with toolname
          cmd += flags + sage_cmd
-@@ -887,10 +881,10 @@ class DocTestController(SageObject):
+@@ -1097,10 +1090,10 @@ class DocTestController(SageObject):
              0
          """
          opt = self.options
@@ -74,9 +65,10 @@
                  return 2
              return self.run_val_gdb()
          else:
---- src/sage/interfaces/singular.py.orig	2014-05-10 15:44:59.940201944 -0300
-+++ src/sage/interfaces/singular.py	2014-05-10 15:45:03.230201708 -0300
-@@ -2149,7 +2149,7 @@ def generate_docstring_dictionary():
+diff -up src/sage/interfaces/singular.py.orig src/sage/interfaces/singular.py
+--- src/sage/interfaces/singular.py.orig	2016-08-08 13:23:50.344507349 -0400
++++ src/sage/interfaces/singular.py	2016-08-08 13:24:08.618508049 -0400
+@@ -2249,7 +2249,7 @@ def generate_docstring_dictionary():
      nodes.clear()
      node_names.clear()
  
@@ -85,14 +77,53 @@
  
      new_node = re.compile("File: singular\.hlp,  Node: ([^,]*),.*")
      new_lookup = re.compile("\* ([^:]*):*([^.]*)\..*")
---- src/sage/misc/latex_macros.py.orig	2014-05-10 15:44:59.940201944 -0300
-+++ src/sage/misc/latex_macros.py	2014-05-10 15:45:03.232201708 -0300
-@@ -142,7 +142,7 @@ def convert_latex_macro_to_mathjax(macro
-         return name + ': ["' + defn + '",' + str(num_args) + ']'
- 
- from superseded import deprecated_function_alias
--convert_latex_macro_to_jsmath = deprecated_function_alias(13508, convert_latex_macro_to_mathjax)
-+convert_latex_macro_to_jsmath = convert_latex_macro_to_mathjax
- 
- # To add a new macro for use in the Sage documentation, add a list or
- # tuple to the following list.  Each list (or tuple) should have the
+diff -up src/sage_setup/docbuild/ext/multidocs.py.orig src/sage_setup/docbuild/ext/multidocs.py
+--- src/sage_setup/docbuild/ext/multidocs.py.orig	2016-08-10 14:37:02.566492810 -0400
++++ src/sage_setup/docbuild/ext/multidocs.py	2016-08-10 14:37:31.238493908 -0400
+@@ -78,8 +78,11 @@ def merge_environment(app, env):
+             for ind in newalldoc:
+                 # treat subdocument source as orphaned file and don't complain
+                 md = env.metadata.get(ind, dict())
+-                md['orphan'] = 1
+-                env.metadata[ind] = md
++                try:
++                    md['orphan'] = 1
++                    env.metadata[ind] = md
++                except AttributeError:
++                    env.metadata[ind] = {'orphan'}
+             # merge the citations
+             newcite = {}
+             for ind, (path, tag) in docenv.citations.iteritems():
+diff -up src/sage_setup/docbuild/__init__.py.orig src/sage_setup/docbuild/__init__.py
+--- src/sage_setup/docbuild/__init__.py.orig	2016-08-10 14:33:38.854485009 -0400
++++ src/sage_setup/docbuild/__init__.py	2016-08-10 14:34:22.591486684 -0400
+@@ -295,12 +295,12 @@ class AllBuilder(object):
+         # apply_async does not, so don't use it.
+         x = pool.map_async(build_other_doc, L, 1)
+         try:
+-            x.get(99999)
++            x.get(3600)
+             pool.close()
+             pool.join()
+         except Exception:
+-            pool.terminate()
+             if ABORT_ON_ERROR:
++                pool.terminate()
+                 raise
+         logger.warning("Elapsed time: %.1f seconds."%(time.time()-start))
+         logger.warning("Done building the documentation!")
+@@ -492,12 +492,12 @@ class ReferenceBuilder(AllBuilder):
+             # (See comment in AllBuilder._wrapper about using map instead of apply.)
+             x = pool.map_async(build_ref_doc, L, 1)
+             try:
+-                x.get(99999)
++                x.get(3600)
+                 pool.close()
+                 pool.join()
+             except Exception:
+-                pool.terminate()
+                 if ABORT_ON_ERROR:
++                    pool.terminate()
+                     raise
+             # The html refman must be build at the end to ensure correct
+             # merging of indexes and inventories.

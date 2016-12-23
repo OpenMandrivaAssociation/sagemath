@@ -1,14 +1,21 @@
 diff -up src/sage/geometry/polyhedron/base.py.orig src/sage/geometry/polyhedron/base.py
---- src/sage/geometry/polyhedron/base.py.orig	2014-02-07 12:36:06.514837620 -0200
-+++ src/sage/geometry/polyhedron/base.py	2014-02-07 12:36:16.918838019 -0200
-@@ -3406,11 +3406,6 @@ class Polyhedron_base(Element):
+--- src/sage/geometry/polyhedron/base.py.orig	2016-08-08 13:38:11.144540312 -0400
++++ src/sage/geometry/polyhedron/base.py	2016-08-08 13:38:26.707540908 -0400
+@@ -21,7 +21,6 @@ import six
+ from sage.structure.element import Element, coerce_binop, is_Vector
+ 
+ from sage.misc.all import cached_method, prod
+-from sage.misc.package import is_package_installed
+ 
+ from sage.rings.all import QQ, ZZ
+ from sage.rings.real_double import RDF
+@@ -3691,10 +3690,6 @@ class Polyhedron_base(Element):
  
               David Avis's lrs program.
          """
--        if is_package_installed('lrs') != True:
--            print 'You must install the optional lrs package ' \
--                  'for this function to work'
--            raise NotImplementedError
+-        if not is_package_installed('lrslib'):
+-            raise NotImplementedError('You must install the optional lrslib package '
+-                                       'for this function to work')
 -
          from sage.misc.temporary_file import tmp_filename
          from subprocess import Popen, PIPE

@@ -1,11 +1,12 @@
---- src/sage/graphs/graph_generators.py.orig	2014-05-10 15:51:24.250174378 -0300
-+++ src/sage/graphs/graph_generators.py	2014-05-10 15:51:36.224173519 -0300
-@@ -824,7 +824,7 @@ class GraphGenerators():
+diff -up src/sage/graphs/graph_generators.py.orig src/sage/graphs/graph_generators.py
+--- src/sage/graphs/graph_generators.py.orig	2016-08-08 13:38:51.824541870 -0400
++++ src/sage/graphs/graph_generators.py	2016-08-08 13:39:20.460542967 -0400
+@@ -872,7 +872,7 @@ class GraphGenerators():
+             >A geng -d0D3 n=4 e=0-6
          """
          import subprocess
-         from sage.misc.package import is_package_installed
--        if not is_package_installed("nauty"):
-+        if 1:
-             raise TypeError("the optional nauty package is not installed")
-         sp = subprocess.Popen("nauty-geng {0}".format(options), shell=True,
+-        sp = subprocess.Popen("geng {0}".format(options), shell=True,
++        sp = subprocess.Popen("nauty-geng {0}".format(options), shell=True,
                                stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, close_fds=True)
+         if debug:

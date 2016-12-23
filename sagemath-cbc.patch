@@ -1,11 +1,14 @@
---- src/module_list.py.orig	2014-05-10 16:02:43.371125667 -0300
-+++ src/module_list.py	2014-05-10 16:02:58.362124591 -0300
-@@ -2115,7 +2115,7 @@ if (os.path.isfile(SAGE_INC + "/cplex.h"
-                   libraries = ["stdc++", "cplex"])
-         )
+diff -up src/sage/numerical/backends/coin_backend.pyx.orig src/sage/numerical/backends/coin_backend.pyx
+--- src/sage/numerical/backends/coin_backend.pyx.orig	2016-08-08 13:41:10.063547164 -0400
++++ src/sage/numerical/backends/coin_backend.pyx	2016-08-08 13:41:28.426547867 -0400
+@@ -755,8 +755,8 @@ cdef class CoinBackend(GenericBackend):
+         model.setLogLevel(old_logLevel)
  
--if is_package_installed('cbc'):
-+if 1:
-     ext_modules.append(
-         Extension("sage.numerical.backends.coin_backend",
-                   ["sage/numerical/backends/coin_backend.pyx"],
+         # multithreading
+-        import multiprocessing
+-        model.setNumberThreads(multiprocessing.cpu_count())
++        #import multiprocessing
++        #model.setNumberThreads(multiprocessing.cpu_count())
+ 
+         model.branchAndBound()
+ 

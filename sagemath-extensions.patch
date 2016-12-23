@@ -1,12 +1,194 @@
---- src/module_list.py.orig	2014-05-10 15:32:07.746257332 -0300
-+++ src/module_list.py	2014-05-10 15:36:31.142238439 -0300
-@@ -2070,7 +2070,8 @@ ext_modules = [
- # These extensions are to be compiled only if the
- # corresponding packages have been installed
+diff -up src/module_list.py.orig src/module_list.py
+--- src/module_list.py.orig	2016-08-08 13:14:09.383485102 -0400
++++ src/module_list.py	2016-08-08 13:17:44.834493353 -0400
+@@ -147,7 +147,6 @@ library_order["stdc++"] = 1000
+ ###
+ #############################################################
  
--from sage.misc.package import is_package_installed
-+def is_package_installed(name):
-+    return False
+-from sage_setup.optional_extension import OptionalExtension
+ UNAME = os.uname()
  
- if is_package_installed('fes'):
-     ext_modules.extend([
+ def uname_specific(name, value, alternative):
+@@ -378,21 +377,21 @@ ext_modules = [
+               libraries = ['flint'],
+               extra_compile_args = ['-std=c99']),
+ 
+-    OptionalExtension("sage.graphs.mcqd",
+-              ["sage/graphs/mcqd.pyx"],
+-              language = "c++",
+-              package = 'mcqd'),
+-
+-    OptionalExtension("sage.graphs.bliss",
+-              ["sage/graphs/bliss.pyx"],
+-              language = "c++",
+-              libraries = ['bliss'],
+-              package = 'bliss'),
+-
+-    OptionalExtension('sage.graphs.modular_decomposition',
+-              sources = ['sage/graphs/modular_decomposition.pyx'],
+-              libraries = ['modulardecomposition'],
+-              package = 'modular_decomposition'),
++#    Extension("sage.graphs.mcqd",
++#              ["sage/graphs/mcqd.pyx"],
++#              language = "c++",
++#              package = 'mcqd'),
++
++#    Extension("sage.graphs.bliss",
++#              ["sage/graphs/bliss.pyx"],
++#              language = "c++",
++#              libraries = ['bliss'],
++#              package = 'bliss'),
++
++#    Extension('sage.graphs.modular_decomposition',
++#              sources = ['sage/graphs/modular_decomposition.pyx'],
++#              libraries = ['modulardecomposition'],
++#              package = 'modular_decomposition'),
+ 
+     Extension('sage.graphs.planarity',
+               sources = ['sage/graphs/planarity.pyx'],
+@@ -411,10 +410,10 @@ ext_modules = [
+     Extension('sage.graphs.graph_decompositions.cutwidth',
+               sources = ['sage/graphs/graph_decompositions/cutwidth.pyx']),
+ 
+-    OptionalExtension('sage.graphs.graph_decompositions.tdlib',
+-              sources = ['sage/graphs/graph_decompositions/tdlib.pyx'],
+-              language="c++",
+-              package = 'tdlib'),
++#    Extension('sage.graphs.graph_decompositions.tdlib',
++#              sources = ['sage/graphs/graph_decompositions/tdlib.pyx'],
++#              language="c++",
++#              package = 'tdlib'),
+ 
+     Extension('sage.graphs.spanning_tree',
+               sources = ['sage/graphs/spanning_tree.pyx']),
+@@ -553,18 +552,18 @@ ext_modules = [
+     ##
+     ################################
+ 
+-    OptionalExtension('sage.libs.coxeter3.coxeter',
+-              sources = ['sage/libs/coxeter3/coxeter.pyx'],
+-              include_dirs = [os.path.join(SAGE_INC, 'coxeter')],
+-              language="c++",
+-              libraries = ['coxeter3'],
+-              package = 'coxeter3'),
++#    Extension('sage.libs.coxeter3.coxeter',
++#              sources = ['sage/libs/coxeter3/coxeter.pyx'],
++#              include_dirs = [os.path.join(SAGE_INC, 'coxeter')],
++#              language="c++",
++#              libraries = ['coxeter3'],
++#              package = 'coxeter3'),
+ 
+     Extension('sage.libs.ecl',
+               sources = ["sage/libs/ecl.pyx"],
+               libraries = ["ecl"]),
+ 
+-    OptionalExtension("sage.libs.fes",
++    Extension("sage.libs.fes",
+              ["sage/libs/fes.pyx"],
+              language = "c",
+              libraries = ['fes'],
+@@ -613,17 +613,17 @@
+     Extension('sage.libs.gmp.rational_reconstruction',
+               sources = ['sage/libs/gmp/rational_reconstruction.pyx']),
+ 
+-    OptionalExtension('sage.libs.braiding',
+-                      sources = ["sage/libs/braiding.pyx"],
+-                      libraries = ["braiding"],
+-                      package="libbraiding",
+-                      language = 'c++'),
++ #   OptionalExtension('sage.libs.braiding',
++ #                     sources = ["sage/libs/braiding.pyx"],
++ #                     libraries = ["braiding"],
++ #                     package="libbraiding",
++ #                     language = 'c++'),
+ 
+ 
+-    OptionalExtension('sage.libs.homfly',
+-                      sources = ["sage/libs/homfly.pyx"],
+-                      libraries = ["homfly", "gc"],
+-                      package="libhomfly"),
++ #   OptionalExtension('sage.libs.homfly',
++ #                     sources = ["sage/libs/homfly.pyx"],
++ #                     libraries = ["homfly", "gc"],
++ #                     package="libhomfly"),
+ 
+  #    Extension('sage.libs.linbox.linbox',
+  #             sources = ['sage/libs/linbox/linbox.pyx']),
+@@ -989,10 +988,10 @@ ext_modules = [
+     Extension('sage.matrix.matrix_window',
+               sources = ['sage/matrix/matrix_window.pyx']),
+ 
+-    OptionalExtension("sage.matrix.matrix_gfpn_dense",
+-              sources = ['sage/matrix/matrix_gfpn_dense.pyx'],
+-              libraries = ['mtx'],
+-              package = 'meataxe'),
++#    Extension("sage.matrix.matrix_gfpn_dense",
++#              sources = ['sage/matrix/matrix_gfpn_dense.pyx'],
++#              libraries = ['mtx'],
++#              package = 'meataxe'),
+ 
+     Extension('sage.matrix.misc',
+               sources = ['sage/matrix/misc.pyx'],
+@@ -1025,12 +1024,6 @@ ext_modules = [
+ 
+     Extension('*', ['sage/misc/*.pyx']),
+ 
+-    # Only include darwin_utilities on OS_X >= 10.5
+-    OptionalExtension('sage.misc.darwin_utilities',
+-        sources = ['sage/misc/darwin_memory_usage.c',
+-                   'sage/misc/darwin_utilities.pyx'],
+-        condition = (UNAME[0] == "Darwin" and not UNAME[2].startswith('8.'))),
+-
+     ################################
+     ##
+     ## sage.modular
+@@ -1173,19 +1166,19 @@ ext_modules = [
+     Extension("sage.numerical.backends.interactivelp_backend",
+               ["sage/numerical/backends/interactivelp_backend.pyx"]),
+ 
+-    OptionalExtension("sage.numerical.backends.gurobi_backend",
+-              ["sage/numerical/backends/gurobi_backend.pyx"],
+-              libraries = ["stdc++", "gurobi"],
+-              condition = os.path.isfile(SAGE_INC + "/gurobi_c.h") and
+-                  os.path.isfile(SAGE_LOCAL + "/lib/libgurobi.so")),
+-
+-    OptionalExtension("sage.numerical.backends.cplex_backend",
+-              ["sage/numerical/backends/cplex_backend.pyx"],
+-              libraries = ["stdc++", "cplex"],
+-              condition = os.path.isfile(SAGE_INC + "/cplex.h") and
+-                  os.path.isfile(SAGE_LOCAL + "/lib/libcplex.a")),
++#    Extension("sage.numerical.backends.gurobi_backend",
++#              ["sage/numerical/backends/gurobi_backend.pyx"],
++#              libraries = ["stdc++", "gurobi"],
++#              condition = os.path.isfile(SAGE_INC + "/gurobi_c.h") and
++#                  os.path.isfile(SAGE_LOCAL + "/lib/libgurobi.so")),
++
++#    Extension("sage.numerical.backends.cplex_backend",
++#              ["sage/numerical/backends/cplex_backend.pyx"],
++#              libraries = ["stdc++", "cplex"],
++#              condition = os.path.isfile(SAGE_INC + "/cplex.h") and
++#                  os.path.isfile(SAGE_LOCAL + "/lib/libcplex.a")),
+ 
+-    OptionalExtension("sage.numerical.backends.coin_backend",
++    Extension("sage.numerical.backends.coin_backend",
+               ["sage/numerical/backends/coin_backend.pyx"],
+               language = 'c++',
+               libraries = ["Cbc", "CbcSolver", "Cgl", "Clp", "CoinUtils",
+@@ -1677,7 +1670,7 @@ ext_modules = [
+     ##
+     ################################
+ 
+-    OptionalExtension("sage.sat.solvers.cryptominisat.cryptominisat",
++    Extension("sage.sat.solvers.cryptominisat.cryptominisat",
+               sources = ["sage/sat/solvers/cryptominisat/cryptominisat.pyx"],
+               include_dirs = [os.path.join(SAGE_INC, "cmsat")] + zlib_include_dirs,
+               language = "c++",
+@@ -1685,7 +1678,7 @@ ext_modules = [
+               library_dirs = zlib_library_dirs,
+               package = 'cryptominisat'),
+ 
+-    OptionalExtension("sage.sat.solvers.cryptominisat.solverconf",
++    Extension("sage.sat.solvers.cryptominisat.solverconf",
+               sources = ["sage/sat/solvers/cryptominisat/solverconf.pyx",
+                          "sage/sat/solvers/cryptominisat/solverconf_helper.cpp"],
+               include_dirs = [os.path.join(SAGE_INC, "cmsat")] + zlib_include_dirs,

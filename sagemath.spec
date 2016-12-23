@@ -25,14 +25,14 @@
 %global SAGE_TIMEOUT_LONG	180
 
 %global conway_polynomials_pkg	conway_polynomials-0.4
-%global	elliptic_curves_pkg	elliptic_curves-0.7
-%global	flintqs_pkg		flintqs-20070817
-%global graphs_pkg		graphs-20120404
-%global pexpect_pkg		pexpect-2.0
+%global	elliptic_curves_pkg	elliptic_curves-0.8
+%global	flintqs_pkg		flintqs-1.0
+%global graphs_pkg		graphs-20151224
+%global pexpect_pkg		pexpect-4.1.0
 %global polytopes_db_pkg	polytopes_db-20120220
 %global rubiks_pkg		rubiks-20070912
-%global	sagenb_pkg		sagenb-0.10.8.2
-%global sagetex_pkg		sagetex-2.3.4
+%global	sagenb_pkg		sagenb-0.13
+%global sagetex_pkg		sagetex-3.0
 
 %global SAGE_ROOT		%{_libdir}/sagemath
 %global SAGE_LOCAL		%{SAGE_ROOT}/local
@@ -45,8 +45,8 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	6.2
-Release:	1%{?dist}
+Version:	7.4
+Release:	1
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -71,23 +71,11 @@ Source6:	%{name}.rpmlintrc
 # tar jcf output.tar.bz2 output
 Source10:	output.tar.bz2
 
-# 1. scons ignores most environment variables
-# 2. scons 2.2* does not have soname support (expected for scons 2.3*)
-# This patch adds some regex substition templates for CFLAGS, etc, and
-# minor adaptation from full scons patch at:
-# http://scons.tigris.org/nonav/issues/showattachment.cgi/902/soname_func.py
-# Discussed at:
-# http://scons.tigris.org/issues/show_bug.cgi?id=2869
-Patch0:		%{name}-scons.patch
-
 # Upstream uses mpir not gmp, but the rpm package is tailored to use gmp
 Patch1:		%{name}-gmp.patch
 
 # Set of patches to work with system wide packages
 Patch2:		%{name}-scripts.patch
-
-# Adapt to ntl 6.0.0.
-Patch3:		%{name}-ntl6.patch
 
 # remove call to not implemented sagemath "is_package_installed" interfaces
 # need to package coin-or solver in fedora
@@ -110,13 +98,6 @@ Patch7:		%{name}-sagenb.patch
 
 # do not attempt to create state files in system directories
 Patch8:		%{name}-readonly.patch
-
-# force coercion of ecl t_string to ecl t_base_string
-# this is hackish and only required if ecl is built with unicode support
-Patch9:		%{name}-ecl-unicode.patch
-
-# do not link explicitly to png12
-Patch10:	%{name}-png.patch
 
 # work with all maxima-runtime lisp backend packages
 Patch11:	%{name}-maxima.patch
@@ -149,9 +130,6 @@ Patch20:	%{name}-nauty.patch
 # http://www-gap.mcs.st-and.ac.uk/Packages/hap.html
 Patch21:	%{name}-gap-hap.patch
 
-# Patch to enable lrcalc once review request is done in Fedora
-Patch22:	%{name}-lrcalc.patch
-
 # Patch to enable cbc once review requests are done in Fedora
 Patch23:	%{name}-cbc.patch
 
@@ -161,19 +139,12 @@ Patch24:	%{name}-libgap.patch
 # Patch to enable fes once review requests are done in Fedora
 Patch25:	%{name}-fes.patch
 
-# sagemath 5.8 (optionally) requires cryptominisat 2.9.6 (in rawhide)
-# and does not work with cryptominisat 2.9.5 (in f18)
-Patch27:	%{name}-cryptominisat.patch
-
 # Side effect of using distro packages
 # https://bugzilla.redhat.com/show_bug.cgi?id=974769
 Patch28:	%{name}-sympy.patch
 
 # Mandriva specific
 Patch29:	%{name}-underlink.patch
-
-# Edited latest version from http://trac.sagemath.org/ticket/15767
-Patch30:	%{name}-pari2.7.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
@@ -221,8 +192,6 @@ BuildRequires:	lrcalc-devel
 %endif
 BuildRequires:	m4ri-devel
 BuildRequires:	m4rie-devel
-# try to ensure a sane /dev will exist when building documentation
-BuildRequires:	makedev
 BuildRequires:	maxima-runtime-ecl
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
@@ -555,7 +524,7 @@ pushd build/pkgs/graphs
 popd
 
 pushd build/pkgs/pexpect
-    tar jxf ../../../upstream/%{pexpect_pkg}.tar.bz2
+    tar jxf ../../../upstream/%{pexpect_pkg}.tar.gz
     mv %{pexpect_pkg} src
     pushd src
 	for diff in `ls ../patches/*.patch`; do
@@ -572,38 +541,31 @@ popd
 pushd build/pkgs/rubiks
     tar jxf ../../../upstream/%{rubiks_pkg}.tar.bz2
     mv %{rubiks_pkg} src
-    pushd src
-	cp ../patches/dietz-mcube-Makefile dietz/mcube/Makefile
-	cp ../patches/dietz-solver-Makefile dietz/solver/Makefile
-	cp ../patches/dietz-cu2-Makefile dietz/cu2/Makefile
-	cp ../patches/reid-Makefile reid/Makefile
-    popd
+#    pushd src
+#	cp ../patches/dietz-mcube-Makefile dietz/mcube/Makefile
+#	cp ../patches/dietz-solver-Makefile dietz/solver/Makefile
+#	cp ../patches/dietz-cu2-Makefile dietz/cu2/Makefile
+#	cp ../patches/reid-Makefile reid/Makefile
+#    popd
 popd
 
 pushd build/pkgs/sagenb
-    tar xf ../../../upstream/%{sagenb_pkg}.tar
+    tar xf ../../../upstream/%{sagenb_pkg}.tar.bz2
     mv %{sagenb_pkg} src
-    pushd src
-	tar zxf %{sagenb_pkg}.tar.gz
-    popd
 popd
 
 pushd build/pkgs/sagetex
-    tar jxf ../../../upstream/%{sagetex_pkg}.tar.bz2
+    tar jxf ../../../upstream/%{sagetex_pkg}.tar.gz
     mv %{sagetex_pkg} src
 popd
 
-%patch0
 %patch1
 %patch2
-%patch3
 %patch4
 %patch5
 %patch6
 %patch7
 %patch8
-%patch9
-%patch10
 %patch11
 %patch12
 %patch13
@@ -614,10 +576,6 @@ popd
 
 %patch20
 %patch21
-
-%if %{have_lrcalc}
-%patch22
-%endif
 
 # other coin-or packages are build requires or coin-or-Cbc
 %if %{have_coin_or_Cbc}
@@ -630,11 +588,8 @@ popd
 %patch25
 %endif
 
-%patch27
 %patch28
-%patch29
-
-%patch30 -p1
+#patch29
 
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
@@ -642,7 +597,7 @@ sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
 
 sed -e "s|, 'flask-oldsessions>=0.10'||" \
     -e "s|'http://github.com/mitsuhiko/flask-oldsessions/tarball/master#egg=flask-oldsessions-0.10'||" \
-    -i build/pkgs/sagenb/src/%{sagenb_pkg}/setup.py
+    -i build/pkgs/sagenb/src/setup.py
 
 #------------------------------------------------------------------------
 # ensure proper/preferred libatlas is in linker path
@@ -654,10 +609,10 @@ perl -pi -e "s|return 'atlas'|return 'satlas'|;" src/sage/misc/cython.py
 find src/sage \( -name \*.pyx -o -name \*.pxd \) | xargs touch
 
 # remove bundled jar files before build
-rm build/pkgs/sagenb/src/%{sagenb_pkg}/sagenb/data/sage3d/lib/sage3d.jar
+rm build/pkgs/sagenb/src/sagenb/data/sage3d/lib/sage3d.jar
 
 # remove binary egg
-rm -r build/pkgs/sagenb/src/%{sagenb_pkg}/sagenb.egg-info
+rm -r build/pkgs/sagenb/src/sagenb.egg-info
 
 ########################################################################
 %build
@@ -686,20 +641,6 @@ export PATH=$PWD/bin:%{buildroot}%{_bindir}:$PATH
 export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
 
 #------------------------------------------------------------------------
-pushd src/c_lib
-    # scons ignores most environment variables
-    # and does not have soname support
-    sed -e 's|@@includedir@@|%{_includedir}|g' \
-	-e 's|@@libdir@@|%{_libdir}|g' \
-	-e 's|@@optflags@@|%{optflags}|g' \
-	-e 's|@@__global_ldflags@@|%{ldflags}|g' \
-	-i SConstruct
-    CXX=g++ UNAME=Linux SAGE64=auto scons
-    ln -s libcsage.so.0 libcsage.so
-popd
-pushd src/sage/libs/mpmath
-    dos2unix ext_impl.pxd ext_libmp.pyx ext_main.pxd ext_main.pyx
-popd
 pushd src
     python ./setup.py build
 popd

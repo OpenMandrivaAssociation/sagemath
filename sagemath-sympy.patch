@@ -1,21 +1,21 @@
 diff -up src/sage/env.py.orig src/sage/env.py
---- src/sage/env.py.orig	2014-02-07 12:50:28.534870630 -0200
-+++ src/sage/env.py	2014-02-07 12:51:07.014872104 -0200
-@@ -85,7 +85,7 @@ _add_variable_or_fallback('HOSTNAME',
+--- src/sage/env.py.orig	2016-08-08 13:45:28.136557046 -0400
++++ src/sage/env.py	2016-08-08 13:46:17.426558934 -0400
+@@ -89,7 +89,7 @@ _add_variable_or_fallback('HOSTNAME',
  _add_variable_or_fallback('LOCAL_IDENTIFIER','$HOSTNAME.%s'%os.getpid())
  
  # bunch of sage directories and files
 -_add_variable_or_fallback('SAGE_ROOT',       None)
 +_add_variable_or_fallback('SAGE_ROOT',       '@@SAGE_ROOT@@')
- _add_variable_or_fallback('SAGE_LOCAL',      opj('$SAGE_ROOT', 'local'))
+ _add_variable_or_fallback('SAGE_LOCAL',      None)
  _add_variable_or_fallback('SAGE_ETC',        opj('$SAGE_LOCAL', 'etc'))
- _add_variable_or_fallback('SAGE_SHARE',      opj('$SAGE_LOCAL', 'share'))
-@@ -98,7 +98,7 @@ _add_variable_or_fallback('SAGE_LIB',
+ _add_variable_or_fallback('SAGE_INC',        opj('$SAGE_LOCAL', 'include'))
+@@ -111,7 +111,7 @@ _add_variable_or_fallback('SAGE_CYTHONIZ
  _add_variable_or_fallback('SAGE_EXTCODE',    opj('$SAGE_SHARE', 'sage', 'ext'))
  _add_variable_or_fallback('SAGE_LOGS',       opj('$SAGE_ROOT', 'logs', 'pkgs'))
  _add_variable_or_fallback('SAGE_SPKG_INST',  opj('$SAGE_LOCAL', 'var', 'lib', 'sage', 'installed'))
--_add_variable_or_fallback('SAGE_DOC',        opj('$SAGE_SRC', 'doc'))
-+_add_variable_or_fallback('SAGE_DOC',        '@@SAGE_DOC@@')
+-_add_variable_or_fallback('SAGE_DOC_SRC',    opj('$SAGE_SRC', 'doc'))
++_add_variable_or_fallback('SAGE_DOC_SRC',    '@@SAGE_DOC@@')
+ _add_variable_or_fallback('SAGE_DOC',        opj('$SAGE_SHARE', 'doc', 'sage'))
  _add_variable_or_fallback('DOT_SAGE',        opj(os.environ.get('HOME','$SAGE_ROOT'), '.sage'))
  _add_variable_or_fallback('SAGE_DOT_GIT',    opj('$SAGE_ROOT', '.git'))
- 

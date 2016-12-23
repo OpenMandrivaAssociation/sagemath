@@ -1,6 +1,7 @@
---- src/sage/all.py.orig	2014-05-10 15:45:46.934198573 -0300
-+++ src/sage/all.py	2014-05-10 15:45:58.395197751 -0300
-@@ -327,11 +327,11 @@ def _write_started_file():
+diff -up src/sage/all.py.orig src/sage/all.py
+--- src/sage/all.py.orig	2016-08-08 13:29:42.192520823 -0400
++++ src/sage/all.py	2016-08-08 13:30:18.601522217 -0400
+@@ -305,11 +305,11 @@ def _write_started_file():
  
      Check that the file exists when Sage is running::
  
@@ -11,6 +12,6 @@
      """
 -    started_file = os.path.join(SAGE_LOCAL, 'etc', 'sage-started.txt')
 +    started_file = os.path.join(DOT_SAGE, 'sage-started.txt')
-     # Do nothing if the file already exists
-     if os.path.isfile(started_file):
-         return
+ 
+     # Current time with a resolution of 1 second
+     import datetime
