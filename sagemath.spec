@@ -146,6 +146,8 @@ Patch28:	%{name}-sympy.patch
 # Mandriva specific
 Patch29:	%{name}-underlink.patch
 
+Patch100:	sagemath-pkgconfig1.2.patch
+
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
 BuildRequires:	boost-devel
@@ -591,6 +593,8 @@ popd
 
 %patch28
 #patch29
+
+%patch100 -p1
 
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \

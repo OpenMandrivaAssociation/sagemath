@@ -1,0 +1,11 @@
+--- sage-7.4/src/module_list.py.o	2016-12-24 01:03:11.514552795 +0000
++++ sage-7.4/src/module_list.py	2016-12-24 01:03:18.906163811 +0000
+@@ -42,7 +42,7 @@
+ # GNU Scientific Library
+ # Note we replace the built-in gslcblas with the above cblas
+ gsl_pc = pkgconfig.parse('gsl')
+-gsl_libs = list(gsl_pc['libraries'].difference(['gslcblas']).union(cblas_libs))
++gsl_libs = list(set(gsl_pc['libraries']).difference(['gslcblas']).union(cblas_libs))
+ gsl_library_dirs = list(gsl_pc['library_dirs'])
+ gsl_include_dirs = list(gsl_pc['include_dirs'])
+ 
