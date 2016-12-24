@@ -207,6 +207,7 @@ BuildRequires:	python-flask-silk
 BuildRequires:	python-matplotlib
 BuildRequires:	python-networkx
 BuildRequires:	python-numpy-devel
+BuildRequires:	python-pkgconfig
 BuildRequires:	python-scipy
 BuildRequires:	python-twisted
 BuildRequires:	python-twisted-web
@@ -631,6 +632,7 @@ export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
 # match system packages as sagemath packages
+rm -Rf $SAGE_LOCALE $SAGE_ROOT
 mkdir -p $SAGE_ROOT $SAGE_LOCAL
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
