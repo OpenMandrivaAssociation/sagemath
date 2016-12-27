@@ -216,7 +216,6 @@ BuildRequires:	python-pkgconfig
 BuildRequires:	python-scipy
 BuildRequires:	python-twisted
 BuildRequires:	python-twisted-web
-BuildRequires:	python-twisted-web2
 BuildRequires:	R
 BuildRequires:	ratpoints-devel
 BuildRequires:	readline-devel
