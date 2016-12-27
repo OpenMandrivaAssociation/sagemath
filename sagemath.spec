@@ -203,19 +203,18 @@ BuildRequires:	ntl-devel
 BuildRequires:	polybori-devel
 BuildRequires:	ppl-devel
 BuildRequires:	pynac-devel
-BuildRequires:	python-cython
-BuildRequires:	python-devel
-BuildRequires:	python-flask-autoindex
-BuildRequires:	python-flask-babel
-BuildRequires:	python-flask-openid
-BuildRequires:	python-flask-silk
-BuildRequires:	python-matplotlib
-BuildRequires:	python-networkx
-BuildRequires:	python-numpy-devel
-BuildRequires:	python-pkgconfig
-BuildRequires:	python-scipy
-BuildRequires:	python-twisted
-BuildRequires:	python-twisted-web
+BuildRequires:	python2-cython
+BuildRequires:	python2-devel
+BuildRequires:	python2-flask-autoindex
+BuildRequires:	python2-flask-babel
+BuildRequires:	python2-flask-openid
+BuildRequires:	python2-flask-silk
+BuildRequires:	python2-matplotlib
+BuildRequires:	python2-networkx
+BuildRequires:	python2-numpy-devel
+BuildRequires:	python2-pkgconfig
+BuildRequires:	python2-scipy
+BuildRequires:	python2-twisted
 BuildRequires:	R
 BuildRequires:	ratpoints-devel
 BuildRequires:	readline-devel
@@ -251,21 +250,20 @@ Requires:	maxima-runtime-ecl
 Requires:	palp
 Requires:	pari
 Requires:	pari-data
-Requires:	python-pycrypto
-Requires:	python-cvxopt
-BuildRequires:	python-cython
-BuildRequires:	python-docutils
-Requires:	python-flask-autoindex
-Requires:	python-flask-babel
-Requires:	python-flask-openid
-Requires:	python-flask-silk
-Requires:	python-matplotlib
-Requires:	python-networkx
-Requires:	python-parsing
-Requires:	python-scipy
-Requires:	python-sympy
-Requires:	python-twisted-web
-Requires:	python-twisted-web2
+Requires:	python2-pycrypto
+Requires:	python2-cvxopt
+BuildRequires:	python2-cython
+BuildRequires:	python2-docutils
+Requires:	python2-flask-autoindex
+Requires:	python2-flask-babel
+Requires:	python2-flask-openid
+Requires:	python2-flask-silk
+Requires:	python2-matplotlib
+Requires:	python2-networkx
+Requires:	python2-parsing
+Requires:	python2-scipy
+Requires:	python2-sympy
+Requires:	python2-twisted
 Requires:	R
 Requires:	%{name}-core
 Requires:	%{name}-data
@@ -702,8 +700,8 @@ popd
 
 # Generate pari interface
 pushd src
-    %__python -c "from sage_setup.autogen.interpreters import rebuild; rebuild('sage/ext/interpreters')"
-    %__python -c "from sage_setup.autogen.pari import rebuild; rebuild()"
+    %__python2 -c "from sage_setup.autogen.interpreters import rebuild; rebuild('sage/ext/interpreters')"
+    %__python2 -c "from sage_setup.autogen.pari import rebuild; rebuild()"
 popd
 
 %if %{with bundled_pari}
@@ -715,8 +713,8 @@ sed -i 's|\(^extra_link_args = \[\) \]|\1"-L%{_builddir}/lib"\]|' \
 %endif
 
 pushd build/pkgs/cysignals/src
-    %__python setup.py build
-    %__python setup.py install --root %{_builddir}
+    %__python2 setup.py build
+    %__python2 setup.py install --root %{_builddir}
 popd
 
 export PYTHONPATH=%{_builddir}%{python_sitearch}:$PYTHONPATH
@@ -736,12 +734,12 @@ export PATH=$save_PATH
 export SAGE_LOCAL=$save_LOCAL
 #------------------------------------------------------------------------
 pushd src
-    python -u ./setup.py build
+    %__python2 -u ./setup.py build
 popd
 
 #------------------------------------------------------------------------
 pushd build/pkgs/sagenb/src/%{sagenb_pkg}
-    python ./setup.py build
+    %__python2 ./setup.py build
 popd
 
 #------------------------------------------------------------------------
