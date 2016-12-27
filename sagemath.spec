@@ -1,5 +1,9 @@
 #%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
 %define __noautoreq		'pythonegg\(flask-oldsessions\).*'
+%define _disable_lto 1
+
+%bcond_without bundled_pari
+%bcond_without cython_hack
 
 # use prebuilt documentation? useful if distro sphinx cannot rebuild docs
 %global build_doc		0
@@ -25,9 +29,13 @@
 %global SAGE_TIMEOUT_LONG	180
 
 %global conway_polynomials_pkg	conway_polynomials-0.4
+%global cysignals_pkg		cysignals-1.1.1
 %global	elliptic_curves_pkg	elliptic_curves-0.8
 %global	flintqs_pkg		flintqs-1.0
 %global graphs_pkg		graphs-20151224
+%if %{with bundled_pari}
+%global pari_pkg		pari-2.8.0.alpha
+%endif
 %global pexpect_pkg		pexpect-4.1.0
 %global polytopes_db_pkg	polytopes_db-20120220
 %global rubiks_pkg		rubiks-20070912
@@ -52,7 +60,7 @@ Release:	1
 # before files with that license
 License:	ASL 2.0 and BSD and GPL+ and GPLv2+ and LGPLv2+ and MIT and Public Domain
 URL:		http://www.sagemath.org
-Source0:	http://boxen.math.washington.edu/home/%{name}/sage-mirror/src/sage-%{version}.tar.gz
+Source0:	http://files.sagemath.org/src/sage-%{version}.tar.gz
 Source1:	gprc.expect
 Source2:	makecmds.sty
 # not installed by jmol package, use one in sagemath jmol spkg
@@ -61,15 +69,6 @@ Source4:	JmolHelp.html
 # from jmol-12.3.27.p2 spkg
 Source5:	testjava.sh
 Source6:	%{name}.rpmlintrc
-# wget http://boxen.math.washington.edu/home/sagemath/sage-mirror/linux/64bit/sage-6.2-x86_64-Linux-Fedora_20_x86_64.tar.lzma
-# tar Jxf sage-6.2-x86_64-Linux-Fedora_20_x86_64.tar.lzma
-# cd sage-6.2-x86_64-Linux/src/doc
-# cp -fpar output ~/rpmbuild
-# cd ~/rpmbuild/output
-# rm -fr doctrees inventory latex pdf
-# cd ..
-# tar jcf output.tar.bz2 output
-Source10:	output.tar.bz2
 
 # Upstream uses mpir not gmp, but the rpm package is tailored to use gmp
 Patch1:		%{name}-gmp.patch
@@ -147,6 +146,8 @@ Patch28:	%{name}-sympy.patch
 Patch29:	%{name}-underlink.patch
 
 Patch100:	sagemath-pkgconfig1.2.patch
+Patch101:	sagemath-disable_gen.patch
+Patch102:	sagemath-cython0.25.patch
 
 BuildRequires:	4ti2
 BuildRequires:	cddlib-devel
@@ -187,7 +188,9 @@ BuildRequires:	libatlas-devel
 BuildRequires:	libfac-devel
 BuildRequires:	libgap-devel
 BuildRequires:	libmpc-devel
+%if %{without bundled_pari}
 BuildRequires:	libpari-devel
+%endif
 BuildRequires:	linalg-linbox-devel
 %if %{have_lrcalc}
 BuildRequires:	lrcalc-devel
@@ -501,6 +504,11 @@ computations, and plots from the Sage mathematics software suite
 %prep
 %setup -q -n sage-%{version}
 
+pushd build/pkgs/cysignals
+    tar jxf ../../../upstream/%{cysignals_pkg}.tar.bz2
+    mv %{cysignals_pkg} src
+popd
+
 pushd build/pkgs/conway_polynomials
     tar jxf ../../../upstream/%{conway_polynomials_pkg}.tar.bz2
     mv %{conway_polynomials_pkg} src
@@ -525,6 +533,20 @@ pushd build/pkgs/graphs
     tar jxf ../../../upstream/%{graphs_pkg}.tar.bz2
     mv %{graphs_pkg} src
 popd
+
+%if %{with bundled_pari}
+pushd build/pkgs/pari
+    tar zxf ../../../upstream/%{pari_pkg}.tar.gz
+    mv %{pari_pkg} src
+    pushd src
+	for diff in ../patches/*.patch; do
+	    patch -p1 < $diff
+	done
+	# Temporary workaround: redefining GCC_VERSION kills the build
+	sed -i 's/GCC_VERSION/PARI_&/' config/paricfg.h.SH
+    popd
+popd
+%endif
 
 pushd build/pkgs/pexpect
     tar jxf ../../../upstream/%{pexpect_pkg}.tar.gz
@@ -571,7 +593,9 @@ popd
 %patch8
 %patch11
 %patch12
+%if %{without bundled_pari}
 %patch13
+%endif
 
 %patch17
 %patch18
@@ -595,10 +619,15 @@ popd
 #patch29
 
 %patch100 -p1
+%patch101 -p1
+%patch102 -p1
 
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
     -i src/sage/env.py
+
+sed -e 's|@@CYSIGNALS@@|%{_builddir}%{python_sitearch}/cysignals|' \
+    -i src/setup.py
 
 sed -e "s|, 'flask-oldsessions>=0.10'||" \
     -e "s|'http://github.com/mitsuhiko/flask-oldsessions/tarball/master#egg=flask-oldsessions-0.10'||" \
@@ -619,15 +648,21 @@ rm build/pkgs/sagenb/src/sagenb/data/sage3d/lib/sage3d.jar
 # remove binary egg
 rm -r build/pkgs/sagenb/src/sagenb.egg-info
 
+# fix Singular paths
+sed -e "s,SINGULARPATH=\",&%{_libdir}/Singular/LIB:," \
+    -e "s,\(SINGULAR_EXECUTABLE=\"\).*\",\1%{_libdir}/Singular/Singular\"," \
+    -i src/bin/sage-env
+
 ########################################################################
 %build
-export CC=%{__cc}
+export CC=gcc
 export CFLAGS="%{optflags} -fuse-ld=bfd"
 export CXXFLAGS="%{optflags} -fuse-ld=bfd"
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 # Avoid buildroot in gcc command line (use _builddir instead)
 export SAGE_SRC="$PWD/src"
+export SAGE_INC=%{_includedir}
 export SAGE_FORTRAN=%{_bindir}/gfortran
 export SAGE_FORTRAN_LIB=`gfortran --print-file-name=libgfortran.so`
 export DESTDIR=%{buildroot}
@@ -647,8 +682,62 @@ export PATH=$PWD/bin:%{buildroot}%{_bindir}:$PATH
 export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
 
 #------------------------------------------------------------------------
+# Save and update environment to generate bundled interfaces
+save_PATH=$PATH
+save_LOCAL=$SAGE_LOCAL
+export PATH=%{_builddir}/bin:$PATH
+export SAGE_LOCAL=%{_builddir}
+
+%if %{with bundled_pari}
+# Build bundled pari-2.8
+pushd build/pkgs/pari/src
+    ./Configure --prefix=%{_builddir} \
+	--without-readline --with-gmp \
+	--kernel=gmp --graphic=none
+    sed -i 's|%{_builddir}|%{_prefix}|g' Olinux-*/paricfg.h
+    make %{?_smp_mflags} gp
+    make install DESTDIR=""
+    cp -p src/language/anal.h  %{_builddir}/include/pari/anal.h
+popd
+%endif
+
+# Generate pari interface
 pushd src
-    python ./setup.py build
+    %__python -c "from sage_setup.autogen.interpreters import rebuild; rebuild('sage/ext/interpreters')"
+    %__python -c "from sage_setup.autogen.pari import rebuild; rebuild()"
+popd
+
+%if %{with bundled_pari}
+# Make temporary headers and static library visible
+sed -i 's|\(^    include_directories = \[SAGE_INC,\)|\1 "%{_builddir}/include",|' \
+    src/sage/env.py
+sed -i 's|\(^extra_link_args = \[\) \]|\1"-L%{_builddir}/lib"\]|' \
+    src/setup.py
+%endif
+
+pushd build/pkgs/cysignals/src
+    %__python setup.py build
+    %__python setup.py install --root %{_builddir}
+popd
+
+export PYTHONPATH=%{_builddir}%{python_sitearch}:$PYTHONPATH
+
+%if %{with cython_hack}
+    cp -far %{python_sitearch}/Cython %{_builddir}%{python_sitearch}
+    PATCH=$PWD/build/pkgs/cython/patches/pxi_sys_path.patch
+    pushd %{_builddir}%{python_sitearch}
+	patch -p1 < $PATCH
+	# https://bugzilla.redhat.com/show_bug.cgi?id=1406533
+	sed -i 's/disallow/dissallow/' Cython/Compiler/Options.py
+    popd
+%endif
+
+# Restore environment used to generate bundled interfaces
+export PATH=$save_PATH
+export SAGE_LOCAL=$save_LOCAL
+#------------------------------------------------------------------------
+pushd src
+    python -u ./setup.py build
 popd
 
 #------------------------------------------------------------------------
@@ -663,6 +752,16 @@ popd
 
 pushd build/pkgs/rubiks/src
     make %{?_smp_mflags} CC="gcc -fPIC" CXX="g++ -fPIC" CFLAGS="%{optflags}" CXXFLAGS="%{optflags}"
+popd
+
+# Remove buildroot reference from cython comments
+perl -pi -e 's|%{buildroot}||g;' `find src/build/cythonized -type f`
+
+# Try hard to remove buildroot from binaries
+rm -f `grep -lr "%{buildroot}" src/build/lib.linux-*/`
+rm -f `grep -lr "%{buildroot}" src/build/temp.linux-*/`
+pushd src
+    %__python2 ./setup.py build
 popd
 
 # last build command

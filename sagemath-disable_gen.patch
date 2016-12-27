@@ -1,0 +1,19 @@
+--- a/src/setup.py.o	2016-12-27 12:16:21.155084584 +0000
++++ a/src/setup.py	2016-12-27 12:16:28.953804631 +0000
+@@ -99,11 +99,11 @@
+ ### Generate some Python/Cython sources
+ #########################################################
+ 
+-make = os.environ.get("MAKE", 'make')
+-make_cmdline = "{} -f generate_py_source.mk SAGE_SRC={}".format(make, sage.env.SAGE_SRC)
+-status = subprocess.call(make_cmdline, shell=True)
+-if status != 0:
+-    raise DistutilsSetupError("{} failed".format(make_cmdline))
++#make = os.environ.get("MAKE", 'make')
++#make_cmdline = "{} -f generate_py_source.mk SAGE_SRC={}".format(make, sage.env.SAGE_SRC)
++#status = subprocess.call(make_cmdline, shell=True)
++#if status != 0:
++#    raise DistutilsSetupError("{} failed".format(make_cmdline))
+ 
+ #########################################################
+ ### Testing related stuff
