@@ -1,0 +1,93 @@
+diff -up src/sage/libs/arb/acb.pxd.orig src/sage/libs/arb/acb.pxd
+--- src/sage/libs/arb/acb.pxd.orig	2016-08-08 14:02:11.176595456 -0400
++++ src/sage/libs/arb/acb.pxd	2016-08-08 14:02:17.514595699 -0400
+@@ -3,7 +3,7 @@
+ from sage.libs.arb.types cimport *
+ from sage.libs.flint.types cimport fmpz_t, fmpq_t
+ 
+-cdef extern from "acb.h":
++cdef extern from "arb/acb.h":
+ 
+     arb_t acb_realref(acb_t x)
+     arb_t acb_imagref(acb_t x)
+diff -up src/sage/libs/arb/arb.pxd.orig src/sage/libs/arb/arb.pxd
+--- src/sage/libs/arb/arb.pxd.orig	2016-08-08 14:02:26.528596044 -0400
++++ src/sage/libs/arb/arb.pxd	2016-08-08 14:02:33.554596313 -0400
+@@ -4,7 +4,7 @@ from sage.libs.arb.types cimport *
+ from sage.libs.flint.types cimport fmpz_t, fmpq_t
+ from sage.libs.mpfr cimport mpfr_t
+ 
+-cdef extern from "arb.h":
++cdef extern from "arb/arb.h":
+ 
+     arf_t arb_midref(arb_t x)
+     mag_t arb_radref(arb_t x)
+diff -up src/sage/libs/arb/arf.pxd.orig src/sage/libs/arb/arf.pxd
+--- src/sage/libs/arb/arf.pxd.orig	2016-08-08 14:02:45.928596787 -0400
++++ src/sage/libs/arb/arf.pxd	2016-08-08 14:02:53.194597065 -0400
+@@ -5,7 +5,7 @@ from sage.libs.gmp.types cimport mpz_t
+ from sage.libs.flint.types cimport fmpz_t
+ from sage.libs.mpfr cimport mpfr_t, mpfr_rnd_t
+ 
+-cdef extern from "arf.h":
++cdef extern from "arb/arf.h":
+     void arf_init(arf_t x)
+     void arf_clear(arf_t x)
+     void arf_zero(arf_t x)
+diff -up src/sage/libs/arb/mag.pxd.orig src/sage/libs/arb/mag.pxd
+--- src/sage/libs/arb/mag.pxd.orig	2016-08-08 14:03:03.208597449 -0400
++++ src/sage/libs/arb/mag.pxd	2016-08-08 14:03:10.010597709 -0400
+@@ -3,7 +3,7 @@
+ from sage.libs.arb.types cimport *
+ from sage.libs.flint.types cimport fmpz_t, fmpq_t
+ 
+-cdef extern from "mag.h":
++cdef extern from "arb/mag.h":
+     void mag_init(mag_t x)
+     void mag_clear(mag_t x)
+     void mag_init_set(mag_t x, const mag_t y)
+diff -up src/sage/libs/arb/acb_hypgeom.pxd.orig src/sage/libs/arb/acb_hypgeom.pxd
+--- src/sage/libs/arb/acb_hypgeom.pxd.orig	2016-08-09 14:18:12.798626773 -0400
++++ src/sage/libs/arb/acb_hypgeom.pxd	2016-08-09 14:18:18.591626994 -0400
+@@ -2,7 +2,7 @@
+ 
+ from sage.libs.arb.types cimport *
+ 
+-cdef extern from "acb_hypgeom.h":
++cdef extern from "arb/acb_hypgeom.h":
+     void acb_hypgeom_pfq_bound_factor(mag_t C, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, unsigned long n)
+     long acb_hypgeom_pfq_choose_n(acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long prec)
+     void acb_hypgeom_pfq_sum_forward(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long n, long prec)
+diff -up src/sage/libs/arb/acb_mat.pxd.orig src/sage/libs/arb/acb_mat.pxd
+--- src/sage/libs/arb/acb_mat.pxd.orig	2016-08-09 14:18:29.126627398 -0400
++++ src/sage/libs/arb/acb_mat.pxd	2016-08-09 14:18:33.559627568 -0400
+@@ -1,6 +1,6 @@
+ from sage.libs.arb.types cimport acb_t, acb_mat_t
+ 
+-cdef extern from "acb_mat.h":
++cdef extern from "arb/acb_mat.h":
+     unsigned int acb_mat_nrows(acb_mat_t mat)
+     unsigned int acb_mat_ncols(acb_mat_t mat)
+     acb_t acb_mat_entry(acb_mat_t mat, unsigned long i, unsigned long j)
+diff -up src/sage/libs/arb/acb_modular.pxd.orig src/sage/libs/arb/acb_modular.pxd
+--- src/sage/libs/arb/acb_modular.pxd.orig	2016-08-09 14:18:42.526627911 -0400
++++ src/sage/libs/arb/acb_modular.pxd	2016-08-09 14:18:46.191628051 -0400
+@@ -3,7 +3,7 @@
+ from sage.libs.arb.types cimport *
+ from sage.libs.flint.types cimport fmpz_poly_t
+ 
+-cdef extern from "acb_modular.h":
++cdef extern from "arb/acb_modular.h":
+     void acb_modular_theta(acb_t theta1, acb_t theta2, acb_t theta3, acb_t theta4, const acb_t z, const acb_t tau, long prec)
+     void acb_modular_j(acb_t z, const acb_t tau, long prec)
+     void acb_modular_eta(acb_t z, const acb_t tau, long prec)
+diff -up src/sage/libs/arb/bernoulli.pxd.orig src/sage/libs/arb/bernoulli.pxd
+--- src/sage/libs/arb/bernoulli.pxd.orig	2016-08-09 14:19:29.102629695 -0400
++++ src/sage/libs/arb/bernoulli.pxd	2016-08-09 14:19:33.495629863 -0400
+@@ -2,5 +2,5 @@
+ 
+ from ..flint.types cimport fmpq_t, ulong
+ 
+-cdef extern from "bernoulli.h":
++cdef extern from "arb/bernoulli.h":
+     void bernoulli_fmpq_ui(fmpq_t b, ulong n)

@@ -1,12 +1,14 @@
 #%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
 %define __noautoreq		'pythonegg\(flask-oldsessions\).*'
 %define _disable_lto 1
+%define _disable_ld_no_undefined 1
 
 %bcond_without bundled_pari
 %bcond_without cython_hack
 
-# use prebuilt documentation? useful if distro sphinx cannot rebuild docs
-%global build_doc		0
+%bcond_without install_hack
+
+%bcond_with docs
 
 # not functional due to missing jar dependencies
 %global with_sage3d		0
@@ -129,6 +131,9 @@ Patch20:	%{name}-nauty.patch
 # http://www-gap.mcs.st-and.ac.uk/Packages/hap.html
 Patch21:	%{name}-gap-hap.patch
 
+# correct path to Lfunction include
+Patch22:	%{name}-lcalc.patch
+
 # Patch to enable cbc once review requests are done in Fedora
 Patch23:	%{name}-cbc.patch
 
@@ -145,11 +150,16 @@ Patch28:	%{name}-sympy.patch
 # Mandriva specific
 Patch29:	%{name}-underlink.patch
 
+Patch30:	sagemath-includes.patch
+
+Patch31:	sagemath-arb.patch
+
 Patch100:	sagemath-pkgconfig1.2.patch
 Patch101:	sagemath-disable_gen.patch
 Patch102:	sagemath-cython0.25.patch
 
 BuildRequires:	4ti2
+BuildRequires:	arb-devel
 BuildRequires:	cddlib-devel
 BuildRequires:	boost-devel
 BuildRequires:	cliquer-devel
@@ -200,7 +210,8 @@ BuildRequires:	m4rie-devel
 BuildRequires:	maxima-runtime-ecl
 BuildRequires:	mpfi-devel
 BuildRequires:	ntl-devel
-BuildRequires:	polybori-devel
+BuildRequires:	planarity-devel
+BuildRequires:	brial-devel
 BuildRequires:	ppl-devel
 BuildRequires:	pynac-devel
 BuildRequires:	python2-cython
@@ -219,6 +230,7 @@ BuildRequires:	R
 BuildRequires:	ratpoints-devel
 BuildRequires:	readline-devel
 BuildRequires:	rpy
+BuildRequires:	rw-devel
 BuildRequires:	scons
 BuildRequires:	singular
 BuildRequires:	singular-devel
@@ -372,16 +384,6 @@ distribution of Sage. To work with lattice and reflexive polytopes from Sage
 you can use sage.geometry.lattice_polytope module, which relies on PALP for
 some of its functionality. To get access to the databases of this package, use
 ReflexivePolytope and ReflexivePolytopes commands.
-
-#------------------------------------------------------------------------
-%package	devel
-Summary:	Development files for %{name}
-Group:		Sciences/Mathematics
-Requires:	%{name}%{?_isa} = %{version}-%{release}
-
-%description	devel
-This package contains the header files and development documentation
-for %{name}.
 
 #------------------------------------------------------------------------
 %package	doc
@@ -600,6 +602,7 @@ popd
 
 %patch20
 %patch21
+%patch22
 
 # other coin-or packages are build requires or coin-or-Cbc
 %if %{have_coin_or_Cbc}
@@ -614,6 +617,8 @@ popd
 
 %patch28
 #patch29
+%patch30
+%patch31
 
 %patch100 -p1
 %patch101 -p1
@@ -623,7 +628,7 @@ sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
     -i src/sage/env.py
 
-sed -e 's|@@CYSIGNALS@@|%{_builddir}%{python_sitearch}/cysignals|' \
+sed -e 's|@@CYSIGNALS@@|%{_builddir}%{python2_sitearch}/cysignals|' \
     -i src/setup.py
 
 sed -e "s|, 'flask-oldsessions>=0.10'||" \
@@ -650,11 +655,14 @@ sed -e "s,SINGULARPATH=\",&%{_libdir}/Singular/LIB:," \
     -e "s,\(SINGULAR_EXECUTABLE=\"\).*\",\1%{_libdir}/Singular/Singular\"," \
     -i src/bin/sage-env
 
+rm -f src/sage/misc/darwin*
+
 ########################################################################
 %build
 export CC=gcc
-export CFLAGS="%{optflags} -fuse-ld=bfd"
-export CXXFLAGS="%{optflags} -fuse-ld=bfd"
+export CFLAGS="%{optflags} -fuse-ld=bfd -fno-lto"
+export CXXFLAGS="%{optflags} -fuse-ld=bfd -fno-lto"
+export LIBS=-lm
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 # Avoid buildroot in gcc command line (use _builddir instead)
@@ -667,6 +675,9 @@ export DESTDIR=%{buildroot}
 export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
+# Avoid surprises due to change to src/build/temp.*$ARCH.*/...
+export SAGE_CYTHONIZED=$SAGE_SRC/build/cythonized
+
 # match system packages as sagemath packages
 rm -Rf $SAGE_LOCALE $SAGE_ROOT
 mkdir -p $SAGE_ROOT $SAGE_LOCAL
@@ -676,7 +687,7 @@ ln -sf %{_datadir} $SAGE_LOCAL/share
 
 mkdir bin; pushd bin; ln -s /usr/bin/ld.bfd ld; popd
 export PATH=$PWD/bin:%{buildroot}%{_bindir}:$PATH
-export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
+export PYTHONPATH=%{buildroot}%{python2_sitearch}:$PYTHONPATH
 
 #------------------------------------------------------------------------
 # Save and update environment to generate bundled interfaces
@@ -717,12 +728,12 @@ pushd build/pkgs/cysignals/src
     %__python2 setup.py install --root %{_builddir}
 popd
 
-export PYTHONPATH=%{_builddir}%{python_sitearch}:$PYTHONPATH
+export PYTHONPATH=%{_builddir}%{python2_sitearch}:$PYTHONPATH
 
 %if %{with cython_hack}
-    cp -far %{python_sitearch}/Cython %{_builddir}%{python_sitearch}
+    cp -far %{python2_sitearch}/Cython %{_builddir}%{python2_sitearch}
     PATCH=$PWD/build/pkgs/cython/patches/pxi_sys_path.patch
-    pushd %{_builddir}%{python_sitearch}
+    pushd %{_builddir}%{python2_sitearch}
 	patch -p1 < $PATCH
 	# https://bugzilla.redhat.com/show_bug.cgi?id=1406533
 	sed -i 's/disallow/dissallow/' Cython/Compiler/Options.py
@@ -734,16 +745,17 @@ export PATH=$save_PATH
 export SAGE_LOCAL=$save_LOCAL
 #------------------------------------------------------------------------
 pushd src
-    %__python2 -u ./setup.py build
+    %__python2 -u ./setup.py build build_ext -lm -L%{_builddir}/lib
 popd
 
 #------------------------------------------------------------------------
-pushd build/pkgs/sagenb/src/%{sagenb_pkg}
+pushd build/pkgs/sagenb/src
     %__python2 ./setup.py build
 popd
 
 #------------------------------------------------------------------------
 pushd build/pkgs/flintqs/src
+    %configure
     make %{?_smp_mflags} CPP="g++ %{optflags} -fPIC"
 popd
 
@@ -758,7 +770,7 @@ perl -pi -e 's|%{buildroot}||g;' `find src/build/cythonized -type f`
 rm -f `grep -lr "%{buildroot}" src/build/lib.linux-*/`
 rm -f `grep -lr "%{buildroot}" src/build/temp.linux-*/`
 pushd src
-    %__python2 ./setup.py build
+    %__python2 ./setup.py build build_ext -lm
 popd
 
 # last build command
@@ -766,70 +778,114 @@ rm -fr $DOT_SAGE
 
 ########################################################################
 %install
-export CC=%{__cc}
-export CFLAGS="%{optflags} -fuse-ld=bfd"
-export CXXFLAGS="%{optflags} -fuse-ld=bfd"
+export CC=gcc
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
-export SAGE_SRC=%{buildroot}%{SAGE_SRC}
+# Avoid buildroot in gcc command line (use _builddir instead)
+export SAGE_SRC="$PWD/src"
+export SAGE_INC=%{_includedir}
+#export SAGE_SRC=#%#{buildroot}#%#{SAGE_SRC}
 export SAGE_SHARE=%{buildroot}%{SAGE_SHARE}
 export SAGE_ETC=%{buildroot}%{SAGE_ETC}
+export SAGE_EXTCODE=%{buildroot}%{SAGE_ETC}
 export SAGE_DOC=%{buildroot}%{SAGE_DOC}
 export SAGE_PYTHONPATH=%{buildroot}%{SAGE_PYTHONPATH}
-export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:$LD_LIBRARY_PATH
+%if %{with bundled_pari}
+export LD_LIBRARY_PATH=%{_builddir}/lib:$LD_LIBRARY_PATH
+%endif
 export DESTDIR=%{buildroot}
+export SAGE_DEBUG=no
 export DOT_SAGE=/tmp/sage$$
 mkdir -p $DOT_SAGE/tmp
 
-export PATH=$PWD/bin:%{buildroot}%{_bindir}:$PATH
-export PYTHONPATH=%{buildroot}%{python_sitearch}:$PYTHONPATH
+export PATH=%{buildroot}%{_bindir}:$PATH
+export PYTHONPATH=%{buildroot}%{python2_sitearch}:$PYTHONPATH
+export PYTHONPATH=%{_builddir}%{python2_sitearch}:$PYTHONPATH
 
 #------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p $SAGE_PYTHONPATH
 rm -fr $SAGE_LOCAL/{include,lib,share,notebook}
-mkdir -p $SAGE_SHARE $SAGE_DOC $SAGE_LOCAL/bin $SAGE_SRC
-ln -sf $PWD/src/sage $SAGE_SRC/sage
+mkdir -p $SAGE_SHARE $SAGE_DOC $SAGE_LOCAL/bin %{buildroot}%{SAGE_SRC}
+ln -sf $PWD/src/sage %{buildroot}%{SAGE_SRC}/sage
 ln -sf %{_libdir} $SAGE_LOCAL/lib
 ln -sf %{_includedir} $SAGE_LOCAL/include
 ln -sf %{_datadir} $SAGE_LOCAL/share
 
 #------------------------------------------------------------------------
+pushd build/pkgs/cysignals/src
+    pushd docs
+	%__make html
+    popd
+    %__python2 setup.py install --root %{buildroot}
+    mv %{buildroot}%{_bindir}/cysignals* $SAGE_LOCAL/bin
+popd
+
+#------------------------------------------------------------------------
+pushd src/ext
+    mkdir -p $SAGE_ETC
+    for dir in 			\
+	gap			\
+	graphs			\
+	images			\
+	magma			\
+	mwrank			\
+	notebook-ipython; do
+	COUNT=`find $dir -type f | wc -l `
+	if [ $COUNT -gt 0 ]; then
+	    cp -far $dir $SAGE_ETC
+	fi
+	cp -far pari $SAGE_ETC
+    done
+    cp -fa %{SOURCE1} $SAGE_ETC
+popd
+
+#------------------------------------------------------------------------
 pushd src
-    python setup.py install --root=%{buildroot}
-    cp -fa c_lib/libcsage.so.0 %{buildroot}%{_libdir}
-    ln -sf libcsage.so.0 %{buildroot}%{_libdir}/libcsage.so
+%if %{without install_hack}
+    # FIXME tries to rebuild everything
+    %__python2 -u setup.py install --root=%{buildroot}
+%else
+    mkdir -p %{buildroot}%{python2_sitearch}
+    cp -far build/lib.linux-*/sage %{buildroot}%{python2_sitearch}
+%endif
+%if %{with docs}
     # install documentation sources
     rm -fr $SAGE_DOC/{common,en,fr}
-    cp -far doc/{common,de,en,fr,pt,ru,tr} $SAGE_DOC
+    cp -far doc/{common,ca,de,en,fr,hu,it,pt,ru,tr} $SAGE_DOC
+%endif
 popd
 
+%if %{with bundled_pari}
+# Revert change to make temporary headers and static library visible
+# Making it search for the installed sagemath path
+sed -i 's|\(^    include_directories = \[SAGE_INC,\).*|\1|' \
+    %{buildroot}%{SAGE_SRC}/sage/env.py
+%endif
+
 #------------------------------------------------------------------------
-pushd build/pkgs/sagenb/src/%{sagenb_pkg}
-    rm -f %{buildroot}%{python_sitearch}/sagenb/data/sage3d/sage3d
-    python setup.py install --root=%{buildroot} --install-purelib=%{python_sitearch}
-    install -p -m0755 %{SOURCE5} $SAGE_LOCAL/bin/testjava.sh
-    # jmol
-    rm -fr %{buildroot}%{python_sitearch}/sagenb/data/jmol
-    mkdir -p %{buildroot}%{python_sitearch}/sagenb/data/jmol/appletweb
-    pushd %{buildroot}%{python_sitearch}/sagenb/data/jmol
-	cp -fa %{SOURCE3} %{SOURCE4} appletweb
-    popd
+pushd build/pkgs/sagenb/src
+    rm -f %{buildroot}%{python2_sitearch}/sagenb/data/sage3d/sage3d
+    %__python2 setup.py install --root=%{buildroot} --install-purelib=%{python2_sitearch}
+    # jsmol
+    ln -sf %{_jsdir}/jsmol $SAGE_SHARE/jsmol
     # sage3d
     rm -f %{buildroot}%{_bindir}/sage3d
-%if %{with_sage3d}
-    ln -sf %{SAGE_LOCAL}/bin/sage3d %{buildroot}%{python_sitearch}/sagenb/data/sage3d/sage3d
+%if %{with sage3d}
+    ln -sf %{SAGE_LOCAL}/bin/sage3d %{buildroot}%{python2_sitearch}/sagenb/data/sage3d/sage3d
 %endif
-    # flask stuff not installed
-    cp -ar flask_version %{buildroot}%{python_sitearch}/sagenb
-    ln -sf %{python_sitearch}/sagenb %{buildroot}%{SAGE_SRC}/sagenb
+    ln -sf %{python2_sitearch}/sagenb %{buildroot}%{SAGE_SRC}/sagenb
+    # use system mathjax
+    ln -sf %{_jsdir}/mathjax %{buildroot}%{python2_sitearch}/sagenb/data/mathjax
 popd
 
 #------------------------------------------------------------------------
+%if %{with bundled_pexpect}
 pushd build/pkgs/pexpect/src
-    cp -fa {ANSI,FSM,pexpect,pxssh,screen}.py $SAGE_PYTHONPATH
+    cp -fa pexpect $SAGE_PYTHONPATH
 popd
+%endif
 
 #------------------------------------------------------------------------
 cp -fa COPYING.txt $SAGE_ROOT
@@ -837,16 +893,21 @@ pushd src/bin
     mkdir -p $SAGE_LOCAL/bin
     cp -fa sage-* $SAGE_LOCAL/bin
     pushd $SAGE_LOCAL/bin
+	ln -sf %{_bindir}/jmol jmol
 	ln -sf %{_bindir}/python sage.bin
+	ln -sf %{_bindir}/python python
+%if %{without bundled_pari}
 	ln -sf %{_bindir}/gp sage_pari
+%endif
 	ln -sf %{_bindir}/gap gap_stamp
+	ln -sf %{_bindir}/gmp-ecm ecm
     popd
 popd
 install -p -m755 src/bin/sage $SAGE_LOCAL/bin
 
 #------------------------------------------------------------------------
 pushd build/pkgs/flintqs/src
-    cp -fa QuadraticSieve $SAGE_LOCAL/bin
+    cp -fa src/QuadraticSieve $SAGE_LOCAL/bin
 popd
 
 pushd build/pkgs/rubiks/src
@@ -908,7 +969,7 @@ popd
 
 #------------------------------------------------------------------------
 pushd build/pkgs/conway_polynomials
-    python ./spkg-install
+    %__python2 ./spkg-install
 popd
 
 #------------------------------------------------------------------------
@@ -919,27 +980,7 @@ pushd build/pkgs/elliptic_curves
 	tar jxf ../../../upstream/%{elliptic_curves_pkg}.tar.bz2
 	mv %{elliptic_curves_pkg} src
     fi
-    python ./spkg-install
-popd
-
-#------------------------------------------------------------------------
-pushd src/ext
-    mkdir -p $SAGE_ETC
-    for dir in 			\
-	gap			\
-	images			\
-	magma			\
-	maxima			\
-	mwrank			\
-	singular		\
-	sobj; do
-	COUNT=`find $dir -type f | wc -l `
-	if [ $COUNT -gt 0 ]; then
-	    cp -far $dir $SAGE_ETC
-	fi
-	cp -far pari $SAGE_ETC
-    done
-    cp -fa %{SOURCE1} $SAGE_ETC
+    %__python2 ./spkg-install
 popd
 
 #------------------------------------------------------------------------
@@ -956,20 +997,25 @@ popd
 
 #------------------------------------------------------------------------
 pushd build/pkgs/sagetex/src
-    python setup.py install --root=%{buildroot} --install-purelib=%{python_sitearch}
+    %__python2 setup.py install --root=%{buildroot} --install-purelib=%{python2_sitearch}
     install -p -m 0644 -D %{SOURCE2} \
-	%{buildroot}%{_datadir}/texmf/tex/generic/sagetex/makecmds.sty
-    mv %{buildroot}%{_docdir}/{sagetex,%{sagetex_pkg}}
-    mv %{buildroot}%{_datadir}/texmf/tex/generic/sagetex/CONTRIBUTORS \
-	 %{buildroot}%{_docdir}/%{sagetex_pkg}
+	%{buildroot}%{_datadir}/texmf/tex/latex/sagetex/makecmds.sty
+    mv %{buildroot}%{_datadir}/texmf/tex/latex/sagetex/CONTRIBUTORS \
+	 %{buildroot}%{_docdir}/sagetex
     for file in PKG-INFO README; do
-	install -p -m 0644 $file %{buildroot}%{_docdir}/%{sagetex_pkg}/$file
+	install -p -m 0644 $file %{buildroot}%{_docdir}/sagetex/$file
     done
 popd
 
 #------------------------------------------------------------------------
+%if %{with bundled_ipython}
+mv %{_builddir}%{python_sitelib}/IPython %{buildroot}%{SAGE_PYTHONPATH}
+mv %{_builddir}%{_bindir}/ip* %{buildroot}%{SAGE_LOCAL}/bin
+%endif
+
+#------------------------------------------------------------------------
 cat > %{buildroot}%{_bindir}/sage << EOF
-#!/bin/sh
+#!/bin/bash -i
 
 export CUR=\`pwd\`
 ##export DOT_SAGE="\$HOME/.sage"
@@ -978,14 +1024,14 @@ export SAGE_TESTDIR=\$DOT_SAGE/tmp
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_LOCAL="$SAGE_LOCAL"
 export SAGE_SHARE="$SAGE_SHARE"
+export SAGE_EXTCODE="$SAGE_ETC"
 export SAGE_ETC="$SAGE_ETC"
-export SAGE_SRC="$SAGE_SRC"
+export SAGE_SRC="%{buildroot}%{SAGE_SRC}"
 ##export SAGE_DOC="$SAGE_DOC"
+##export SAGE_DOC_SRC="\$SAGE_DOC"
 module load 4ti2-%{_arch}
-%if %{have_lrcalc}
 module load lrcalc-%{_arch}
-%endif
-module load surf-%{_arch}
+module load surf-geometry-%{_arch}
 export PATH=$SAGE_LOCAL/bin:\$PATH
 export SINGULARPATH=%{_libdir}/Singular/LIB
 export SINGULAR_BIN_DIR=%{_libdir}/Singular
@@ -996,13 +1042,16 @@ export SAGE_FORTRAN_LIB=\`gfortran --print-file-name=libgfortran.so\`
 export SYMPOW_DIR="\$DOT_SAGE/sympow"
 export LC_MESSAGES=C
 export LC_NUMERIC=C
+export LD_LIBRARY_PATH=\$SAGE_ROOT/lib:\$LD_LIBRARY_PATH
+# Required for sage -gdb
+export SAGE_DEBUG=no
 $SAGE_LOCAL/bin/sage "\$@"
 EOF
 #------------------------------------------------------------------------
 chmod +x %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
-%if %{with_sage3d}
+%if %{with sage3d}
 cat > %{buildroot}%{SAGE_LOCAL}/bin/sage3d << EOF
 #!/bin/sh
 
@@ -1016,47 +1065,53 @@ chmod +x %{buildroot}%{SAGE_LOCAL}/bin/sage3d
 # o install csage headers
 # o install .pxi and .pxd files
 pushd src
-    # make csage headers available
-    mkdir -p %{buildroot}%{_includedir}/csage
-    cp -fa c_lib/include/* %{buildroot}%{_includedir}/csage
     for f in `find sage \( -name \*.pxi -o -name \*.pxd -o -name \*.pyx \)`; do
-	install -p -D -m 0644 $f %{buildroot}%{python_sitearch}/$f
+	install -p -D -m 0644 $f %{buildroot}%{python2_sitearch}/$f
     done
     # need this or will not "find" the files in the directory, and
     # fail to link with gmp
-    touch %{buildroot}%{python_sitearch}/sage/libs/gmp/__init__.py
+    touch %{buildroot}%{python2_sitearch}/sage/libs/gmp/__init__.py
 popd
 
+%if %{with docs}
 #------------------------------------------------------------------------
-%if %{build_doc}
-    cp -f $SAGE_PYTHONPATH/{ANSI,FSM,pexpect,pxssh,screen}.py %{buildroot}%{python_sitearch}
+%if %{with bundled_pexpect}
+cp -fa $SAGE_PYTHONPATH/pexpect %{buildroot}%{python2_sitearch}
+%endif
 
 # Build documentation, using %#{buildroot} environment
+export SAGE_SETUP=$PWD/src/sage_setup
 pushd src/doc
     export SAGE_DOC=`pwd`
     export PATH=%{buildroot}%{_bindir}:$SAGE_LOCAL/bin:$PATH
     export SINGULARPATH=%{_libdir}/Singular/LIB
     export SINGULAR_BIN_DIR=%{_libdir}/Singular
-    export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{_libdir}/atlas:$LD_LIBRARY_PATH
-    export PYTHONPATH=%{buildroot}%{python_sitearch}:$SAGE_PYTHONPATH:$SAGE_DOC
+    export LD_LIBRARY_PATH=%{_libdir}/atlas:$LD_LIBRARY_PATH
+    export PYTHONPATH=$SAGE_SETUP:%{buildroot}%{python2_sitearch}:$SAGE_PYTHONPATH:$SAGE_DOC
 
-%if %{with_sphinx_hack}
-    cp -far %{python_sitelib}/sphinx %{buildroot}%{python_sitearch}
+%if %{with sphinx_hack}
+    cp -far %{python_sitelib}/sphinx %{buildroot}%{python2_sitearch}
     sed -i "s|\(source.startswith('>>>')\)|\1 or source.startswith('sage: ')|" \
-	%{buildroot}%{python_sitearch}/sphinx/highlighting.py
+	%{buildroot}%{python2_sitearch}/sphinx/highlighting.py
 %endif
 
     # there we go
-    ln -sf %{buildroot}%{SAGE_DOC} $SAGE_SRC/doc
-    SAGE_NUM_THREADS=1 python common/builder.py all html
+    ln -sf %{buildroot}%{SAGE_DOC} %{buildroot}%{SAGE_SRC}/doc
     export SAGE_DOC=%{buildroot}%{SAGE_DOC}
-    cp -far output $SAGE_DOC
+    export SAGE_DOC_SRC=$SAGE_DOC
+    # python -m sage_setup.docbuild
+    # FIXME there is a 'ja' translation, but adding it to $LANGUAGES
+    # does not get documentation built
+    LANGUAGES="ca de en fr hu it pt ru tr" \
+	%__python2 -m docbuild --no-pdf-links -k all html
+    rm -f %{buildroot}%{SAGE_SRC}/doc
+    ln -sf %{SAGE_DOC} %{buildroot}%{SAGE_SRC}/doc
 
     # should not be required and encodes buildroot
     rm -fr $SAGE_DOC/output/doctrees
 popd
 
-%if %{with_check}
+%if %{with check}
 export SAGE_TIMEOUT=%{SAGE_TIMEOUT}
 export SAGE_TIMEOUT_LONG=%{SAGE_TIMEOUT_LONG}
 sage -testall --verbose || :
@@ -1065,38 +1120,30 @@ install -p -m644 $DOT_SAGE/tmp/test.log $SAGE_DOC/test.log
 sed -i 's|%{buildroot}||g' $SAGE_DOC/test.log
 %endif
 
-    rm -f %{buildroot}%{python_sitearch}/{ANSI,FSM,pexpect,pxssh,screen}.py{,c}
-
-%if %{with_sphinx_hack}
-    rm -fr %{buildroot}%{python_sitearch}/sphinx
-%endif
-%else
-pushd src/doc
-    tar jxf %{SOURCE10}
-    export SAGE_DOC=%{buildroot}%{SAGE_DOC}
-    cp -far output $SAGE_DOC
-
-    # should not be required and encodes buildroot
-    rm -fr $SAGE_DOC/output/doctrees
-popd
+%if %{with bundled_pexpect}
+    rm -f %{buildroot}%{python2_sitearch}/pexpect
 %endif
 
-# Script was used to build documentation 
-perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
+%if %{with sphinx_hack}
+    rm -fr %{buildroot}%{python2_sitearch}/sphinx
+%endif
 
-%if %{build_doc}
 # More wrong buildroot references
 perl -pi -e 's|%{buildroot}||g;' \
 	 -e "s|$PWD/src/doc|%{SAGE_DOC}|g;" \
     %{buildroot}%{SAGE_DOC}/output/html/en/reference/todolist.html
+# with docs
 %endif
+
+# Script was used to build documentation
+perl -pi -e 's|%{buildroot}||g;s|^##||g;' %{buildroot}%{_bindir}/sage
 
 #------------------------------------------------------------------------
 # Fix links
 rm -fr $SAGE_SRC/sage $SAGE_ETC/sage $SAGE_ROOT/doc $SAGE_SRC/doc
 rm -fr $SAGE_ROOT/share $SAGE_ROOT/devel
-ln -sf %{python_sitearch}/sage $SAGE_SRC/sage
-ln -sf %{python_sitearch} $SAGE_ETC/sage
+ln -sf %{python2_sitearch}/sage $SAGE_SRC/sage
+ln -sf %{python2_sitearch} $SAGE_ETC/sage
 ln -sf %{SAGE_DOC} $SAGE_ROOT/doc
 ln -sf %{SAGE_DOC} $SAGE_SRC/doc
 ln -sf %{SAGE_SHARE} $SAGE_ROOT/share
@@ -1104,8 +1151,8 @@ ln -sf %{SAGE_SHARE} $SAGE_ROOT/share
 ln -sf src $SAGE_ROOT/devel
 
 # Install menu and icons
-pushd build/pkgs/sagenb/src/%{sagenb_pkg}/sagenb/data
-    install -p -m644 -D sage/images/icon32x32.png %{buildroot}%{_datadir}/pixmaps/%{name}.png
+pushd build/pkgs/sagenb/src/sagenb/data
+    install -p -m644 -D sage/images/icon128x128.png %{buildroot}%{_datadir}/pixmaps/%{name}.png
 popd
 mkdir -p %{buildroot}%{_datadir}/applications
 cat > %{buildroot}%{_datadir}/applications/%{name}.desktop << EOF
@@ -1131,25 +1178,91 @@ for file in `find %{buildroot} -name \*.py`; do
 	chmod +x $file
     fi
 done
+
+%if %{with docs}
 chmod -x %{buildroot}%{SAGE_DOC}/en/prep/media/Rplot001.png
 
 # Documentation is not rebuilt (also corrects rpmlint warning of hidden file)
 find %{buildroot}%{SAGE_DOC} -name .buildinfo -exec rm {} \;
 rm -fr %{buildroot}%{SAGE_DOC}/output/inventory
 find %{buildroot}%{SAGE_DOC} -type d -name _sources | xargs rm -fr
-
-# remove bundles fonts
-rm -r %{buildroot}%{python_sitearch}/sagenb/data/mathjax/fonts
-
-# remove .po files
-rm %{buildroot}%{python_sitearch}/sagenb/translations/*/LC_MESSAGES/*.po
-
-%if !%{with_sage3d}
-rm -r %{buildroot}%{python_sitearch}/sagenb/data/sage3d
 %endif
 
-# remove cache files
-rm -r %{buildroot}%{python_sitearch}/sagenb/data/.webassets-cache
+# remove .po files
+rm %{buildroot}%{python2_sitearch}/sagenb/translations/*/LC_MESSAGES/*.po
+
+%if %{without sage3d}
+rm -r %{buildroot}%{python2_sitearch}/sagenb/data/sage3d
+%endif
+
+# remove build directory in buildroot
+[ -d %{buildroot}%{SAGE_SRC}/build ] &&
+    rm -r %{buildroot}%{SAGE_SRC}/build
+
+%if %{with bundled_pari}
+install -D -m 755 %{_builddir}/bin/gp-2.8 %{buildroot}%{SAGE_LOCAL}/bin/gp-2.8
+for dest in gp sage_pari; do
+    ln -sf gp-2.8 %{buildroot}%{SAGE_LOCAL}/bin/$dest
+done
+install -D -m 755 %{_builddir}/lib/libpari-gmp-2.8.so.0.0.0 \
+    %{buildroot}%{SAGE_ROOT}/lib/libpari-gmp-2.8.so.0.0.0
+ln -s libpari-gmp-2.8.so.0.0.0 \
+    %{buildroot}%{SAGE_ROOT}/lib/libpari-gmp-2.8.so.0
+install -D -m 644 %{_builddir}/share/pari/pari.desc \
+    %{buildroot}%{SAGE_LOCAL}/pari.desc
+
+# make sure pari is in link path
+ln -s libpari-gmp-2.8.so.0.0.0 %{buildroot}%{SAGE_ROOT}/lib/libpari.so
+perl -pi -e 's|(libdirs = cblas_library_dirs)|$1 + \["%{SAGE_ROOT}/lib"\]|;' %{buildroot}%{python2_sitearch}/sage/misc/cython.py
+%endif
+
+%if %{without install_hack}
+# remove sage_setup
+rm -r %{buildroot}%{python2_sitearch}/sage_setup
+%endif
+
+# pretend sagemath spkgs are installed to reduce number of errors
+# in doctests
+mkdir -p %{buildroot}%{SAGE_SPKG_INST}
+pushd upstream
+for file in *.tar.*; do
+    touch %{buildroot}%{SAGE_SPKG_INST}/$(echo $file | sed -e 's|\.tar.*||')
+done
+popd
+#------------------------------------------------------------------------
+cat > %{buildroot}%{SAGE_LOCAL}/bin/sage-list-packages << EOF
+#!/bin/sh
+NOVERSION=false
+INSTALLED=no
+while [ \$# -gt 0 ]; do
+    if [ x\$1 = x--no-version ]; then
+	NOVERSION=true
+    elif [ x\$1 = xinstalled ]; then
+        INSTALLED=yes
+    fi
+    shift
+done
+if [ \$INSTALLED = no ]; then
+    exit 0
+fi
+LIST=\$(cd %{SAGE_SPKG_INST}; echo *)
+if [ \$NOVERSION = false ]; then
+    for pkg in \$LIST; do
+	echo \$pkg | sed -e 's/-/ /'
+    done
+else
+    for pkg in \$LIST; do
+	echo \$pkg | sed -e 's/-.*//'
+    done
+fi
+EOF
+chmod +x %{buildroot}%{SAGE_LOCAL}/bin/sage-list-packages
+#------------------------------------------------------------------------
+
+%if %{with docs}
+    # do not install symlink to '.'
+    rm %{buildroot}%{SAGE_DOC}/output
+%endif
 
 # last install command
 rm -fr $DOT_SAGE
@@ -1157,19 +1270,19 @@ rm -fr $DOT_SAGE
 ########################################################################
 # Use symlinks and a minor patch to the notebook to not bundle jmol
 %post		notebook
-ln -sf %{_javadir}/JmolApplet.jar %{python_sitearch}/sagenb/data/jmol/
-ln -sf %{_javadir}/Jmol.jar %{python_sitearch}/sagenb/data/jmol/
-ln -sf %{_javadir}/vecmath.jar %{python_sitearch}/sagenb/data/jmol/
+ln -sf %{_javadir}/JmolApplet.jar %{python2_sitearch}/sagenb/data/jmol/
+ln -sf %{_javadir}/Jmol.jar %{python2_sitearch}/sagenb/data/jmol/
+ln -sf %{_javadir}/vecmath.jar %{python2_sitearch}/sagenb/data/jmol/
 exit 0
 
 %postun		notebook
 if [ $1 -eq 0 ] ; then
-    rm -f %{python_sitearch}/sagenb/data/jmol/JmolApplet.jar
-    rm -f %{python_sitearch}/sagenb/data/jmol/Jmol.jar
-    rm -f %{python_sitearch}/sagenb/data/jmol/vecmath.jar
-    rmdir %{python_sitearch}/sagenb/data/jmol &&
-	rmdir %{python_sitearch}/sagenb/data &&
-	    rmdir %{python_sitearch}/sagenb
+    rm -f %{python2_sitearch}/sagenb/data/jmol/JmolApplet.jar
+    rm -f %{python2_sitearch}/sagenb/data/jmol/Jmol.jar
+    rm -f %{python2_sitearch}/sagenb/data/jmol/vecmath.jar
+    rmdir %{python2_sitearch}/sagenb/data/jmol &&
+	rmdir %{python2_sitearch}/sagenb/data &&
+	    rmdir %{python2_sitearch}/sagenb
 fi
 exit 0
 
@@ -1192,8 +1305,12 @@ exit 0
 %dir %{SAGE_LOCAL}/bin
 %{SAGE_LOCAL}/bin/QuadraticSieve
 %{SAGE_LOCAL}/bin/gap_stamp
+%if %{with bundled_pari}
+%{SAGE_LOCAL}/bin/gp*
+%endif
+%{SAGE_LOCAL}/bin/jmol
+%{SAGE_LOCAL}/bin/python
 %{SAGE_LOCAL}/bin/sage*
-%{SAGE_LOCAL}/bin/testjava.sh
 %{SAGE_LOCAL}/include
 %{SAGE_LOCAL}/lib
 %{SAGE_LOCAL}/share
@@ -1201,22 +1318,29 @@ exit 0
 %{SAGE_ROOT}/devel
 %{SAGE_ROOT}/share
 %dir %{SAGE_SRC}
+%if %{with docs}
 %{SAGE_SRC}/doc
+%endif
 %{SAGE_SRC}/sage
 %dir %{SAGE_PYTHONPATH}
-# MIT
-%{SAGE_PYTHONPATH}/*.py*
 # GPLv2+
 %{_bindir}/sage
 %{_datadir}/pixmaps/%{name}.png
 %{_datadir}/applications/%{name}.desktop
+%if %{with bundled_pari}
+%{SAGE_ROOT}/lib
+%{SAGE_LOCAL}/pari.desc
+%endif
 
 #------------------------------------------------------------------------
 %files		core
 # GPLv2+
-%{_libdir}/libcsage.so.*
-%{python_sitearch}/sage
-%{python_sitearch}/sage-*.egg-info
+%{python2_sitearch}/sage
+%if %{without install_hack}
+%{python2_sitearch}/sage-*.egg-info
+%endif
+%{python2_sitearch}/cysignals
+%{python2_sitearch}/cysignals-*.egg-info
 
 #------------------------------------------------------------------------
 %files		data
@@ -1256,12 +1380,6 @@ exit 0
 %files		data-polytopes_db
 # GPL+
 %{SAGE_SHARE}/reflexive_polytopes
-
-#------------------------------------------------------------------------
-%files		devel
-# GPLv2+
-%{_includedir}/csage
-%{_libdir}/libcsage.so
 
 #------------------------------------------------------------------------
 %files		doc
@@ -1311,66 +1429,66 @@ exit 0
 %files		notebook
 # GPLv2+
 %{SAGE_SRC}/sagenb
-%dir %{python_sitearch}/sagenb
-%{python_sitearch}/sagenb/*.py*
-%{python_sitearch}/sagenb-*.egg-info
-%dir %{python_sitearch}/sagenb/data
+%dir %{python2_sitearch}/sagenb
+%{python2_sitearch}/sagenb/*.py*
+%{python2_sitearch}/sagenb-*.egg-info
+%dir %{python2_sitearch}/sagenb/data
 # BSD
-%{python_sitearch}/sagenb/data/codemirror
+%{python2_sitearch}/sagenb/data/codemirror
 # MIT
-%{python_sitearch}/sagenb/data/graph_editor
+%{python2_sitearch}/sagenb/data/graph_editor
 # ASL 2.0
-%{python_sitearch}/sagenb/data/highlight
+%{python2_sitearch}/sagenb/data/highlight
 # LGPLv2+
-%{python_sitearch}/sagenb/data/jmol
+%{python2_sitearch}/sagenb/data/jmol
 # (MIT or GPLv2) and (MIT and BSD and GPL)
-%{python_sitearch}/sagenb/data/jquery
+%{python2_sitearch}/sagenb/data/jquery
 # (MIT or GPLv2) and (MIT and BSD and GPL)
-%{python_sitearch}/sagenb/data/jqueryui
+%{python2_sitearch}/sagenb/data/jqueryui
 # Public Domain
-%{python_sitearch}/sagenb/data/json
+%{python2_sitearch}/sagenb/data/json
 # ASL 2.0
-%{python_sitearch}/sagenb/data/mathjax
+%{python2_sitearch}/sagenb/data/mathjax
 # Empty (do not run doctests flag file)
-%{python_sitearch}/sagenb/data/nodoctest.py*
+%{python2_sitearch}/sagenb/data/nodoctest.py*
 # BSD
-%{python_sitearch}/sagenb/data/openid-realselector
+%{python2_sitearch}/sagenb/data/openid-realselector
 # GPLv2+
-%{python_sitearch}/sagenb/data/sage
+%{python2_sitearch}/sagenb/data/sage
 %if %{with_sage3d}
 # GPLv2+
-%{python_sitearch}/sagenb/data/sage3d
+%{python2_sitearch}/sagenb/data/sage3d
 %endif
 # LGPLv2+
-%{python_sitearch}/sagenb/data/tiny_mce
+%{python2_sitearch}/sagenb/data/tiny_mce
 # Auto generated files
-%{python_sitearch}/sagenb/data/webassets_generated
+%{python2_sitearch}/sagenb/data/webassets_generated
 # LGPLv2+
-%{python_sitearch}/sagenb/data/zorn
+%{python2_sitearch}/sagenb/data/zorn
 # GPLv2+
-%{python_sitearch}/sagenb/flask_version
+%{python2_sitearch}/sagenb/flask_version
 # GPLv2+
-%{python_sitearch}/sagenb/interfaces
+%{python2_sitearch}/sagenb/interfaces
 # GPLv2+
-%{python_sitearch}/sagenb/misc
+%{python2_sitearch}/sagenb/misc
 # GPLv2+
-%{python_sitearch}/sagenb/notebook
+%{python2_sitearch}/sagenb/notebook
 # GPLv2+
-%{python_sitearch}/sagenb/simple
+%{python2_sitearch}/sagenb/simple
 # GPLv2+
-%{python_sitearch}/sagenb/storage
+%{python2_sitearch}/sagenb/storage
 # GPLv2+
-%dir %{python_sitearch}/sagenb/testing
-%{python_sitearch}/sagenb/testing/*.py*
-%{python_sitearch}/sagenb/testing/tests
+%dir %{python2_sitearch}/sagenb/testing
+%{python2_sitearch}/sagenb/testing/*.py*
+%{python2_sitearch}/sagenb/testing/tests
 # ASL 2.0
-%{python_sitearch}/sagenb/testing/selenium
+%{python2_sitearch}/sagenb/testing/selenium
 # GPLv2+
-%dir %{python_sitearch}/sagenb/translations
-%lang(cs_CZ) %{python_sitearch}/sagenb/translations/cs_CZ
-%lang(de_AT) %{python_sitearch}/sagenb/translations/de_AT
-%lang(pt_BR) %{python_sitearch}/sagenb/translations/pt_BR
-%lang(ru_RU) %{python_sitearch}/sagenb/translations/ru_RU
+%dir %{python2_sitearch}/sagenb/translations
+%lang(cs_CZ) %{python2_sitearch}/sagenb/translations/cs_CZ
+%lang(de_AT) %{python2_sitearch}/sagenb/translations/de_AT
+%lang(pt_BR) %{python2_sitearch}/sagenb/translations/pt_BR
+%lang(ru_RU) %{python2_sitearch}/sagenb/translations/ru_RU
 
 #------------------------------------------------------------------------
 %files		rubiks
@@ -1387,6 +1505,7 @@ exit 0
 #------------------------------------------------------------------------
 %files		sagetex
 # GPLv2+
-%{python_sitearch}/sagetex*
+%{python2_sitearch}/sagetex*
 %{_datadir}/texmf/tex/generic/sagetex
+%{_datadir}/texmf/tex/latex/sagetex
 %doc %{_docdir}/%{sagetex_pkg}

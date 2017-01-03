@@ -1,0 +1,9 @@
+diff -up src/sage/libs/lcalc/lcalc_sage.h.orig src/sage/libs/lcalc/lcalc_sage.h
+--- src/sage/libs/lcalc/lcalc_sage.h.orig	2016-08-08 13:40:43.480546146 -0400
++++ src/sage/libs/lcalc/lcalc_sage.h	2016-08-08 13:40:49.561546379 -0400
+@@ -1,4 +1,4 @@
+-#include "libLfunction/L.h"
++#include "Lfunction/L.h"
+ 
+ int *new_ints(int l)
+ {
