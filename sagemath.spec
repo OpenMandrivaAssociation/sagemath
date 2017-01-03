@@ -11,13 +11,9 @@
 %bcond_with docs
 
 # not functional due to missing jar dependencies
-%global with_sage3d		0
+%bcond_with sage3d
 
-%global with_sphinx_hack	1
-
-%global have_lrcalc		1
-
-%global have_coin_or_Cbc	1
+%bcond_without sphinx_hack
 
 %ifarch x86_64
 %global have_fes		1
@@ -163,9 +159,7 @@ BuildRequires:	arb-devel
 BuildRequires:	cddlib-devel
 BuildRequires:	boost-devel
 BuildRequires:	cliquer-devel
-%if %{have_coin_or_Cbc}
 BuildRequires:	coin-or-Cbc-devel
-%endif
 BuildRequires:	cryptominisat-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	dos2unix
@@ -202,9 +196,7 @@ BuildRequires:	libmpc-devel
 BuildRequires:	libpari-devel
 %endif
 BuildRequires:	linalg-linbox-devel
-%if %{have_lrcalc}
 BuildRequires:	lrcalc-devel
-%endif
 BuildRequires:	m4ri-devel
 BuildRequires:	m4rie-devel
 BuildRequires:	maxima-runtime-ecl
@@ -605,9 +597,7 @@ popd
 %patch22
 
 # other coin-or packages are build requires or coin-or-Cbc
-%if %{have_coin_or_Cbc}
 %patch23
-%endif
 
 %patch24
 
@@ -1304,6 +1294,7 @@ exit 0
 %dir %{SAGE_LOCAL}
 %dir %{SAGE_LOCAL}/bin
 %{SAGE_LOCAL}/bin/QuadraticSieve
+%{SAGE_LOCAL}/bin/ecm
 %{SAGE_LOCAL}/bin/gap_stamp
 %if %{with bundled_pari}
 %{SAGE_LOCAL}/bin/gp*
@@ -1335,6 +1326,7 @@ exit 0
 #------------------------------------------------------------------------
 %files		core
 # GPLv2+
+%{SAGE_LOCAL}/bin/cysignals*
 %{python2_sitearch}/sage
 %if %{without install_hack}
 %{python2_sitearch}/sage-*.egg-info
@@ -1366,14 +1358,13 @@ exit 0
 %{SAGE_ETC}/gap
 %{SAGE_ETC}/images
 %{SAGE_ETC}/magma
-%{SAGE_ETC}/maxima
 %{SAGE_ETC}/mwrank
 %{SAGE_ETC}/pari
-%{SAGE_ETC}/singular
 
 #------------------------------------------------------------------------
 %files		data-graphs
 # GPLv2+
+%{SAGE_ETC}/graphs
 %{SAGE_SHARE}/graphs
 
 #------------------------------------------------------------------------
@@ -1381,6 +1372,7 @@ exit 0
 # GPL+
 %{SAGE_SHARE}/reflexive_polytopes
 
+%if %{with docs}
 #------------------------------------------------------------------------
 %files		doc
 # GPLv2+
@@ -1425,8 +1417,12 @@ exit 0
 %{SAGE_DOC}/tr
 %{SAGE_DOC}/output/html/tr
 
+# with docs
+%endif
+
 #------------------------------------------------------------------------
 %files		notebook
+%{SAGE_ETC}/notebook-ipython
 # GPLv2+
 %{SAGE_SRC}/sagenb
 %dir %{python2_sitearch}/sagenb
@@ -1440,7 +1436,7 @@ exit 0
 # ASL 2.0
 %{python2_sitearch}/sagenb/data/highlight
 # LGPLv2+
-%{python2_sitearch}/sagenb/data/jmol
+%{SAGE_SHARE}/jsmol
 # (MIT or GPLv2) and (MIT and BSD and GPL)
 %{python2_sitearch}/sagenb/data/jquery
 # (MIT or GPLv2) and (MIT and BSD and GPL)
@@ -1455,14 +1451,12 @@ exit 0
 %{python2_sitearch}/sagenb/data/openid-realselector
 # GPLv2+
 %{python2_sitearch}/sagenb/data/sage
-%if %{with_sage3d}
+%if %{with sage3d}
 # GPLv2+
 %{python2_sitearch}/sagenb/data/sage3d
 %endif
 # LGPLv2+
 %{python2_sitearch}/sagenb/data/tiny_mce
-# Auto generated files
-%{python2_sitearch}/sagenb/data/webassets_generated
 # LGPLv2+
 %{python2_sitearch}/sagenb/data/zorn
 # GPLv2+
@@ -1487,8 +1481,12 @@ exit 0
 %dir %{python2_sitearch}/sagenb/translations
 %lang(cs_CZ) %{python2_sitearch}/sagenb/translations/cs_CZ
 %lang(de_AT) %{python2_sitearch}/sagenb/translations/de_AT
+%lang(de_AT) %{python2_sitearch}/sagenb/translations/en_US
+%lang(de_AT) %{python2_sitearch}/sagenb/translations/es_ES
+%lang(de_AT) %{python2_sitearch}/sagenb/translations/fr_FR
 %lang(pt_BR) %{python2_sitearch}/sagenb/translations/pt_BR
 %lang(ru_RU) %{python2_sitearch}/sagenb/translations/ru_RU
+%lang(uk_UA) %{python2_sitearch}/sagenb/translations/uk_UA
 
 #------------------------------------------------------------------------
 %files		rubiks
@@ -1506,6 +1504,5 @@ exit 0
 %files		sagetex
 # GPLv2+
 %{python2_sitearch}/sagetex*
-%{_datadir}/texmf/tex/generic/sagetex
 %{_datadir}/texmf/tex/latex/sagetex
-%doc %{_docdir}/%{sagetex_pkg}
+%doc %{_docdir}/sagetex
