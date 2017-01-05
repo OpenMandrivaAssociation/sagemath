@@ -1,5 +1,6 @@
 #%#define __noautoprov		'[^l][^i][^b]([-a-zA-Z_]+)\.so\(\)'
-%define __noautoreq		'pythonegg\(flask-oldsessions\).*'
+%define __noautoreq 'lib(s|t)atlas\\.so\\..\|pythonegg\(flask-oldsessions\).*'
+
 %define _disable_lto 1
 %define _disable_ld_no_undefined 1
 
@@ -271,7 +272,9 @@ Requires:	python2-twisted
 Requires:	R
 Requires:	%{name}-core
 Requires:	%{name}-data
+%if %{with docs}
 Requires:	%{name}-doc-en
+%endif
 Requires:	%{name}-notebook
 Requires:	%{name}-rubiks
 Requires:	%{name}-sagetex
@@ -621,7 +624,7 @@ sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
 sed -e 's|@@CYSIGNALS@@|%{_builddir}%{python2_sitearch}/cysignals|' \
     -i src/setup.py
 
-sed -e "s|, 'flask-oldsessions>=0.10'||" \
+sed -e "s|'flask-oldsessions>=0.10',||" \
     -e "s|'http://github.com/mitsuhiko/flask-oldsessions/tarball/master#egg=flask-oldsessions-0.10'||" \
     -i build/pkgs/sagenb/src/setup.py
 
