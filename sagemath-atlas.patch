@@ -1,0 +1,57 @@
+diff -up src/module_list.py.orig src/module_list.py
+--- src/module_list.py.orig	2016-10-20 09:16:23.105695029 -0400
++++ src/module_list.py	2016-10-20 09:17:17.868697126 -0400
+@@ -12,20 +12,14 @@ SAGE_INC = '/usr/include'
+ import pkgconfig
+ 
+ # CBLAS can be one of multiple implementations
+-cblas_pc = pkgconfig.parse('cblas')
++cblas_pc = pkgconfig.parse('atlas')
+ cblas_libs = list(cblas_pc['libraries'])
+ cblas_library_dirs = list(cblas_pc['library_dirs'])
+ cblas_include_dirs = list(cblas_pc['include_dirs'])
+ 
+-# TODO: Remove Cygwin hack by installing a suitable cblas.pc
+-if os.path.exists('/usr/lib/libblas.dll.a'):
+-    cblas_libs = ['gslcblas']
+-
+-# LAPACK can be one of multiple implementations
+-lapack_pc = pkgconfig.parse('lapack')
+-lapack_libs = list(lapack_pc['libraries'])
+-lapack_library_dirs = list(lapack_pc['library_dirs'])
+-lapack_include_dirs = list(lapack_pc['include_dirs'])
++lapack_libs = [ 'lapack' ]
++lapack_library_dirs = []
++lapack_include_dirs = [ SAGE_INC + '/lapack' ]
+ 
+ # FFLAS-FFPACK
+ fflas_ffpack_pc = pkgconfig.parse('fflas-ffpack')
+@@ -43,7 +37,7 @@ givaro_cflags = pkgconfig.cflags('givaro
+ # Note we replace the built-in gslcblas with the above cblas
+ gsl_pc = pkgconfig.parse('gsl')
+ gsl_libs = list(set(gsl_pc['libraries']).difference(['gslcblas']).union(cblas_libs))
+-gsl_library_dirs = list(gsl_pc['library_dirs'])
++gsl_library_dirs = list(cblas_pc['library_dirs'])
+ gsl_include_dirs = list(gsl_pc['include_dirs'])
+ 
+ # GD image library
+diff -up src/sage/misc/cython.py.orig src/sage/misc/cython.py
+--- src/sage/misc/cython.py.orig	2016-10-20 09:17:25.057697402 -0400
++++ src/sage/misc/cython.py	2016-10-20 09:17:43.339698102 -0400
+@@ -30,15 +30,11 @@ import pkgconfig
+ 
+ 
+ # CBLAS can be one of multiple implementations
+-cblas_pc = pkgconfig.parse('cblas')
++cblas_pc = pkgconfig.parse('atlas')
+ cblas_libs = list(cblas_pc['libraries'])
+ cblas_library_dirs = list(cblas_pc['library_dirs'])
+ cblas_include_dirs = list(cblas_pc['include_dirs'])
+ 
+-# TODO: Remove Cygwin hack by installing a suitable cblas.pc
+-if os.path.exists('/usr/lib/libblas.dll.a'):
+-    cblas_libs = 'gslcblas'
+-
+ standard_libs = [
+     'mpfr', 'gmp', 'gmpxx', 'stdc++', 'pari', 'm', 
+     'ec', 'gsl',
