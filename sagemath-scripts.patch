@@ -1,7 +1,24 @@
 diff -up src/bin/sage.orig src/bin/sage
---- src/bin/sage.orig	2016-08-08 13:05:27.823465130 -0400
-+++ src/bin/sage	2016-08-08 13:12:27.114481186 -0400
-@@ -13,20 +13,16 @@ usage() {
+--- src/bin/sage.orig	2016-12-30 06:31:16.930949819 -0500
++++ src/bin/sage	2016-12-30 06:31:50.812950266 -0500
+@@ -1,5 +1,16 @@
+ #!/usr/bin/env bash
+ 
++# Display the Sage startup banner, used in src/bin/sage
++sage_banner() {
++    if [ "$SAGE_BANNER" = "bare" ]; then
++        cat "$SAGE_ROOT/VERSION.txt"
++    elif [ "$SAGE_BANNER" != "no" ]; then
++        # This file sage-banner is not yet available during the build
++        # of Sage, so we ignore errors from cat.
++        cat "$SAGE_LOCAL/bin/sage-banner" 2>/dev/null
++    fi
++}
++
+ help_banner() {
+     sage_banner | grep -v 'Type'
+     echo
+@@ -13,20 +24,16 @@ usage() {
      echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
      echo "  -advanced           -- list all command line options"
      echo "  -c <cmd>            -- Evaluates cmd as sage code"
@@ -22,7 +39,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -python [...]       -- run the Python interpreter"
      echo "  -R [...]            -- run Sage's R with given arguments"
      echo "  -singular [...]     -- run Sage's singular with given arguments"
-@@ -42,10 +38,6 @@ usage() {
+@@ -42,10 +49,6 @@ usage() {
      echo "                           --optional - controls which optional tests are run"
      echo "                           --sagenb - test all sagenb files"
      echo "                           --help - show all testing options"
@@ -33,7 +50,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -v, -version        -- display Sage version information"
      exit 0
  }
-@@ -64,11 +56,8 @@ usage_advanced() {
+@@ -64,11 +67,8 @@ usage_advanced() {
      echo "  -preparse <file.sage> -- preparse file.sage and produce corresponding file.sage.py"
      echo "  -q                  -- quiet; start with no banner"
      echo "  -root               -- print the Sage root directory"
@@ -45,7 +62,7 @@ diff -up src/bin/sage.orig src/bin/sage
  
      echo
      ####  1.......................26..................................................78
-@@ -78,8 +67,6 @@ usage_advanced() {
+@@ -78,8 +78,6 @@ usage_advanced() {
      echo "                         'default', 'sagenb', and 'jupyter'). See the output"
      echo "                         of sage --notebook --help for more details and"
      echo "                         examples of how to pass optional arguments"
@@ -54,7 +71,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -inotebook [...]    -- start the *insecure* Sage notebook (deprecated)"
      echo "  -n, -notebook [...] -- start the default Sage notebook (options are the"
      echo "                         same as for the notebook command in Sage).  See the"
-@@ -98,12 +85,9 @@ usage_advanced() {
+@@ -98,18 +96,12 @@ usage_advanced() {
      echo "  -gp [...]           -- run Sage's PARI/GP calculator with given arguments"
      echo "  -ipython [...]      -- run Sage's IPython using the default environment (not"
      echo "                         Sage), passing additional options to IPython"
@@ -64,10 +81,16 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -lisp [...]         -- run Lisp interpreter included with Sage"
      echo "  -M2 [...]           -- run Sage's Macaulay2 with given arguments"
 -    command -v M2 &>/dev/null || \
-     echo "                         (not installed currently, run sage -i macaulay2)"
+-    echo "                         (not installed currently, run sage -i macaulay2)"
      echo "  -maxima [...]       -- run Sage's Maxima with given arguments"
      echo "  -mwrank [...]       -- run Sage's mwrank with given arguments"
-@@ -118,49 +102,7 @@ usage_advanced() {
+     echo "  -polymake [...]     -- run Sage's Polymake with given arguments"
+-    command -v polymake &>/dev/null || \
+-    echo "                         (not installed currently, run sage -i polymake)"
+     echo "  -python [...]       -- run the Python interpreter"
+     echo "  -R [...]            -- run Sage's R with given arguments"
+     echo "  -scons [...]        -- run Sage's scons"
+@@ -121,49 +113,7 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
@@ -118,7 +141,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -startuptime [module] -- display how long each component of Sage takes to"
      echo "                         start up; optionally specify a module to get more"
      echo "                         details about that particular module"
-@@ -190,7 +132,6 @@ usage_advanced() {
+@@ -193,7 +143,6 @@ usage_advanced() {
      echo "  -coverage <files>   -- give info about doctest coverage of files"
      echo "  -coverageall        -- give summary info about doctest coverage of all"
      echo "                         files in the Sage library"
@@ -126,7 +149,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -search_src <string> -- search through all the Sage library code for string"
      echo "  -search_doc <string> -- search through the Sage documentation for string"
      echo "  -grep <string>      -- same as -search_src"
-@@ -210,16 +151,6 @@ usage_advanced() {
+@@ -213,16 +162,6 @@ usage_advanced() {
      echo
      ####  1.......................26..................................................78
      ####  |.....................--.|...................................................|
@@ -143,7 +166,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "Valgrind memory debugging:"
      echo "  -cachegrind         -- run Sage using Valgrind's cachegrind tool.  The log"
      echo "                         files are named sage-cachegrind.PID can be found in"
-@@ -233,9 +164,6 @@ usage_advanced() {
+@@ -236,9 +175,6 @@ usage_advanced() {
      echo "  -memcheck           -- run Sage using Valgrind's memcheck tool.  The log"
      echo "                         files are named sage-memcheck.PID can be found in"
      echo "                         $DOT_SAGE"
@@ -153,7 +176,7 @@ diff -up src/bin/sage.orig src/bin/sage
      echo "  -valgrind           -- this is an alias for -memcheck"
      echo
      echo "You can also use -- before a long option, e.g., 'sage --optional'."
-@@ -260,86 +188,6 @@ if [ "$1" = '--nodotsage' ]; then
+@@ -263,87 +199,6 @@ if [ "$1" = '--nodotsage' ]; then
      exit $status
  fi
  
@@ -237,10 +260,11 @@ diff -up src/bin/sage.orig src/bin/sage
 -    exit 1
 -fi
 -
- 
+-
  if [ $# -gt 0 ]; then
    if [ "$1" = '-h' -o "$1" = '-?' -o "$1" = '-help' -o "$1" = '--help' ]; then
-@@ -203,23 +203,9 @@
+      usage
+@@ -355,23 +210,10 @@ fi
  
  # Prepare for running Sage, either interactively or non-interactively.
  sage_setup() {
@@ -255,7 +279,7 @@ diff -up src/bin/sage.orig src/bin/sage
 -        echo >&2 '************************************************************************'
 -        exit 1
 -    fi
--
+ 
      # Display the startup banner (unless SAGE_BANNER is explictly "no")
      sage_banner
  
@@ -264,7 +288,7 @@ diff -up src/bin/sage.orig src/bin/sage
      if [ ! -d "$IPYTHONDIR" ]; then
          # make sure that $DOT_SAGE exists so that ipython will happily
          # create its config directories there.  If DOT_SAGE doesn't
-@@ -382,20 +216,6 @@ sage_setup() {
+@@ -382,20 +224,6 @@ sage_setup() {
  }
  
  
@@ -285,7 +309,7 @@ diff -up src/bin/sage.orig src/bin/sage
  # Start an interactive Sage session, this function never returns.
  interactive_sage() {
      sage_setup
-@@ -467,7 +287,7 @@ fi
+@@ -472,7 +300,7 @@ fi
  
  if [ "$1" = '-singular' -o "$1" = '--singular' ]; then
      shift
@@ -294,7 +318,7 @@ diff -up src/bin/sage.orig src/bin/sage
  fi
  
  if [ "$1" = '-sqlite3' -o "$1" = '--sqlite3' ]; then
-@@ -495,16 +315,6 @@ if [ "$1" = '-lisp' -o "$1" = '--lisp' ]
+@@ -500,16 +328,6 @@ if [ "$1" = '-lisp' -o "$1" = '--lisp' ]
      exec ecl "$@"
  fi
  
@@ -311,19 +335,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = '-maxima' -o "$1" = '--maxima' ]; then
      shift
      exec maxima "$@"
-@@ -530,11 +340,6 @@ if [ "$1" = '-pip' -o "$1" = '--pip' ];
-     exec pip-lock "$@"
- fi
- 
--if [ "$1" = '-fix-pkg-checksums' -o "$1" = '--fix-pkg-checksums' ]; then
--    shift
--    exec sage-fix-pkg-checksums "$@"
--fi
--
- if [ "$1" = '-python' -o "$1" = '--python' ]; then
-     shift
-     exec python "$@"
-@@ -555,11 +360,6 @@ if [ "$1" = '-git' -o "$1" = '--git' ];
+@@ -560,11 +378,6 @@ if [ "$1" = '-git' -o "$1" = '--git' ];
      exec git "$@"
  fi
  
@@ -335,7 +347,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = '-sh' -o "$1" = '--sh' ]; then
      # AUTHORS:
      # - Carl Witty and William Stein: initial version
-@@ -679,20 +479,6 @@ EOF
+@@ -684,20 +497,6 @@ EOF
  fi
  
  #####################################################################
@@ -356,7 +368,7 @@ diff -up src/bin/sage.orig src/bin/sage
  # File conversion
  #####################################################################
  
-@@ -710,11 +496,6 @@ fi
+@@ -715,11 +514,6 @@ fi
  # Run Sage's versions of the standard Algebra/Geometry etc. software
  #####################################################################
  
@@ -368,7 +380,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [[ "$1" =~ ^--notebook=.* || "$1" =~ ^-n=.* || "$1" =~ ^-notebook=.* ]] ; then
      sage-cleaner &>/dev/null &
      exec sage-notebook "$@"
-@@ -725,13 +506,6 @@ if [ "$1" = "-notebook" -o "$1" = '--not
+@@ -730,13 +524,6 @@ if [ "$1" = "-notebook" -o "$1" = '--not
      exec sage-notebook "$@"
  fi
  
@@ -382,7 +394,7 @@ diff -up src/bin/sage.orig src/bin/sage
  if [ "$1" = "-inotebook" -o "$1" = '--inotebook' ]; then
      shift
      sage-cleaner &>/dev/null &
-@@ -750,38 +524,19 @@ if [ "$1" = '-grepdoc' -o "$1" = "--grep
+@@ -755,31 +542,12 @@ if [ "$1" = '-grepdoc' -o "$1" = "--grep
     exit 0
  fi
  
@@ -415,15 +427,7 @@ diff -up src/bin/sage.orig src/bin/sage
      if [ ! -f  "$DOT_SAGE"/init.sage ]; then
          echo >&2 "init.sage does not exist ... creating"
          touch "$DOT_SAGE"/init.sage
-     fi
-     SAGE_BANNER=no sage_setup
-     export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
--    if [ "$1" = '-tp' -o "$1" = '-btp' ]; then
-+    if [ "$1" = '-tp' ]; then
-         shift
-         exec sage-runtests -p "$@"
-     else
-@@ -790,16 +545,6 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1"
+@@ -795,10 +563,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1"
      fi
  fi
  
@@ -431,24 +435,14 @@ diff -up src/bin/sage.orig src/bin/sage
 -    if [ "$1" = '-btnew' ]; then
 -        build_sage
 -    fi
--    shift
--    SAGE_BANNER=no sage_setup
--    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
--    exec sage-runtests --new "$@"
--fi
--
- if [ "$1" = '-testall' -o "$1" = "--testall" ]; then
++if [ "$1" = '-tnew' ]; then
      shift
      SAGE_BANNER=no sage_setup
-@@ -814,133 +559,6 @@ if [ "$1" = '-c' ]; then
-     exec sage-eval "$@"
+     export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
+@@ -824,114 +589,6 @@ if [ "$1" = '--location' ]; then
+     exit 0
  fi
  
--if [ "$1" = '--location' ]; then
--    maybe_sage_location
--    exit 0
--fi
--
 -
 -install() {
 -    maybe_sage_location
@@ -557,24 +551,10 @@ diff -up src/bin/sage.orig src/bin/sage
 -    exec python -m "sage_setup.docbuild" "$@"
 -fi
 -
--if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
--    shift
--    sage_setup
--    if [ "$SAGE_DEBUG" = "no" ]; then
--        gdb -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
--            -args python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
--    else
--        cygdb "$SAGE_SRC/build" "$SAGE_SRC/sage" \
--            -- -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
--            -args python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
--    fi
--    exit $?
--fi
--
- if [ "$1" = '-preparse' -o "$1" = "--preparse" ]; then
+ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
      shift
-     exec sage-preparse "$@"
-@@ -975,21 +593,10 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
+     sage_setup
+@@ -980,26 +637,11 @@ if [ "$1" = '-callgrind' -o "$1" = "--ca
      exec sage-callgrind "$@"
  fi
  
@@ -594,11 +574,16 @@ diff -up src/bin/sage.orig src/bin/sage
 -fi
 -
  if [ $# -ge 1 ]; then
-     T=`echo "$1" | sed -e "s/.*\.//"`
-     if [ "$T" = "spkg" ]; then
+-    T=`echo "$1" | sed -e "s/.*\.//"`
+-    if [ "$T" = "spkg" ]; then
+-        install "$@"
+-    fi
+     SAGE_BANNER=no sage_setup
+     unset TERM  # See Trac #12263
+     exec sage-run "$@"
 diff -up src/bin/sage-runtests.orig src/bin/sage-runtests
---- src/bin/sage-runtests.orig	2016-08-08 13:12:45.999481909 -0400
-+++ src/bin/sage-runtests	2016-08-08 13:13:01.713482511 -0400
+--- src/bin/sage-runtests.orig	2016-12-30 06:31:16.938949819 -0500
++++ src/bin/sage-runtests	2016-12-30 06:31:21.902949885 -0500
 @@ -56,10 +56,6 @@ if __name__ == "__main__":
                        help="run doctests using Valgrind's cachegrind tool.  The log "
                           "files are named sage-cachegrind.PID and can be found in " +
@@ -611,8 +596,8 @@ diff -up src/bin/sage-runtests.orig src/bin/sage-runtests
      parser.add_option("-f", "--failed", action="store_true", default=False,
          help="doctest only those files that failed in the previous run")
 diff -up src/bin/sage-valgrind.orig src/bin/sage-valgrind
---- src/bin/sage-valgrind.orig	2016-08-08 13:13:12.399482920 -0400
-+++ src/bin/sage-valgrind	2016-08-08 13:13:37.233483871 -0400
+--- src/bin/sage-valgrind.orig	2016-12-30 06:31:16.945949819 -0500
++++ src/bin/sage-valgrind	2016-12-30 06:31:21.903949885 -0500
 @@ -1,16 +1,6 @@
  #!/usr/bin/env bash
  

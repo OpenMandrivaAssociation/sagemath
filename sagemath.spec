@@ -4,9 +4,9 @@
 %define _disable_lto 1
 %define _disable_ld_no_undefined 1
 
+%bcond_without bundled_ipython
 %bcond_without bundled_pari
 %bcond_without cython_hack
-
 %bcond_without install_hack
 
 %bcond_with docs
@@ -32,6 +32,9 @@
 %global	elliptic_curves_pkg	elliptic_curves-0.8
 %global	flintqs_pkg		flintqs-1.0
 %global graphs_pkg		graphs-20151224
+%if %{with bundled_ipython}
+%global ipython_pkg		ipython-5.0.0
+%endif
 %if %{with bundled_pari}
 %global pari_pkg		pari-2.8.0.alpha
 %endif
@@ -151,6 +154,8 @@ Patch30:	sagemath-includes.patch
 
 Patch31:	sagemath-arb.patch
 
+Patch32:        sagemath-atlas.patch
+
 Patch100:	sagemath-pkgconfig1.2.patch
 Patch101:	sagemath-disable_gen.patch
 Patch102:	sagemath-cython0.25.patch
@@ -186,7 +191,9 @@ BuildRequires:	glpk-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	gsl-devel
 BuildRequires:	iml-devel
-BuildRequires:	ipython
+%if %{without bundled_ipython}
+BuildRequires:	python2-ipython
+%endif
 BuildRequires:	lapack-devel
 BuildRequires:	lcalc-devel
 BuildRequires:	libatlas-devel
@@ -222,7 +229,7 @@ BuildRequires:	python2-twisted
 BuildRequires:	R
 BuildRequires:	ratpoints-devel
 BuildRequires:	readline-devel
-BuildRequires:	rpy
+BuildRequires:	python2-rpy2
 BuildRequires:	rw-devel
 BuildRequires:	scons
 BuildRequires:	singular
@@ -244,7 +251,9 @@ Requires:	genus2reduction
 Requires:	gfan
 Requires:	gp2c
 Requires:	iml-devel
-Requires:	ipython
+%if %{without bundled_ipython}
+Requires:	python2-ipython
+%endif
 Requires:	java-plugin
 Requires:	jmol
 Requires:	jsmath-fonts
@@ -528,6 +537,13 @@ pushd build/pkgs/graphs
     mv %{graphs_pkg} src
 popd
 
+%if %{with bundled_ipython}
+pushd build/pkgs/ipython
+    tar zxf ../../../upstream/%{ipython_pkg}.tar.gz
+    mv %{ipython_pkg} src
+popd
+%endif
+
 %if %{with bundled_pari}
 pushd build/pkgs/pari
     tar zxf ../../../upstream/%{pari_pkg}.tar.gz
@@ -617,6 +633,8 @@ popd
 %patch101 -p1
 %patch102 -p1
 
+%patch32
+
 sed -e 's|@@SAGE_ROOT@@|%{SAGE_ROOT}|' \
     -e 's|@@SAGE_DOC@@|%{SAGE_DOC}|' \
     -i src/sage/env.py
@@ -650,12 +668,13 @@ sed -e "s,SINGULARPATH=\",&%{_libdir}/Singular/LIB:," \
 
 rm -f src/sage/misc/darwin*
 
+sed -e 's|/usr/bin/env python|%__python2|' -i src/bin/*
 ########################################################################
 %build
 export CC=gcc
 export CFLAGS="%{optflags} -fuse-ld=bfd -fno-lto"
 export CXXFLAGS="%{optflags} -fuse-ld=bfd -fno-lto"
-export LIBS=-lm
+export LIBS="-lm -ldl"
 export SAGE_ROOT=%{buildroot}%{SAGE_ROOT}
 export SAGE_LOCAL=%{buildroot}%{SAGE_LOCAL}
 # Avoid buildroot in gcc command line (use _builddir instead)
@@ -688,6 +707,13 @@ save_PATH=$PATH
 save_LOCAL=$SAGE_LOCAL
 export PATH=%{_builddir}/bin:$PATH
 export SAGE_LOCAL=%{_builddir}
+
+%if %{with bundled_ipython}
+pushd build/pkgs/ipython/src
+    %__python2 setup.py build
+    %__python2 setup.py install --root %{_builddir}
+popd
+%endif
 
 %if %{with bundled_pari}
 # Build bundled pari-2.8
@@ -738,7 +764,7 @@ export PATH=$save_PATH
 export SAGE_LOCAL=$save_LOCAL
 #------------------------------------------------------------------------
 pushd src
-    %__python2 -u ./setup.py build build_ext -lm -L%{_builddir}/lib
+    %__python2 -u ./setup.py build build_ext -lm,dl
 popd
 
 #------------------------------------------------------------------------
@@ -763,7 +789,7 @@ perl -pi -e 's|%{buildroot}||g;' `find src/build/cythonized -type f`
 rm -f `grep -lr "%{buildroot}" src/build/lib.linux-*/`
 rm -f `grep -lr "%{buildroot}" src/build/temp.linux-*/`
 pushd src
-    %__python2 ./setup.py build build_ext -lm
+    %__python2 ./setup.py build build_ext -lm,dl
 popd
 
 # last build command
@@ -888,12 +914,12 @@ pushd src/bin
     pushd $SAGE_LOCAL/bin
 	ln -sf %{_bindir}/jmol jmol
 	ln -sf %{_bindir}/python sage.bin
-	ln -sf %{_bindir}/python python
+	ln -sf %{_bindir}/python2 python
 %if %{without bundled_pari}
 	ln -sf %{_bindir}/gp sage_pari
 %endif
 	ln -sf %{_bindir}/gap gap_stamp
-	ln -sf %{_bindir}/gmp-ecm ecm
+	ln -sf %{_bindir}/ecm ecm
     popd
 popd
 install -p -m755 src/bin/sage $SAGE_LOCAL/bin
@@ -1002,7 +1028,7 @@ popd
 
 #------------------------------------------------------------------------
 %if %{with bundled_ipython}
-mv %{_builddir}%{python_sitelib}/IPython %{buildroot}%{SAGE_PYTHONPATH}
+mv %{_builddir}%{python2_sitelib}/IPython %{buildroot}%{SAGE_PYTHONPATH}
 mv %{_builddir}%{_bindir}/ip* %{buildroot}%{SAGE_LOCAL}/bin
 %endif
 
@@ -1303,6 +1329,9 @@ exit 0
 %{SAGE_LOCAL}/bin/gp*
 %endif
 %{SAGE_LOCAL}/bin/jmol
+%if %{with bundled_ipython}
+%{SAGE_LOCAL}/bin/ip*
+%endif
 %{SAGE_LOCAL}/bin/python
 %{SAGE_LOCAL}/bin/sage*
 %{SAGE_LOCAL}/include
@@ -1336,7 +1365,9 @@ exit 0
 %endif
 %{python2_sitearch}/cysignals
 %{python2_sitearch}/cysignals-*.egg-info
-
+%if %{with bundled_ipython}
+%{SAGE_PYTHONPATH}/IPython
+%endif
 #------------------------------------------------------------------------
 %files		data
 %dir %{SAGE_SHARE}
