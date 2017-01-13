@@ -250,7 +250,6 @@ Requires:	GAPDoc
 Requires:	gap-character-tables
 Requires:	gap-sonata
 Requires:	gap-table-of-marks
-Requires:	genus2reduction
 Requires:	gfan
 Requires:	gp2c
 Requires:	iml-devel
