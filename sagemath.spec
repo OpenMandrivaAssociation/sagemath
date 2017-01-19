@@ -751,6 +751,8 @@ sed -i 's|\(^    include_directories = \[SAGE_INC,\)|\1 "%{_builddir}/include",|
     src/sage/env.py
 sed -i 's|\(^extra_link_args = \[\) \]|\1"-L%{_builddir}/lib"\]|' \
     src/setup.py
+sed -i 's|m.library_dirs + |m.library_dirs + ["%{_builddir}/lib"] + |' \
+    src/setup.py
 %endif
 
 pushd build/pkgs/cysignals/src
