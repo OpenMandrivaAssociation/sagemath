@@ -261,6 +261,7 @@ Requires:	python2-ipython
 Requires:	java-plugin
 Requires:	jmol
 Requires:	jsmath-fonts
+Requires:	libatlas
 Requires:	libpari-devel
 Requires:	lrslib
 Requires:	maxima-gui

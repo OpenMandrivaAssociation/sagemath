@@ -7,3 +7,4 @@ addFilter("E: non-versioned-file-in-library-package")
 # use external depfilter to avoid bogus provides
 addFilter("E: external-depfilter-with-internal-depgen")
 addFilter("E: incoherent-version-in-name")
+addFilter("E: devel-file-in-non-devel-package")
