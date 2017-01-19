@@ -229,6 +229,8 @@ BuildRequires:	python2-twisted
 BuildRequires:	python2-pickleshare
 BuildRequires:	python2-prompt_toolkit
 BuildRequires:	python2-future
+BuildRequires:	python2-sphinx
+BuildRequires:	python-sphinx
 BuildRequires:	R
 BuildRequires:	ratpoints-devel
 BuildRequires:	readline-devel
@@ -1122,7 +1124,7 @@ pushd src/doc
     export PYTHONPATH=$SAGE_SETUP:%{buildroot}%{python2_sitearch}:$SAGE_PYTHONPATH:$SAGE_DOC
 
 %if %{with sphinx_hack}
-    cp -far %{python_sitelib}/sphinx %{buildroot}%{python2_sitearch}
+    cp -far %{python2_sitelib}/sphinx %{buildroot}%{python2_sitearch}
     sed -i "s|\(source.startswith('>>>')\)|\1 or source.startswith('sage: ')|" \
 	%{buildroot}%{python2_sitearch}/sphinx/highlighting.py
 %endif
