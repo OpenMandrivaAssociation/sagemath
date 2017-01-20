@@ -17,9 +17,9 @@
 %bcond_without sphinx_hack
 
 %ifarch x86_64
-%global have_fes		1
+%bcond_without fes
 %else
-%global have_fes		0
+%bcond_with fes
 %endif
 
 # set to run sage -testall in %%install
@@ -173,7 +173,7 @@ BuildRequires:	ecl
 BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
 BuildRequires:	factory-devel
-%if %{have_fes}
+%if %{with fes}
 BuildRequires:	fes-devel
 %endif
 BuildRequires:	flint-devel
@@ -634,7 +634,7 @@ popd
 
 %patch24
 
-%if %{have_fes}
+%if %{without fes}
 %patch25
 %endif
 
