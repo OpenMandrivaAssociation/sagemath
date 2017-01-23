@@ -56,7 +56,7 @@ Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
 Version:	7.4
-Release:	1
+Release:	2
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -223,6 +223,7 @@ BuildRequires:	python2-flask-silk
 BuildRequires:	python2-matplotlib
 BuildRequires:	python2-networkx
 BuildRequires:	python2-numpy-devel
+BuildRequires:	python2-pexpect
 BuildRequires:	python2-pkgconfig
 BuildRequires:	python2-scipy
 BuildRequires:	python2-twisted
@@ -269,6 +270,7 @@ Requires:	maxima-runtime-ecl
 Requires:	palp
 Requires:	pari
 Requires:	pari-data
+Requires:	python-enum34
 Requires:	python2-pycrypto
 Requires:	python2-cvxopt
 BuildRequires:	python2-cython
@@ -284,12 +286,15 @@ Requires:	python2-parsing
 Requires:	python2-pickleshare
 Requires:	python2-prompt_toolkit
 Requires:	python2-pathlib2
+Requires:	python2-pexpect
 Requires:	python2-backports_abc
 Requires:	python2-backports-shutil_get_terminal_size
 Requires:	python2-backports
 Requires:	python2-traitlets
 Requires:	python2-ipython_genutils
+Requires:	python2-pygments
 Requires:	python2-scipy
+Requires:	python2-simplegeneric
 Requires:	python2-sympy
 Requires:	python2-twisted
 Requires:	R
@@ -1066,7 +1071,7 @@ export SAGE_SRC="%{buildroot}%{SAGE_SRC}"
 ##export SAGE_DOC_SRC="\$SAGE_DOC"
 module load 4ti2-%{_arch}
 module load lrcalc-%{_arch}
-module load surf-geometry-%{_arch}
+module load surf-%{_arch}
 export PATH=$SAGE_LOCAL/bin:\$PATH
 export SINGULARPATH=%{_libdir}/Singular/LIB
 export SINGULAR_BIN_DIR=%{_libdir}/Singular
