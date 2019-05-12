@@ -16,7 +16,7 @@
 
 %bcond_without sphinx_hack
 
-%ifarch x86_64
+%ifarch %{x86_64}
 %bcond_without fes
 %else
 %bcond_with fes
@@ -55,8 +55,8 @@
 Name:		sagemath
 Group:		Sciences/Mathematics
 Summary:	A free open-source mathematics software system
-Version:	7.4
-Release:	2
+Version:	8.7
+Release:	1
 # The file ${SAGE_ROOT}/COPYING.txt is the upstream license breakdown file
 # Additionally, every $files section has a comment with the license name
 # before files with that license
@@ -311,9 +311,6 @@ Requires:	sympow
 Requires:	tachyon
 Requires:	texlive
 Requires:	vecmath
-
-# Missing build requires on armv7hl
-ExclusiveArch:	%{ix86} x86_64
 
 %description
 Sage is a free open-source mathematics software system licensed
