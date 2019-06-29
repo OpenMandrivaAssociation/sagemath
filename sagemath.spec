@@ -169,8 +169,8 @@ BuildRequires:	coin-or-Cbc-devel
 BuildRequires:	cryptominisat-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	dos2unix
-BuildRequires:	ecl
-BuildRequires:	eclib-devel
+#BuildRequires:	ecl
+#BuildRequires:	eclib-devel
 BuildRequires:	ecm-devel
 BuildRequires:	factory-devel
 %if %{with fes}
@@ -230,7 +230,7 @@ BuildRequires:	python2-twisted
 BuildRequires:	python2-pickleshare
 BuildRequires:	python2-prompt_toolkit
 BuildRequires:	python2-future
-BuildRequires:	python2-sphinx
+#BuildRequires:	python2-sphinx
 BuildRequires:	python-sphinx
 BuildRequires:	R
 BuildRequires:	ratpoints-devel
