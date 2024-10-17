@@ -61,7 +61,7 @@ Release:	1
 # Additionally, every $files section has a comment with the license name
 # before files with that license
 License:	ASL 2.0 and BSD and GPL+ and GPLv2+ and LGPLv2+ and MIT and Public Domain
-URL:		http://www.sagemath.org
+URL:		https://www.sagemath.org
 Source0:	http://files.sagemath.org/src/sage-%{version}.tar.gz
 Source1:	gprc.expect
 Source2:	makecmds.sty
